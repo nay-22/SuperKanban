@@ -5,7 +5,7 @@ import drag from "../assets/drag-white.png"
 
 import "./Draggable.css"
 
-export const Draggable = ({ id, column, type, title, setDraggedItem, children }) => {
+const Draggable = ({ id, column, type, title, setDraggedItem, children }) => {
     const dragRef = useRef(null);
     const handleDragStart = (e) => {
         setDraggedItem({ id, column, title, type });
@@ -51,3 +51,5 @@ export const Draggable = ({ id, column, type, title, setDraggedItem, children })
         </div>
     );
 };
+
+export default Draggable;

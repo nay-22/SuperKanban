@@ -1,21 +1,15 @@
 import React, { useEffect, useState } from 'react';
 
-import DroppableArea from './components/DroppableArea';
-import { Draggable } from './components/Draggable';
 
-import drag from "./assets/drag-white.png";
-
-import "./App.css";
-import Task from './components/Task';
-import Column from './components/Column';
-import Navbar from './components/Navbar';
-import Form from './components/Form';
 import KanbanContext from './contexts/KanbanContext';
+import Navbar from './components/Navbar';
 import Board from './components/Board';
+import Form from './components/Form';
+import "./App.css";
 
 function App() {
 
-  const [itemDetails, setItemDetails] = useState();
+  const [itemDetails, setItemDetails] = useState({});
   const [colName, setColName] = useState('');
   const [draggedItem, setDraggedItem] = useState(null);
   const [columns, setColumns] = useState([]);
@@ -32,10 +26,6 @@ function App() {
       alert("No saved state found");
     }
   }, []);
-
-
-  
-
 
   return (
     <>

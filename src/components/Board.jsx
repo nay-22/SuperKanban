@@ -1,9 +1,9 @@
 import React, { useContext } from 'react'
-import DroppableArea from './DroppableArea';
-import { Draggable } from './Draggable';
-import Task from './Task';
-import Column from './Column';
 import KanbanContext from '../contexts/KanbanContext';
+import DroppableArea from './DroppableArea';
+import Draggable from './Draggable';
+import Column from './Column';
+import Task from './Task';
 
 const Board = () => {
     const { columns, setColumns, items, setItems, draggedItem, setDraggedItem, } = useContext(KanbanContext);
