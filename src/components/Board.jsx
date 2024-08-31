@@ -4,6 +4,7 @@ import DroppableArea from './DroppableArea';
 import Draggable from './Draggable';
 import Column from './Column';
 import Task from './Task';
+import { Box } from '@mui/material';
 
 const Board = () => {
     const { columns, setColumns, items, setItems, draggedItem, setDraggedItem, } = useContext(KanbanContext);
@@ -46,8 +47,8 @@ const Board = () => {
         }
     }
     return (
-        <div
-            style={{
+        <Box
+            sx={{
                 display: 'flex',
                 justifyContent: 'space-around',
                 alignItems: 'start',
@@ -89,7 +90,7 @@ const Board = () => {
                 </React.Fragment>
             ))
             }
-        </div >
+        </Box >
     )
 }
 
