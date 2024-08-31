@@ -1,0 +1,35 @@
+.dropArea {
+    border: 1px dashed grey;
+    border-radius: .35em;
+    height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 1;
+    transition: all .2s ease-in-out;
+    
+    color: white;
+}
+
+.horizontal {
+    height: 400px;
+    width: 100%;
+    margin: 0 2em;
+    padding: 2em;
+}
+
+.vertical {
+    height: 100px;
+    margin: .5em;
+}
+
+.hide {
+    opacity: 0;
+    padding: .4em;
+}
+
+.hide-horizontal {
+    height: 400px;
+    opacity: 0;
+    padding: .4em;
+}
