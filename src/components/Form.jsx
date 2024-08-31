@@ -1,5 +1,7 @@
-import React, { useContext } from 'react'
-import KanbanContext from '../contexts/KanbanContext'
+import { Box, Button, FormControl, FormGroup, FormLabel, InputLabel, MenuItem, Select, TextField } from '@mui/material';
+import React, { useContext } from 'react';
+
+import KanbanContext from '../contexts/KanbanContext';
 
 const Form = () => {
     const { columns, setColumns, colName, setColName, itemDetails, setItemDetails, setItems } = useContext(KanbanContext);
@@ -8,13 +10,14 @@ const Form = () => {
         e.preventDefault();
         setColumns(prev => [...prev, colName]);
         setItems(prev => ({ ...prev, [colName]: [] }));
+        setColName();
     }
 
     const handleItem = (e) => {
         e.preventDefault();
         if (e.target.id === 'itemName') {
             setItemDetails(prev => ({ ...prev, itemName: e.target.value }));
-        } else if (e.target.id === 'col') {
+        } else {
             setItemDetails(prev => ({ ...prev, column: e.target.value }));
         }
     }
@@ -28,65 +31,127 @@ const Form = () => {
                 title: itemDetails.itemName
             };
             setItems(prev => ({ ...prev, [itemDetails.column]: [...prev[itemDetails.column], newItem] }));
+            setItemDetails({});
         }
     }
     return (
-        <div
-            style={{
+        <Box
+            sx={{
                 display: 'flex',
-                gap: '1em',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '2em',
                 padding: '1em',
                 margin: 'auto',
-                width: 'fit-content'
             }}
         >
-            <form
-                style={{
+            <FormGroup
+                sx={{
                     display: 'flex',
                     alignItems: 'center',
                     gap: '1em',
                     padding: '1em',
-                    margin: 'auto',
-                    width: 'fit-content',
                     border: '1px solid grey',
                     borderRadius: '.5em',
+                    backgroundColor: 'lightgray'
                 }}
             >
-                <label htmlFor="colName">Column Name: </label>
-                <input placeholder='Enter Column Name' onChange={(e) => setColName(e.target.value)} type="text" id="colName" />
-                <button
-                    className='btn'
-                    onClick={addColumn} type="submit">Add Column</button>
-            </form>
-            <form
-                style={{
+                <Box
+                    sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '1em',
+                    }}
+                >
+                    <TextField
+                        sx={{
+                            color: 'white',
+                            borderRadius: '.35em'
+                        }}
+                        label='Column Name'
+                        placeholder='Enter Column Name'
+                        onChange={(e) => setColName(e.target.value)}
+                        value={colName ? colName : ""}
+                        type="text"
+                        id="colName"
+                    />
+                    <Button
+                        sx={{
+                            backgroundColor: 'orange',
+                            textTransform: 'none',
+                            height: '55px'
+                        }}
+                        variant='contained'
+                        onClick={addColumn}
+                    >
+                        Add Column
+                    </Button>
+                </Box>
+            </FormGroup>
+            <FormGroup
+                sx={{
                     display: 'flex',
+                    alignItems: 'center',
                     gap: '1em',
                     padding: '1em',
-                    margin: 'auto',
-                    width: 'fit-content',
                     border: '1px solid grey',
                     borderRadius: '.5em',
+                    backgroundColor: 'lightgray'
                 }}
             >
-                <div>
-                    <label htmlFor="colName">Task Name </label>
-                    <input placeholder='Enter Task Name' onChange={handleItem} type="text" id="itemName" />
-                </div>
-                <div>
-                    <label htmlFor="colName">Add To </label>
-                    <select onChange={handleItem} defaultValue="" name="col" id="col">
-                        <option value="" disabled hidden>Select Status</option>
-                        {columns.map((col, idx) => (
-                            <option key={idx} value={col}>{col}</option>
-                        ))}
-                    </select>
-                </div>
-                <button
-                    className='btn'
-                    onClick={addItem} type="submit">Add Item</button>
-            </form>
-        </div>
+                <Box
+                    sx={{
+                        display: 'flex',
+                        gap: '1em',
+                    }}
+                >
+
+                    <TextField
+                        sx={{
+                            color: 'white',
+                            borderRadius: '.35em'
+                        }}
+                        label='Task Name'
+                        placeholder='Enter Task Name'
+                        onChange={handleItem}
+                        type='text'
+                        id="itemName"
+                        value={itemDetails.itemName ? itemDetails.itemName : ""}
+                    />
+                    <FormControl
+                        sx={{
+                            width: '100px'
+                        }}
+                    >
+                        <InputLabel id="col">Status</InputLabel>
+                        <Select
+                            labelId="col"
+                            label="Status"
+                            placeholder='Enter Status'
+                            defaultValue=''
+                            onChange={handleItem}
+                            value={itemDetails ? itemDetails.column || "" : ""}
+                            id="col"
+                        >
+                            {columns.map((col, idx) => (
+                                <MenuItem key={idx} value={col}>{col}</MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
+                    <Button
+                        sx={{
+                            backgroundColor: 'orange',
+                            textTransform: 'none',
+                            height: '55px'
+                        }}
+                        variant='contained'
+                        onClick={addItem}
+                    >
+                        Add Item
+                    </Button>
+                </Box>
+            </FormGroup>
+        </Box>
     )
 }
 
