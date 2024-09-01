@@ -2,6 +2,7 @@ import React from 'react'
 
 import bin from "../assets/bin.png";
 import { Box, Button, Typography } from '@mui/material';
+import { Delete } from '@mui/icons-material';
 
 const Task = ({ id, title, onDelete }) => {
   return (
@@ -20,11 +21,17 @@ const Task = ({ id, title, onDelete }) => {
           border: "none",
           cursor: "pointer",
           outline: "none",
-          minWidth: '0'
+          minWidth: '0',
+          width: '30px',
+          height: '30px',
         }}
         onClick={onDelete}
       >
-        <img width='15px' src={bin} alt="delete" />
+        <Delete
+          sx={{
+            color: 'red',
+          }}
+        />
       </Button>
     </Box>
   )
