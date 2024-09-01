@@ -1,10 +1,16 @@
-import React, { useRef, useState } from 'react'
+import React, { useContext, useRef, useState } from 'react'
 import drag from '../assets/drag-white.png'
-import { Box, Typography } from '@mui/material';
+import { Box, Button, FormControl, FormGroup, Modal, TextField, Typography } from '@mui/material';
 import nextFrame from '../utils/nextFrame';
+import { Edit } from '@mui/icons-material';
+import KanbanContext from '../contexts/KanbanContext';
 const Column = ({ id, idx, type, column, setDraggedItem, children }) => {
 
+    const {columns, setColumns, items, setItems} = useContext(KanbanContext);
+
     const [showColumn, setShowColumn] = useState(true);
+    const [showModal, setShowModal] = useState(false);
+    const [newColName, setNewColName] = useState(columns.get(id));
 
     const dragRef = useRef(null);
 
@@ -34,6 +40,20 @@ const Column = ({ id, idx, type, column, setDraggedItem, children }) => {
         setDraggedItem(null);
     }
 
+    const changeColumnName = () => {
+        setShowModal(true);
+    }
+
+    const updateColName = (e) => {
+        e.preventDefault();
+        setColumns(prev => {
+            const map = new Map(prev);
+            map.set(id, newColName);
+            return map;
+        });
+        setShowModal(false);
+    }
+
     return (
         <Box
             id={col}
@@ -56,8 +76,8 @@ const Column = ({ id, idx, type, column, setDraggedItem, children }) => {
                 onDragEnd={handleDragEnd}
                 style={{
                     display: 'grid',
-                    gridTemplateColumns: '1fr 100%',
-                    justifyContent: 'space-between',
+                    gridTemplateColumns: '1fr 7fr 1fr',
+                    alignItems: 'center',
                     gap: '10px',
                     cursor: 'default',
                     backgroundColor: 'orange',
@@ -87,8 +107,78 @@ const Column = ({ id, idx, type, column, setDraggedItem, children }) => {
                     color='white'
                     padding={'.5em'}
                 >
-                    {id}
+                    {columns.get(id)}
                 </Typography>
+
+                <Button
+                    variant='contained'
+                    sx={{
+                        minWidth: '0',
+                        minHeight: '0',
+                        width: '40px',
+                        height: '40px',
+                        backgroundColor: 'white',
+                        justifySelf: 'center'
+                    }}
+                    onClick={changeColumnName}
+                >
+                    <Edit
+                        sx={{
+                            color: 'orange',
+                        }}
+                    />
+                </Button>
+                <Modal
+                    open={showModal}
+                    onClose={() => setShowModal(false)}
+                >
+                    <Box
+                        sx={{
+                            position: 'absolute',
+                            top: '50%',
+                            left: '50%',
+                            transform: 'translate(-50%, -50%)',
+                            bgcolor: 'lightgray',
+                            borderRadius: '.5em',
+                            padding: '2em',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                        }}
+                    >
+                        <Box
+                            sx={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '1em',
+                            }}
+                        >
+                            <TextField
+                                sx={{
+                                    color: 'white',
+                                    borderRadius: '.35em'
+                                }}
+                                label='Column Name'
+                                placeholder='Enter Column Name'
+                                onChange={(e) => setNewColName(e.target.value)}
+                                value={newColName}
+                                type="text"
+                                id="colName"
+                            />
+                            <Button
+                                sx={{
+                                    backgroundColor: 'orange',
+                                    textTransform: 'none',
+                                    height: '55px'
+                                }}
+                                variant='contained'
+                                onClick={updateColName}
+                            >
+                                Confirm
+                            </Button>
+                        </Box>
+                    </Box>
+                </Modal>
             </Box>
             {children}
         </Box>

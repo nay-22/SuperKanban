@@ -4,7 +4,7 @@ import React, { useContext } from 'react'
 import KanbanContext from "../contexts/KanbanContext";
 
 const Navbar = () => {
-    const { columns, items } = useContext(KanbanContext);
+    const { columns, columnOrder, items } = useContext(KanbanContext);
     return (
         <Box
             sx={{
@@ -38,6 +38,7 @@ const Navbar = () => {
                     onClick={() => {
                         localStorage.setItem('items', JSON.stringify({}));
                         localStorage.setItem('columns', JSON.stringify([]));
+                        localStorage.setItem('columnOrder', JSON.stringify([]));
                     }}
                 >Clear State</Button>
                 <Button
@@ -53,7 +54,8 @@ const Navbar = () => {
                     }}
                     onClick={() => {
                         localStorage.setItem('items', JSON.stringify(items));
-                        localStorage.setItem('columns', JSON.stringify(columns));
+                        localStorage.setItem('columnOrder', JSON.stringify(columnOrder));
+                        localStorage.setItem('columns', JSON.stringify(Array.from(columns.entries())));
                     }}
                 >Save State</Button>
             </Box>

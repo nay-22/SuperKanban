@@ -1,16 +1,26 @@
-import { Box, Button, FormControl, FormGroup, FormLabel, InputLabel, MenuItem, Select, TextField } from '@mui/material';
+import { Box, Button, FormControl, FormGroup, InputLabel, MenuItem, Select, TextField } from '@mui/material';
 import React, { useContext } from 'react';
 
 import KanbanContext from '../contexts/KanbanContext';
+import { v4 as uuid } from 'uuid';
 
 const Form = () => {
-    const { columns, setColumns, colName, setColName, itemDetails, setItemDetails, setItems } = useContext(KanbanContext);
+    const { columns, setColumns, setColumnOrder, colName, setColName, itemDetails, setItemDetails, setItems } = useContext(KanbanContext);
 
     const addColumn = (e) => {
         e.preventDefault();
-        setColumns(prev => [...prev, colName]);
-        setItems(prev => ({ ...prev, [colName]: [] }));
+        // setColumns(prev => [...prev, colName]);
+        // setItems(prev => ({ ...prev, [colName]: [] }));
+        const colId = uuid();
+        setColumns(prev => {
+            const map = new Map(prev);
+            map.set(colId, colName);
+            return map;
+        });
+        setColumnOrder(prev => [...prev, colId]);
         setColName();
+        console.log([...columns.entries()]);
+        
     }
 
     const handleItem = (e) => {
@@ -24,13 +34,15 @@ const Form = () => {
 
     const addItem = (e) => {
         e.preventDefault();
+        console.log(itemDetails);
+        
         if (itemDetails && itemDetails.itemName && itemDetails.column) {
             const newItem = {
                 id: new Date().toISOString(),
                 column: itemDetails.column,
                 title: itemDetails.itemName
             };
-            setItems(prev => ({ ...prev, [itemDetails.column]: [...prev[itemDetails.column], newItem] }));
+            setItems(prev => ({ ...prev, [itemDetails.column]: [...prev[itemDetails.column] || [], newItem] }));
             setItemDetails({});
         }
     }
@@ -81,6 +93,7 @@ const Form = () => {
                             textTransform: 'none',
                             height: '55px'
                         }}
+                        disabled={!colName}
                         variant='contained'
                         onClick={addColumn}
                     >
@@ -133,8 +146,8 @@ const Form = () => {
                             value={itemDetails ? itemDetails.column || "" : ""}
                             id="col"
                         >
-                            {columns.map((col, idx) => (
-                                <MenuItem key={idx} value={col}>{col}</MenuItem>
+                            {[...columns.entries()].map(([key, value]) => (
+                                <MenuItem key={key} value={key}>{value}</MenuItem>
                             ))}
                         </Select>
                     </FormControl>
@@ -146,6 +159,7 @@ const Form = () => {
                         }}
                         variant='contained'
                         onClick={addItem}
+                        disabled={!(itemDetails && itemDetails.itemName && itemDetails.column)}
                     >
                         Add Item
                     </Button>

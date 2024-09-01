@@ -7,24 +7,24 @@ import Task from './Task';
 import { Box } from '@mui/material';
 
 const Board = () => {
-    const { columns, setColumns, items, setItems, draggedItem, setDraggedItem, } = useContext(KanbanContext);
+    const { columnOrder, setColumnOrder, items, setItems, draggedItem, setDraggedItem, } = useContext(KanbanContext);
 
-    // VERY IMPORTANT LOGIC - REVISIT
-    const onDrag = (id, idx) => {
+    // IMPORTANT LOGIC (FIXED)
+    const onDrop = (id, idx) => {
         if (draggedItem) {
-            columns.map(col => {
-                if (col === draggedItem.column) {
+            columnOrder.map(colId => {
+                if (colId === draggedItem.column) {
                     if (id === draggedItem.column) {
-                        const updatedItems = [...items[col]];
-                        const itemIndex = updatedItems.findIndex(item => item.id === draggedItem.id);
-                        const [movedItem] = updatedItems.splice(itemIndex, 1);
-                        updatedItems.splice(idx, 0, movedItem);
-                        setItems(prev => ({ ...prev, [col]: updatedItems }));
+                        let currentColumnItems = [...items[id]];
+                        currentColumnItems = currentColumnItems.filter(item => item.id !== draggedItem.id);
+                        if (idx < draggedItem.currIdx) idx++;
+                        currentColumnItems.splice(idx, 0, draggedItem);
+                        setItems(prev => ({ ...prev, [id]: currentColumnItems }));
                     } else {
-                        const toColumnItems = [...items[id]];
-                        const fromColumnItems = [...items[col]].filter(item => item.id !== draggedItem.id);
-                        toColumnItems.splice(idx, 0, { ...draggedItem, column: id });
-                        setItems(prev => ({ ...prev, [id]: toColumnItems, [col]: fromColumnItems }));
+                        let targetColumnItems = [...items[id] || []];
+                        targetColumnItems.splice(idx + 1, 0, { ...draggedItem, column: id });
+                        let currentColumnItems = [...items[draggedItem.column]].filter(item => item.id !== draggedItem.id);
+                        setItems(prev => ({ ...prev, [id]: targetColumnItems, [draggedItem.column]: currentColumnItems }));
                     }
                 }
             });
@@ -37,12 +37,14 @@ const Board = () => {
         if (draggedItem) {
             const { id, column } = draggedItem;
             console.log("col idx = " + idx);
-            let updatedColumns = [...columns];
+            let updatedColumns = [...columnOrder];
             updatedColumns.splice(column, 1);
             console.log(updatedColumns);
             if (column > idx) idx++;
             updatedColumns.splice(idx, 0, id);
-            setColumns(updatedColumns);
+            setColumnOrder(updatedColumns);
+            console.log(draggedItem);
+            
 
         }
     }
@@ -58,35 +60,53 @@ const Board = () => {
                 overflowX: 'auto'
             }}
         >
-            <DroppableArea allowedType='column' dragType={draggedItem !== null ? draggedItem.type : 'null'} onDrop={() => handleColumnDrop(-1)} />
-            {columns.map((col, idx) => (
+            <DroppableArea
+                allowedType='column'
+                dragType={draggedItem !== null ? draggedItem.type : 'null'}
+                onDrop={() => handleColumnDrop(-1)}
+            />
+            {columnOrder.map((colId, idx) => (
                 <React.Fragment key={idx}>
                     <Column
                         type={'column'}
-                        id={col}
+                        id={colId}
                         column={idx}
                         setDraggedItem={setDraggedItem}
                     >
-                        <DroppableArea allowedType='task' dragType={draggedItem !== null ? draggedItem.type : 'null'} vertical onDrop={() => onDrag(col, 0)} />
-                        {items[col].map((item, index) => (
+                        <DroppableArea
+                            allowedType='task'
+                            dragType={draggedItem !== null ? draggedItem.type : 'null'}
+                            vertical
+                            onDrop={() => onDrop(colId, -1)}
+                        />
+                        {items[colId] && items[colId].map((item, index) => (
                             <React.Fragment key={item.id}>
                                 <Draggable
                                     id={item.id}
-                                    idx={idx}
+                                    currIdx={index}
                                     title={item.title}
                                     column={item.column}
                                     type={'task'}
                                     setDraggedItem={setDraggedItem}
                                 >
                                     <Task id={item.id} title={item.title} onDelete={() => {
-                                        setItems(prev => ({ ...prev, [col]: prev[col].filter(i => i.id !== item.id) }));
+                                        setItems(prev => ({ ...prev, [colId]: prev[colId].filter(i => i.id !== item.id) }));
                                     }} />
                                 </Draggable>
-                                <DroppableArea allowedType='task' dragType={draggedItem !== null ? draggedItem.type : 'null'} vertical onDrop={() => onDrag(col, index + 1)} />
+                                <DroppableArea
+                                    allowedType='task'
+                                    dragType={draggedItem !== null ? draggedItem.type : 'null'}
+                                    vertical
+                                    onDrop={() => onDrop(colId, index)}
+                                />
                             </React.Fragment>
                         ))}
                     </Column>
-                    <DroppableArea allowedType='column' dragType={draggedItem !== null ? draggedItem.type : 'null'} onDrop={() => handleColumnDrop(idx)} />
+                    <DroppableArea
+                        allowedType='column'
+                        dragType={draggedItem !== null ? draggedItem.type : 'null'}
+                        onDrop={() => handleColumnDrop(idx)}
+                    />
                 </React.Fragment>
             ))
             }
