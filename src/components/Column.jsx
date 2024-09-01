@@ -2,14 +2,16 @@ import React, { useContext, useRef, useState } from 'react'
 import drag from '../assets/drag-white.png'
 import { Box, Button, FormControl, FormGroup, Modal, TextField, Typography } from '@mui/material';
 import nextFrame from '../utils/nextFrame';
-import { Edit } from '@mui/icons-material';
+import { Delete, Edit } from '@mui/icons-material';
 import KanbanContext from '../contexts/KanbanContext';
+import ConfirmationModal from './modals/ConfirmationModal';
 const Column = ({ id, idx, type, column, setDraggedItem, children }) => {
 
-    const {columns, setColumns, items, setItems} = useContext(KanbanContext);
+    const { columns, setColumns, columnOrder, setColumnOrder, items, setItems } = useContext(KanbanContext);
 
     const [showColumn, setShowColumn] = useState(true);
-    const [showModal, setShowModal] = useState(false);
+    const [showUpdateColModal, setShowUpdateColModal] = useState(false);
+    const [showDeleteColModal, setShowDeleteColModal] = useState(false);
     const [newColName, setNewColName] = useState(columns.get(id));
 
     const dragRef = useRef(null);
@@ -40,18 +42,43 @@ const Column = ({ id, idx, type, column, setDraggedItem, children }) => {
         setDraggedItem(null);
     }
 
-    const changeColumnName = () => {
-        setShowModal(true);
-    }
-
     const updateColName = (e) => {
         e.preventDefault();
+        setColumns(prev => prev.set(id, newColName));
+        setShowUpdateColModal(false);
+    }
+
+    const deleteColumn = () => {
+        const prevCol = (columns.size + idx - 1) % columns.size;
+        setColumnOrder(prev => {
+            const updatedState = [...prev];
+            updatedState.splice(idx, 1);
+            return updatedState;
+        });
+
+        
+        setItems(prev => {
+            const updatedState = { ...prev };
+            const currColItems = updatedState[id];
+            delete updatedState[id];
+            currColItems.map(item => {
+                item.column = columnOrder[prevCol];
+            })
+            updatedState[columnOrder[prevCol]] = [...updatedState[columnOrder[prevCol]], ...currColItems];
+            return updatedState;
+        });
+        
         setColumns(prev => {
             const map = new Map(prev);
-            map.set(id, newColName);
+            map.delete(id);
+            console.log(map);
+            console.log(items);
+            console.log(prevCol);
+            
             return map;
         });
-        setShowModal(false);
+
+        setShowDeleteColModal(false);
     }
 
     return (
@@ -76,11 +103,11 @@ const Column = ({ id, idx, type, column, setDraggedItem, children }) => {
                 onDragEnd={handleDragEnd}
                 style={{
                     display: 'grid',
-                    gridTemplateColumns: '1fr 7fr 1fr',
+                    gridTemplateColumns: '1fr 7fr 1fr 1fr',
                     alignItems: 'center',
                     gap: '10px',
                     cursor: 'default',
-                    backgroundColor: 'orange',
+                    backgroundColor: showDeleteColModal ? 'red' : 'orange',
                     margin: '0',
                     borderRadius: '.34em .34em 0 0',
                 }}
@@ -115,12 +142,30 @@ const Column = ({ id, idx, type, column, setDraggedItem, children }) => {
                     sx={{
                         minWidth: '0',
                         minHeight: '0',
-                        width: '40px',
-                        height: '40px',
+                        width: '30px',
+                        height: '30px',
                         backgroundColor: 'white',
-                        justifySelf: 'center'
+                        justifySelf: 'right'
                     }}
-                    onClick={changeColumnName}
+                    onClick={() => setShowDeleteColModal(true)}
+                >
+                    <Delete
+                        sx={{
+                            color: 'red',
+                        }}
+                    />
+                </Button>
+                <Button
+                    variant='contained'
+                    sx={{
+                        minWidth: '0',
+                        minHeight: '0',
+                        width: '30px',
+                        height: '30px',
+                        backgroundColor: 'white',
+                        justifySelf: 'right'
+                    }}
+                    onClick={() => setShowUpdateColModal(true)}
                 >
                     <Edit
                         sx={{
@@ -129,8 +174,8 @@ const Column = ({ id, idx, type, column, setDraggedItem, children }) => {
                     />
                 </Button>
                 <Modal
-                    open={showModal}
-                    onClose={() => setShowModal(false)}
+                    open={showUpdateColModal}
+                    onClose={() => setShowUpdateColModal(false)}
                 >
                     <Box
                         sx={{
@@ -179,6 +224,12 @@ const Column = ({ id, idx, type, column, setDraggedItem, children }) => {
                         </Box>
                     </Box>
                 </Modal>
+                <ConfirmationModal
+                    onClose={() => setShowDeleteColModal(false)}
+                    onConfirm={deleteColumn}
+                    open={showDeleteColModal}
+                    message='Do you want to delete this column?'
+                />
             </Box>
             {children}
         </Box>
