@@ -1,10 +1,14 @@
-import React, { useRef } from 'react'
+import React, { useRef, useState } from 'react'
 import drag from '../assets/drag-white.png'
-const Column = ({id, idx, type, column, setDraggedItem, children }) => {
+import { Box, Typography } from '@mui/material';
+import nextFrame from '../utils/nextFrame';
+const Column = ({ id, idx, type, column, setDraggedItem, children }) => {
+
+    const [showColumn, setShowColumn] = useState(true);
 
     const dragRef = useRef(null);
 
-    const handleDragStart = (e) => {        
+    const handleDragStart = async (e) => {
         setDraggedItem({ id, column, type });
         const dragElement = dragRef.current.cloneNode(true);
 
@@ -16,28 +20,37 @@ const Column = ({id, idx, type, column, setDraggedItem, children }) => {
 
         e.dataTransfer.setDragImage(dragElement, 0, 0);
 
+        await nextFrame();
+
+        setShowColumn(false);
+
         setTimeout(() => {
             document.body.removeChild(dragElement);
         }, 0);
     }
 
     const handleDragEnd = (e) => {
+        setShowColumn(true);
         setDraggedItem(null);
     }
 
     return (
-        <div
+        <Box
             id={col}
             key={idx}
             style={{
+                display: showColumn ? 'block' : 'none',
                 width: '100%',
                 border: '1px solid grey',
                 borderRadius: '.5em',
                 minHeight: '100px',
+                // flex: showColumn ? '1 1 auto' : '0 0 auto',
+                // transition: 'flex 0.3s ease, opacity 0.3s ease',
+                // opacity: showColumn ? 1 : 0,
             }}
             ref={dragRef}
         >
-            <div
+            <Box
                 className='draggable'
                 onDragStart={handleDragStart}
                 onDragEnd={handleDragEnd}
@@ -52,7 +65,7 @@ const Column = ({id, idx, type, column, setDraggedItem, children }) => {
                     borderRadius: '.34em .34em 0 0',
                 }}
             >
-                <div
+                <Box
                     style={{
                         display: 'flex',
                         alignItems: 'center',
@@ -68,17 +81,17 @@ const Column = ({id, idx, type, column, setDraggedItem, children }) => {
                         src={drag}
                         alt="drag"
                     />
-                </div>
-                <h2
-                    style={{
-                        color: 'white',
-                        padding: '.5em'
-                    }}>
+                </Box>
+                <Typography
+                    variant='h5'
+                    color='white'
+                    padding={'.5em'}
+                >
                     {id}
-                </h2>
-            </div>
+                </Typography>
+            </Box>
             {children}
-        </div>
+        </Box>
     )
 }
 

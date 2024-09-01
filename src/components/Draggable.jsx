@@ -1,13 +1,17 @@
+import { useState } from 'react'
 import { useRef } from 'react'
 import React from 'react'
 
 import drag from "../assets/drag-white.png"
 
 import "./Draggable.css"
+import nextFrame from '../utils/nextFrame'
 
 const Draggable = ({ id, column, type, title, setDraggedItem, children }) => {
+    const [show, setShow] = useState(true);
     const dragRef = useRef(null);
-    const handleDragStart = (e) => {
+
+    const handleDragStart = async (e) => {
         setDraggedItem({ id, column, title, type });
         const dragElement = dragRef.current.cloneNode(true);
 
@@ -17,11 +21,15 @@ const Draggable = ({ id, column, type, title, setDraggedItem, children }) => {
 
         e.dataTransfer.setDragImage(dragElement, 0, 0);
 
+        await nextFrame();
+        setShow(false);
+
         setTimeout(() => {
             document.body.removeChild(dragElement);
         }, 0);
     }
     const handleDragEnd = (e) => {
+        setShow(true)
         setDraggedItem(null);
     }
     return (
@@ -31,7 +39,7 @@ const Draggable = ({ id, column, type, title, setDraggedItem, children }) => {
             onDragStart={handleDragStart}
             onDragEnd={handleDragEnd}
             style={{
-                display: 'flex',
+                display: show ? 'flex' : 'none',
                 alignItems: 'center',
                 gap: '10px',
                 cursor: 'default'
