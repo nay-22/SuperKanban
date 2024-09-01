@@ -9,14 +9,8 @@ const Form = () => {
 
     const addColumn = (e) => {
         e.preventDefault();
-        // setColumns(prev => [...prev, colName]);
-        // setItems(prev => ({ ...prev, [colName]: [] }));
         const colId = uuid();
-        setColumns(prev => {
-            const map = new Map(prev);
-            map.set(colId, colName);
-            return map;
-        });
+        setColumns(prev => prev.set(colId, colName));
         setColumnOrder(prev => [...prev, colId]);
         setColName();
         console.log([...columns.entries()]);

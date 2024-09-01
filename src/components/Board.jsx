@@ -36,16 +36,11 @@ const Board = () => {
     const handleColumnDrop = (idx) => {
         if (draggedItem) {
             const { id, column } = draggedItem;
-            console.log("col idx = " + idx);
             let updatedColumns = [...columnOrder];
             updatedColumns.splice(column, 1);
-            console.log(updatedColumns);
             if (column > idx) idx++;
             updatedColumns.splice(idx, 0, id);
             setColumnOrder(updatedColumns);
-            console.log(draggedItem);
-            
-
         }
     }
     return (
@@ -69,6 +64,7 @@ const Board = () => {
                 <React.Fragment key={idx}>
                     <Column
                         type={'column'}
+                        idx={idx}
                         id={colId}
                         column={idx}
                         setDraggedItem={setDraggedItem}
