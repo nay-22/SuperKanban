@@ -1,4 +1,4 @@
-import React, { useContext, useRef, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import drag from '../assets/drag-white.png'
 import { Box, Button, FormControl, FormGroup, Modal, TextField, Typography } from '@mui/material';
 import nextFrame from '../utils/nextFrame';
@@ -13,6 +13,10 @@ const Column = ({ id, idx, type, column, setDraggedItem, children }) => {
     const [showUpdateColModal, setShowUpdateColModal] = useState(false);
     const [showDeleteColModal, setShowDeleteColModal] = useState(false);
     const [newColName, setNewColName] = useState(columns.get(id));
+
+    useEffect(() => {
+        setNewColName(columns.get(id));
+    }, [columns]);
 
     const dragRef = useRef(null);
 
@@ -49,34 +53,31 @@ const Column = ({ id, idx, type, column, setDraggedItem, children }) => {
     }
 
     const deleteColumn = () => {
-        const prevCol = (columns.size + idx - 1) % columns.size;
-        setColumnOrder(prev => {
-            const updatedState = [...prev];
-            updatedState.splice(idx, 1);
-            return updatedState;
-        });
-
+        const prevColIdx = (columns.size + idx - 1) % columns.size
+        const prevCol = columnOrder[prevColIdx];
         
         setItems(prev => {
             const updatedState = { ...prev };
             const currColItems = updatedState[id];
             delete updatedState[id];
             currColItems.map(item => {
-                item.column = columnOrder[prevCol];
-            })
-            updatedState[columnOrder[prevCol]] = [...updatedState[columnOrder[prevCol]], ...currColItems];
+                item.column = prevCol;
+            });
+            updatedState[prevCol] = [...updatedState[prevCol], ...currColItems];
             return updatedState;
         });
         
         setColumns(prev => {
             const map = new Map(prev);
             map.delete(id);
-            console.log(map);
-            console.log(items);
-            console.log(prevCol);
-            
             return map;
         });
+        
+        setColumnOrder(prev => {
+            const updatedState = [...prev];
+            updatedState.splice(idx, 1);
+            return updatedState;
+        });        
 
         setShowDeleteColModal(false);
     }
@@ -103,7 +104,7 @@ const Column = ({ id, idx, type, column, setDraggedItem, children }) => {
                 onDragEnd={handleDragEnd}
                 style={{
                     display: 'grid',
-                    gridTemplateColumns: '1fr 7fr 1fr 1fr',
+                    gridTemplateColumns: '50px 1fr 50px 50px',
                     alignItems: 'center',
                     gap: '10px',
                     cursor: 'default',
