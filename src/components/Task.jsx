@@ -42,7 +42,7 @@ const Task = ({ id, title, priority, onDelete, colId }) => {
         <Tooltip title={`${id.split('T')[1]}`} placement="top" arrow>
           <Typography style={{ width: '100%', textAlign: 'left' }}>Created: {id.split('T')[0]}</Typography>
         </Tooltip>
-        {priority &&
+        {priority !== 'none' &&
           <Chip
             label={priority}
             sx={{

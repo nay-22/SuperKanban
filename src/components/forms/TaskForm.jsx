@@ -34,7 +34,7 @@ const TaskForm = ({ edit = false, title, priority, taskId, colId, callback }) =>
                 id: new Date().toISOString(),
                 column: itemDetails.column,
                 title: itemDetails.itemName,
-                priority: itemDetails.priority || undefined
+                priority: itemDetails.priority || 'none'
             };
             setItems(prev => ({ ...prev, [itemDetails.column]: [...prev[itemDetails.column] || [], newItem] }));
             setItemDetails({});
@@ -163,7 +163,7 @@ const TaskForm = ({ edit = false, title, priority, taskId, colId, callback }) =>
                                     },
                                 }}
                             >
-                                {value}
+                                {value.colName}
                             </MenuItem>
                         ))}
                     </Select>

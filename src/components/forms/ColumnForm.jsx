@@ -9,22 +9,22 @@ const ColumnForm = ({ colId, edit = false, callback }) => {
     const [newColName, setNewColName] = useState(edit ? columns.get(colId) : undefined);
 
     useEffect(() => {
-        if (edit) setNewColName(columns.get(colId));
+        if (edit) setNewColName(columns.get(colId).colName);
     }, [columns]);
 
     const addColumn = (e) => {
         e.preventDefault();
         const id = uuid();
-        setColumns(prev => prev.set(id, colName));
+        setColumns(prev => prev.set(id, {colName, sortOrder: 'low'}));
         setColumnOrder(prev => [...prev, id]);
         setColName();
-        console.log([...columns.entries()]);
+        console.log(columns);
 
     }
 
     const updateColName = (e) => {
         e.preventDefault();
-        setColumns(prev => prev.set(colId, newColName));
+        setColumns(prev => prev.set(colId, {...prev.get(colId), colName: newColName}));
         callback();
     }
 

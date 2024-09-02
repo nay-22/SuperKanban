@@ -1,42 +1,34 @@
-import React, { useContext, useEffect, useRef, useState } from 'react'
-import drag from '../assets/drag-white.png'
-import { Box, Button, FormControl, FormGroup, Modal, SpeedDial, SpeedDialAction, SpeedDialIcon, TextField, Tooltip, Typography } from '@mui/material';
-import nextFrame from '../utils/nextFrame';
-import { ArrowDropDown, ArrowDropDownCircle, Delete, DragIndicator, Edit, Settings, Tune } from '@mui/icons-material';
-import KanbanContext from '../contexts/KanbanContext';
+import { Box, Modal, SpeedDial, SpeedDialAction, Tooltip, Typography } from '@mui/material';
+import { Delete, DragIndicator, Edit, SwapVert, Tune } from '@mui/icons-material';
+import React, { useContext, useRef, useState } from 'react'
+
 import ConfirmationModal from './modals/ConfirmationModal';
+import KanbanContext from '../contexts/KanbanContext';
 import ColumnForm from './forms/ColumnForm';
+import nextFrame from '../utils/nextFrame';
+
 const Column = ({ id, idx, type, column, setDraggedItem, children }) => {
 
     const { columns, setColumns, columnOrder, setColumnOrder, items, setItems } = useContext(KanbanContext);
 
-    const [showColumn, setShowColumn] = useState(true);
     const [showUpdateColModal, setShowUpdateColModal] = useState(false);
     const [showDeleteColModal, setShowDeleteColModal] = useState(false);
-    const [newColName, setNewColName] = useState(columns.get(id));
-
-    useEffect(() => {
-        setNewColName(columns.get(id));
-    }, [columns]);
+    const [showColumn, setShowColumn] = useState(true);
+    const [sortOrder, setSortOrder] = useState('high');
 
     const dragRef = useRef(null);
 
     const handleDragStart = async (e) => {
         setDraggedItem({ id, column, type });
         const dragElement = dragRef.current.cloneNode(true);
-
         dragElement.style.position = 'absolute';
         dragElement.style.top = '-9999px';
         dragElement.style.width = 'fit-content';
         dragElement.style.opacity = '1';
         document.body.appendChild(dragElement);
-
         e.dataTransfer.setDragImage(dragElement, 0, 0);
-
         await nextFrame();
-
         setShowColumn(false);
-
         setTimeout(() => {
             document.body.removeChild(dragElement);
         }, 0);
@@ -45,12 +37,6 @@ const Column = ({ id, idx, type, column, setDraggedItem, children }) => {
     const handleDragEnd = (e) => {
         setShowColumn(true);
         setDraggedItem(null);
-    }
-
-    const updateColName = (e) => {
-        e.preventDefault();
-        setColumns(prev => prev.set(id, newColName));
-        setShowUpdateColModal(false);
     }
 
     const deleteColumn = () => {
@@ -81,6 +67,19 @@ const Column = ({ id, idx, type, column, setDraggedItem, children }) => {
         });
 
         setShowDeleteColModal(false);
+    }
+
+    const sortItems = () => {       
+        const currSortOrder = sortOrder === 'high' ? 'low' : 'high';
+        setSortOrder(currSortOrder);
+        const order = {
+            'High': 3,
+            'Medium': 2,
+            'Low': 1,
+            'none': 0,
+        };
+        setItems(prev => ({ ...prev, [id]: prev[id].sort((a, b) => sortOrder === 'low' ? order[a.priority] - order[b.priority] : order[b.priority] - order[a.priority]) }));
+        
     }
 
     return (
@@ -126,7 +125,7 @@ const Column = ({ id, idx, type, column, setDraggedItem, children }) => {
                     color='white'
                     padding={'.5em'}
                 >
-                    {columns.get(id)}
+                    {columns.get(id).colName}
                 </Typography>
                 <SpeedDial
                     direction='left'
@@ -161,6 +160,16 @@ const Column = ({ id, idx, type, column, setDraggedItem, children }) => {
                         icon={<Delete sx={{ fontSize: '30px', color: 'red', bgcolor: 'transparent' }} />}
                         tooltipTitle='Delete'
                         onClick={() => setShowDeleteColModal(true)}
+                    />
+                    <SpeedDialAction
+                        sx={{
+                            bgcolor: 'white',
+                            boxShadow: 'none',
+                            padding: '0',
+                        }}
+                        icon={<SwapVert sx={{ fontSize: '30px', color: 'royalblue', bgcolor: 'transparent' }} />}
+                        tooltipTitle={`Sort By: ${sortOrder.charAt(0).toUpperCase() + sortOrder.slice(1)} Priority`}
+                        onClick={sortItems}
                     />
                 </SpeedDial>
                 <Modal
