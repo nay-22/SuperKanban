@@ -3,6 +3,7 @@ import React, { useContext } from 'react';
 
 import KanbanContext from '../contexts/KanbanContext';
 import { v4 as uuid } from 'uuid';
+import ColumnForm from './forms/ColumnForm';
 
 const Form = () => {
     const { columns, setColumns, setColumnOrder, colName, setColName, itemDetails, setItemDetails, setItems } = useContext(KanbanContext);
@@ -56,77 +57,7 @@ const Form = () => {
                 margin: 'auto',
             }}
         >
-            <FormGroup
-                sx={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '1em',
-                    padding: '1em',
-                    border: '1px solid grey',
-                    borderRadius: '.5em',
-                    backgroundColor: 'rgb(56, 89, 121)'
-                }}
-            >
-                <Box
-                    sx={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '1em',
-                    }}
-                >
-                    <TextField
-                        sx={{
-                            color: 'white',
-                            borderRadius: '.35em',
-                            '& .MuiInputBase-input': {
-                                color: 'white',
-
-                            },
-                            '& .MuiOutlinedInput-root': {
-                                '& fieldset': {
-                                    borderColor: 'white',
-                                },
-                                '&:hover fieldset': {
-                                    borderColor: 'orange',
-                                },
-                                '&.Mui-focused fieldset': {
-                                    borderColor: 'white',
-                                },
-                            },
-                            '& .MuiInputLabel-root': {
-                                color: 'white',
-                                opacity: '1'
-                            },
-                            '& .MuiInputLabel-root.Mui-focused': {
-                                color: 'white',
-
-                            },
-                        }}
-                        label='Column Name'
-                        placeholder='Enter Column Name'
-                        onChange={(e) => setColName(e.target.value)}
-                        value={colName ? colName : ""}
-                        type="text"
-                        id="colName"
-                    />
-                    <Button
-                        sx={{
-                            backgroundColor: 'orange',
-                            textTransform: 'none',
-                            height: '55px',
-                            '&:disabled': {
-                                backgroundColor: 'grey',
-                                color: 'wheat'
-                            }
-                        }}
-                        disabled={!colName}
-                        variant='contained'
-                        onClick={addColumn}
-                    >
-                        Add Column
-                    </Button>
-                </Box>
-            </FormGroup>
+            <ColumnForm />
             <FormGroup
                 sx={{
                     display: 'flex',

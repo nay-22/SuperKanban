@@ -5,6 +5,7 @@ import nextFrame from '../utils/nextFrame';
 import { ArrowDropDown, ArrowDropDownCircle, Delete, DragIndicator, Edit, Settings, Tune } from '@mui/icons-material';
 import KanbanContext from '../contexts/KanbanContext';
 import ConfirmationModal from './modals/ConfirmationModal';
+import ColumnForm from './forms/ColumnForm';
 const Column = ({ id, idx, type, column, setDraggedItem, children }) => {
 
     const { columns, setColumns, columnOrder, setColumnOrder, items, setItems } = useContext(KanbanContext);
@@ -172,45 +173,15 @@ const Column = ({ id, idx, type, column, setDraggedItem, children }) => {
                             top: '50%',
                             left: '50%',
                             transform: 'translate(-50%, -50%)',
-                            bgcolor: 'lightgray',
+                            bgcolor: 'rgb(56, 89, 121)',
                             borderRadius: '.5em',
-                            padding: '2em',
+                            padding: '.5em',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
                         }}
                     >
-                        <Box
-                            sx={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: '1em',
-                            }}
-                        >
-                            <TextField
-                                sx={{
-                                    color: 'white',
-                                    borderRadius: '.35em'
-                                }}
-                                label='Column Name'
-                                placeholder='Enter Column Name'
-                                onChange={(e) => setNewColName(e.target.value)}
-                                value={newColName}
-                                type="text"
-                                id="colName"
-                            />
-                            <Button
-                                sx={{
-                                    backgroundColor: 'orange',
-                                    textTransform: 'none',
-                                    height: '55px'
-                                }}
-                                variant='contained'
-                                onClick={updateColName}
-                            >
-                                Confirm
-                            </Button>
-                        </Box>
+                        <ColumnForm edit colId={id} callback={() => setShowUpdateColModal(false)} />
                     </Box>
                 </Modal>
                 <ConfirmationModal
