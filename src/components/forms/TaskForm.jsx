@@ -88,10 +88,10 @@ const TaskForm = ({ edit = false, title, priority, taskId, colId, callback }) =>
                     }}
                     label='Task Name'
                     placeholder='Enter Task Name'
-                    onChange={(e) => edit ? setTask(prev => ({ ...prev, name: e.target.value })) : handleItemName(e)}
+                    onChange={(e) => edit ? setTask(prev => ({ ...prev, title: e.target.value })) : handleItemName(e)}
                     type='text'
                     id="itemName"
-                    value={edit ? title : itemDetails.itemName ? itemDetails.itemName : ""}
+                    value={edit ? task.title : itemDetails.itemName ? itemDetails.itemName : ""}
                 />
                 {!edit && <FormControl
                     sx={{
