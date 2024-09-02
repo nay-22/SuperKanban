@@ -1,8 +1,8 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import drag from '../assets/drag-white.png'
-import { Box, Button, FormControl, FormGroup, Modal, SpeedDial, SpeedDialAction, SpeedDialIcon, TextField, Typography } from '@mui/material';
+import { Box, Button, FormControl, FormGroup, Modal, SpeedDial, SpeedDialAction, SpeedDialIcon, TextField, Tooltip, Typography } from '@mui/material';
 import nextFrame from '../utils/nextFrame';
-import { ArrowDropDown, ArrowDropDownCircle, Delete, DragIndicator, Edit, Settings } from '@mui/icons-material';
+import { ArrowDropDown, ArrowDropDownCircle, Delete, DragIndicator, Edit, Settings, Tune } from '@mui/icons-material';
 import KanbanContext from '../contexts/KanbanContext';
 import ConfirmationModal from './modals/ConfirmationModal';
 const Column = ({ id, idx, type, column, setDraggedItem, children }) => {
@@ -104,10 +104,10 @@ const Column = ({ id, idx, type, column, setDraggedItem, children }) => {
                     alignItems: 'center',
                     gap: '10px',
                     cursor: 'default',
-                    backgroundColor: showDeleteColModal ? 'rgb(208, 79, 79)' : 'orange',
+                    backgroundColor: showDeleteColModal ? 'rgb(208, 79, 79)' : 'rgb(23, 39, 55)',
                     margin: '0',
                     padding: '.5em',
-                    borderRadius: '.34em .34em 0 0',
+                    borderRadius: '.55em .55em 0 0',
                 }}
             >
                 <Box
@@ -130,13 +130,12 @@ const Column = ({ id, idx, type, column, setDraggedItem, children }) => {
                 <SpeedDial
                     direction='left'
                     ariaLabel='Column Actions'
-                    icon={<Settings sx={{
-                        fontSize: '30px',
-                        transition: 'transform 0.3s ease-in-out',
-                        '&:hover': {
-                            transform: 'rotate(90deg)',
-                        },
-                    }} />}
+                    icon={<Tooltip title="Settings">
+                        <Tune sx={{
+                            fontSize: '30px',
+                            transition: 'transform 0.3s ease-in-out',
+                        }} />
+                    </Tooltip>}
                     sx={{
                         mr: '1em',
                         ml: '1em',

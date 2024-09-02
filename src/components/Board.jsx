@@ -33,8 +33,6 @@ const Board = () => {
         }
     };
 
-
-
     const handleColumnDrop = (idx) => {
         if (draggedItem) {
             const { id, column } = draggedItem;
@@ -45,6 +43,7 @@ const Board = () => {
             setColumnOrder(updatedColumns);
         }
     }
+
     return (
         <Box
             sx={{
@@ -84,6 +83,7 @@ const Board = () => {
                                     currIdx={index}
                                     title={item.title}
                                     column={item.column}
+                                    priority={item.priority}
                                     type={'task'}
                                     setDraggedItem={setDraggedItem}
                                 >
@@ -91,6 +91,7 @@ const Board = () => {
                                         id={item.id}
                                         title={item.title}
                                         colId={colId}
+                                        priority={item.priority}
                                         onDelete={() => {
                                             setItems(prev => ({ ...prev, [colId]: prev[colId].filter(i => i.id !== item.id) }));
                                         }}

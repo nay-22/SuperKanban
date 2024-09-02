@@ -7,12 +7,12 @@ import drag from "../assets/drag-white.png"
 import "./Draggable.css"
 import nextFrame from '../utils/nextFrame'
 
-const Draggable = ({ id, currIdx, column, type, title, setDraggedItem, children }) => {
+const Draggable = ({ id, currIdx, column, type, title, priority, setDraggedItem, children }) => {
     const [show, setShow] = useState(true);
     const dragRef = useRef(null);
 
     const handleDragStart = async (e) => {
-        setDraggedItem({ id, currIdx, column, title, type });
+        setDraggedItem({ id, currIdx, column, title, type, priority });
         const dragElement = dragRef.current.cloneNode(true);
 
         dragElement.style.position = 'absolute';

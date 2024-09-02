@@ -17,24 +17,29 @@ const Form = () => {
 
     }
 
-    const handleItem = (e) => {
+    const handleItemName = (e) => {
         e.preventDefault();
-        if (e.target.id === 'itemName') {
-            setItemDetails(prev => ({ ...prev, itemName: e.target.value }));
-        } else {
-            setItemDetails(prev => ({ ...prev, column: e.target.value }));
-        }
+        setItemDetails(prev => ({ ...prev, itemName: e.target.value }));
+    }
+
+    const handleColumnSelect = (e) => {
+        e.preventDefault();
+        setItemDetails(prev => ({ ...prev, column: e.target.value }));
+    }
+
+    const handlePrioritySelect = (e) => {
+        e.preventDefault();
+        setItemDetails(prev => ({ ...prev, priority: e.target.value }));
     }
 
     const addItem = (e) => {
         e.preventDefault();
-        console.log(itemDetails);
-
         if (itemDetails && itemDetails.itemName && itemDetails.column) {
             const newItem = {
                 id: new Date().toISOString(),
                 column: itemDetails.column,
-                title: itemDetails.itemName
+                title: itemDetails.itemName,
+                priority: itemDetails.priority || undefined
             };
             setItems(prev => ({ ...prev, [itemDetails.column]: [...prev[itemDetails.column] || [], newItem] }));
             setItemDetails({});
@@ -170,7 +175,7 @@ const Form = () => {
                         }}
                         label='Task Name'
                         placeholder='Enter Task Name'
-                        onChange={handleItem}
+                        onChange={handleItemName}
                         type='text'
                         id="itemName"
                         value={itemDetails.itemName ? itemDetails.itemName : ""}
@@ -192,7 +197,7 @@ const Form = () => {
                             label="Status"
                             placeholder="Enter Status"
                             defaultValue=""
-                            onChange={handleItem}
+                            onChange={handleColumnSelect}
                             value={itemDetails ? itemDetails.column || "" : ""}
                             id="col"
                             sx={{
@@ -238,14 +243,89 @@ const Form = () => {
                                             bgcolor: 'rgba(255, 255, 255, 0.1)',
                                         },
                                         '&.Mui-selected:hover': {
-                                            bgcolor: 'rgba(255, 255, 255, 0.2)', // Background color on hover when selected
+                                            bgcolor: 'rgba(255, 255, 255, 0.2)',
                                         },
                                         '&:hover': {
-                                            bgcolor: 'rgba(56, 89, 121, 0.8)', // Background color on hover when not selected
+                                            bgcolor: 'rgba(56, 89, 121, 0.8)',
                                         },
                                     }}
                                 >
                                     {value}
+                                </MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
+                    <FormControl
+                        sx={{
+                            width: '100px',
+                            '& .MuiInputLabel-root': {
+                                color: 'white',
+                            },
+                            '&.Mui-focused .MuiInputLabel-root': {
+                                color: 'white',
+                            },
+                        }}
+                    >
+                        <InputLabel id="priority">Priority</InputLabel>
+                        <Select
+                            labelId="priority"
+                            label="Priority"
+                            placeholder="Enter Priority"
+                            defaultValue=""
+                            onChange={handlePrioritySelect}
+                            value={itemDetails ? itemDetails.priority || "" : ""}
+                            id="priority"
+                            sx={{
+                                color: 'white',
+                                borderRadius: '.35em',
+                                '& .MuiOutlinedInput-notchedOutline': {
+                                    borderColor: 'white',
+                                },
+                                '&:hover .MuiOutlinedInput-notchedOutline': {
+                                    borderColor: 'orange',
+                                },
+                                '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                                    borderColor: 'orange',
+                                },
+                                '& .MuiInputBase-input': {
+                                    color: 'white',
+                                },
+                                '& .MuiSvgIcon-root': {
+                                    color: 'white',
+                                },
+                            }}
+                            MenuProps={{
+                                PaperProps: {
+                                    sx: {
+                                        padding: 0,
+                                        '& .MuiList-root': {
+                                            paddingTop: 0,
+                                            paddingBottom: 0,
+                                        },
+                                    },
+                                },
+                            }}
+                        >
+                            {['High', 'Medium', 'Low'].map(item => (
+                                <MenuItem
+                                key={item}
+                                    value={item}
+                                    sx={{
+                                        color: 'white',
+                                        bgcolor: 'rgb(56, 89, 121)',
+                                        '&.Mui-selected': {
+                                            color: 'black',
+                                            bgcolor: 'rgba(255, 255, 255, 0.1)',
+                                        },
+                                        '&.Mui-selected:hover': {
+                                            bgcolor: 'rgba(255, 255, 255, 0.2)'
+                                        },
+                                        '&:hover': {
+                                            bgcolor: 'rgba(56, 89, 121, 0.8)',
+                                        },
+                                    }}
+                                >
+                                    {item}
                                 </MenuItem>
                             ))}
                         </Select>
