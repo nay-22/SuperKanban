@@ -14,7 +14,7 @@ const Form = () => {
         setColumnOrder(prev => [...prev, colId]);
         setColName();
         console.log([...columns.entries()]);
-        
+
     }
 
     const handleItem = (e) => {
@@ -29,7 +29,7 @@ const Form = () => {
     const addItem = (e) => {
         e.preventDefault();
         console.log(itemDetails);
-        
+
         if (itemDetails && itemDetails.itemName && itemDetails.column) {
             const newItem = {
                 id: new Date().toISOString(),
@@ -59,7 +59,7 @@ const Form = () => {
                     padding: '1em',
                     border: '1px solid grey',
                     borderRadius: '.5em',
-                    backgroundColor: 'lightgray'
+                    backgroundColor: 'rgb(56, 89, 121)'
                 }}
             >
                 <Box
@@ -72,7 +72,30 @@ const Form = () => {
                     <TextField
                         sx={{
                             color: 'white',
-                            borderRadius: '.35em'
+                            borderRadius: '.35em',
+                            '& .MuiInputBase-input': {
+                                color: 'white',
+
+                            },
+                            '& .MuiOutlinedInput-root': {
+                                '& fieldset': {
+                                    borderColor: 'white',
+                                },
+                                '&:hover fieldset': {
+                                    borderColor: 'orange',
+                                },
+                                '&.Mui-focused fieldset': {
+                                    borderColor: 'white',
+                                },
+                            },
+                            '& .MuiInputLabel-root': {
+                                color: 'white',
+                                opacity: '1'
+                            },
+                            '& .MuiInputLabel-root.Mui-focused': {
+                                color: 'white',
+
+                            },
                         }}
                         label='Column Name'
                         placeholder='Enter Column Name'
@@ -85,7 +108,11 @@ const Form = () => {
                         sx={{
                             backgroundColor: 'orange',
                             textTransform: 'none',
-                            height: '55px'
+                            height: '55px',
+                            '&:disabled': {
+                                backgroundColor: 'grey',
+                                color: 'wheat'
+                            }
                         }}
                         disabled={!colName}
                         variant='contained'
@@ -103,7 +130,7 @@ const Form = () => {
                     padding: '1em',
                     border: '1px solid grey',
                     borderRadius: '.5em',
-                    backgroundColor: 'lightgray'
+                    backgroundColor: 'rgb(56, 89, 121)'
                 }}
             >
                 <Box
@@ -116,7 +143,30 @@ const Form = () => {
                     <TextField
                         sx={{
                             color: 'white',
-                            borderRadius: '.35em'
+                            borderRadius: '.35em',
+                            '& .MuiInputBase-input': {
+                                color: 'white',
+
+                            },
+                            '& .MuiOutlinedInput-root': {
+                                '& fieldset': {
+                                    borderColor: 'white',
+                                },
+                                '&:hover fieldset': {
+                                    borderColor: 'orange',
+                                },
+                                '&.Mui-focused fieldset': {
+                                    borderColor: 'white',
+                                },
+                            },
+                            '& .MuiInputLabel-root': {
+                                color: 'white',
+                                opacity: '1'
+                            },
+                            '& .MuiInputLabel-root.Mui-focused': {
+                                color: 'white',
+
+                            },
                         }}
                         label='Task Name'
                         placeholder='Enter Task Name'
@@ -127,29 +177,89 @@ const Form = () => {
                     />
                     <FormControl
                         sx={{
-                            width: '100px'
+                            width: '100px',
+                            '& .MuiInputLabel-root': {
+                                color: 'white',
+                            },
+                            '&.Mui-focused .MuiInputLabel-root': {
+                                color: 'white',
+                            },
                         }}
                     >
                         <InputLabel id="col">Status</InputLabel>
                         <Select
                             labelId="col"
                             label="Status"
-                            placeholder='Enter Status'
-                            defaultValue=''
+                            placeholder="Enter Status"
+                            defaultValue=""
                             onChange={handleItem}
                             value={itemDetails ? itemDetails.column || "" : ""}
                             id="col"
+                            sx={{
+                                color: 'white',
+                                borderRadius: '.35em',
+                                '& .MuiOutlinedInput-notchedOutline': {
+                                    borderColor: 'white',
+                                },
+                                '&:hover .MuiOutlinedInput-notchedOutline': {
+                                    borderColor: 'orange',
+                                },
+                                '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                                    borderColor: 'orange',
+                                },
+                                '& .MuiInputBase-input': {
+                                    color: 'white',
+                                },
+                                '& .MuiSvgIcon-root': {
+                                    color: 'white',
+                                },
+                            }}
+                            MenuProps={{
+                                PaperProps: {
+                                    sx: {
+                                        padding: 0,
+                                        '& .MuiList-root': {
+                                            paddingTop: 0,
+                                            paddingBottom: 0,
+                                        },
+                                    },
+                                },
+                            }}
                         >
                             {[...columns.entries()].map(([key, value]) => (
-                                <MenuItem key={key} value={key}>{value}</MenuItem>
+                                <MenuItem
+                                    key={key}
+                                    value={key}
+                                    sx={{
+                                        color: 'white',
+                                        bgcolor: 'rgb(56, 89, 121)',
+                                        '&.Mui-selected': {
+                                            color: 'black',
+                                            bgcolor: 'rgba(255, 255, 255, 0.1)',
+                                        },
+                                        '&.Mui-selected:hover': {
+                                            bgcolor: 'rgba(255, 255, 255, 0.2)', // Background color on hover when selected
+                                        },
+                                        '&:hover': {
+                                            bgcolor: 'rgba(56, 89, 121, 0.8)', // Background color on hover when not selected
+                                        },
+                                    }}
+                                >
+                                    {value}
+                                </MenuItem>
                             ))}
                         </Select>
                     </FormControl>
+
                     <Button
                         sx={{
                             backgroundColor: 'orange',
                             textTransform: 'none',
-                            height: '55px'
+                            height: '55px',
+                            '&:disabled': {
+                                backgroundColor: 'grey',
+                                color: 'wheat'
+                            }
                         }}
                         variant='contained'
                         onClick={addItem}
