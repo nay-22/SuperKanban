@@ -2,10 +2,10 @@
 
 ## To-Do:
 - Refactor Column component to a Draggable
-- Delete Columns - If elements present, shift to the previous column or a temporary space
-- Edit column name
+- Delete Columns - If elements present, shift to the previous column or a temporary space [DONE - moves to previous column]
+- Edit column name [DONE]
 - Action buttons for tasks to shift to prev/next column
-- Edit Tasks
+- Edit Tasks [DONE - name edit]
 - Assign priorities to tasks - enable sorting (unsure impl)
 
 (non-exhaustive)
