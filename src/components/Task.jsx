@@ -1,22 +1,13 @@
-import React, { useContext, useEffect, useState } from 'react'
+import { Box, Button, Chip, Tooltip, Typography, Modal } from '@mui/material';
+import { Delete, DragIndicator, Edit } from '@mui/icons-material';
+import React, { useState } from 'react'
 
-import { Box, Button, Chip, Divider, FormControl, InputLabel, MenuItem, Modal, Select, SpeedDial, SpeedDialAction, TextField, Tooltip, Typography } from '@mui/material';
-import { Delete, DragIndicator, Edit, Settings } from '@mui/icons-material';
-import KanbanContext from '../contexts/KanbanContext';
 import ConfirmationModal from './modals/ConfirmationModal';
+import TaskForm from './forms/TaskForm';
 
 const Task = ({ id, title, priority, onDelete, colId }) => {
-  const { items, setItems } = useContext(KanbanContext);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [task, setTask] = useState({title, priority});
-
-  const handleUpdate = () => {
-    console.log(task);
-    
-    setItems(prev => ({ ...prev, [colId]: prev[colId].map(item => item.id === id ? { ...item, title: task.title, priority: task.priority } : item) }));
-    setShowUpdateModal(false);
-  }
 
   return (
     <Box
@@ -121,141 +112,21 @@ const Task = ({ id, title, priority, onDelete, colId }) => {
               transform: 'translate(-50%, -50%)',
               bgcolor: 'rgb(56, 89, 121)',
               borderRadius: '.5em',
-              padding: '2em',
+              padding: '.5em',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
             }}
           >
-            <Box
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '1em',
-              }}
-            >
-              <TextField
-                sx={{
-                  color: 'white',
-                  borderRadius: '.35em',
-                  '& .MuiInputBase-input': {
-                      color: 'white',
+            <TaskForm
+              edit
+              taskId={id}
+              colId={colId}
+              title={title}
+              priority={priority}
+              callback={() => setShowUpdateModal(false)}
+            />
 
-                  },
-                  '& .MuiOutlinedInput-root': {
-                      '& fieldset': {
-                          borderColor: 'white',
-                      },
-                      '&:hover fieldset': {
-                          borderColor: 'orange',
-                      },
-                      '&.Mui-focused fieldset': {
-                          borderColor: 'white',
-                      },
-                  },
-                  '& .MuiInputLabel-root': {
-                      color: 'white',
-                      opacity: '1'
-                  },
-                  '& .MuiInputLabel-root.Mui-focused': {
-                      color: 'white',
-
-                  },
-              }}
-                label='Task Name'
-                placeholder='Enter Task Name'
-                onChange={(e) => setTask(prev => ({...prev, name: e.target.value}))}
-                value={task.title || ''}
-                type="text"
-                id="colName"
-              />
-              <FormControl
-                sx={{
-                  width: '100px',
-                  '& .MuiInputLabel-root': {
-                    color: 'white',
-                  },
-                  '&.Mui-focused .MuiInputLabel-root': {
-                    color: 'white',
-                  },
-                }}
-              >
-                <InputLabel id="priority">Priority</InputLabel>
-                <Select
-                  labelId="priority"
-                  label="Priority"
-                  placeholder="Enter Priority"
-                  defaultValue=""
-                  onChange={(e) => setTask(prev => ({...prev, priority: e.target.value}))}
-                  value={task.priority || ""}
-                  id="priority"
-                  sx={{
-                    color: 'white',
-                    borderRadius: '.35em',
-                    '& .MuiOutlinedInput-notchedOutline': {
-                      borderColor: 'white',
-                    },
-                    '&:hover .MuiOutlinedInput-notchedOutline': {
-                      borderColor: 'orange',
-                    },
-                    '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                      borderColor: 'orange',
-                    },
-                    '& .MuiInputBase-input': {
-                      color: 'white',
-                    },
-                    '& .MuiSvgIcon-root': {
-                      color: 'white',
-                    },
-                  }}
-                  MenuProps={{
-                    PaperProps: {
-                      sx: {
-                        padding: 0,
-                        '& .MuiList-root': {
-                          paddingTop: 0,
-                          paddingBottom: 0,
-                        },
-                      },
-                    },
-                  }}
-                >
-                  {['High', 'Medium', 'Low'].map(item => (
-                    <MenuItem
-                      key={item}
-                      value={item}
-                      sx={{
-                        color: 'white',
-                        bgcolor: 'rgb(56, 89, 121)',
-                        '&.Mui-selected': {
-                          color: 'black',
-                          bgcolor: 'rgba(255, 255, 255, 0.1)',
-                        },
-                        '&.Mui-selected:hover': {
-                          bgcolor: 'rgba(255, 255, 255, 0.2)'
-                        },
-                        '&:hover': {
-                          bgcolor: 'rgba(56, 89, 121, 0.8)',
-                        },
-                      }}
-                    >
-                      {item}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-              <Button
-                sx={{
-                  backgroundColor: 'orange',
-                  textTransform: 'none',
-                  height: '55px'
-                }}
-                variant='contained'
-                onClick={handleUpdate}
-              >
-                Confirm
-              </Button>
-            </Box>
           </Box>
         </Modal>
         <ConfirmationModal
