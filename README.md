@@ -10,9 +10,9 @@
 
 (non-exhaustive)
 
-## Current Impl
+## Current Implementation
 - **v1.2**
-  ![image](https://github.com/user-attachments/assets/6a4b2849-495b-4470-b300-cb810878fcaf)
+  ![image](https://github.com/user-attachments/assets/25003714-c7d0-4758-a0f5-ef0e70855151)
 
 - **v1.1**
   ![image](https://github.com/user-attachments/assets/677c7c67-a34c-41df-b81e-822a73532f2c)
