@@ -1,11 +1,11 @@
 .draggable {
-    border: 1px solid #656565;
-    padding: .5em;
-    cursor: move;
-    border-radius: 0.35em;
-    background-color: #484848;
-    color: white;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    /* border: 1px solid #656565; */
+    /* padding: .5em; */
+    /* cursor: move; */
+    /* border-radius: 0.35em; */
+    /* background-color: #484848; */
+    /* color: white; */
+    /* box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); */
     transition: background-color 0.3s, transform 0.2s;
     opacity: 1 !important;
     margin: 0 .5em;

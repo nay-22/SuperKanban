@@ -5,6 +5,8 @@ import Draggable from './Draggable';
 import Column from './Column';
 import Task from './Task';
 import { Box } from '@mui/material';
+import drag from '../assets/drag-white.png';
+import { DragIndicator } from '@mui/icons-material';
 
 const Board = () => {
     const { columnOrder, setColumnOrder, items, setItems, draggedItem, setDraggedItem, } = useContext(KanbanContext);
@@ -85,9 +87,14 @@ const Board = () => {
                                     type={'task'}
                                     setDraggedItem={setDraggedItem}
                                 >
-                                    <Task id={item.id} title={item.title} onDelete={() => {
-                                        setItems(prev => ({ ...prev, [colId]: prev[colId].filter(i => i.id !== item.id) }));
-                                    }} />
+                                    <Task
+                                        id={item.id}
+                                        title={item.title}
+                                        colId={colId}
+                                        onDelete={() => {
+                                            setItems(prev => ({ ...prev, [colId]: prev[colId].filter(i => i.id !== item.id) }));
+                                        }}
+                                    />
                                 </Draggable>
                                 <DroppableArea
                                     allowedType='task'

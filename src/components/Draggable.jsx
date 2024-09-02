@@ -45,7 +45,7 @@ const Draggable = ({ id, currIdx, column, type, title, setDraggedItem, children 
                 cursor: 'default'
             }}
         >
-            <img
+            {/* <img
                 className='drag'
                 draggable
                 style={{
@@ -54,7 +54,7 @@ const Draggable = ({ id, currIdx, column, type, title, setDraggedItem, children 
                 width={'20px'}
                 src={drag}
                 alt="drag"
-            />
+            /> */}
             {children}
         </div>
     );

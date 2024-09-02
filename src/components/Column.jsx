@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useRef, useState } from 'react'
 import drag from '../assets/drag-white.png'
 import { Box, Button, FormControl, FormGroup, Modal, TextField, Typography } from '@mui/material';
 import nextFrame from '../utils/nextFrame';
-import { Delete, Edit } from '@mui/icons-material';
+import { Delete, DragIndicator, Edit } from '@mui/icons-material';
 import KanbanContext from '../contexts/KanbanContext';
 import ConfirmationModal from './modals/ConfirmationModal';
 const Column = ({ id, idx, type, column, setDraggedItem, children }) => {
@@ -99,17 +99,18 @@ const Column = ({ id, idx, type, column, setDraggedItem, children }) => {
             ref={dragRef}
         >
             <Box
-                className='draggable'
+                // className='draggable'
                 onDragStart={handleDragStart}
                 onDragEnd={handleDragEnd}
                 style={{
                     display: 'grid',
-                    gridTemplateColumns: '50px 1fr 50px 50px',
+                    gridTemplateColumns: '50px 1fr 100px',
                     alignItems: 'center',
                     gap: '10px',
                     cursor: 'default',
-                    backgroundColor: showDeleteColModal ? 'red' : 'orange',
+                    backgroundColor: showDeleteColModal ? 'rgb(208, 79, 79)' : 'orange',
                     margin: '0',
+                    padding: '.5em',
                     borderRadius: '.34em .34em 0 0',
                 }}
             >
@@ -117,18 +118,11 @@ const Column = ({ id, idx, type, column, setDraggedItem, children }) => {
                     style={{
                         display: 'flex',
                         alignItems: 'center',
+                        cursor: 'grab',
                     }}
+                    draggable
                 >
-                    <img
-                        className='drag'
-                        draggable
-                        style={{
-                            cursor: 'grab',
-                        }}
-                        width={'20px'}
-                        src={drag}
-                        alt="drag"
-                    />
+                    <DragIndicator sx={{color: 'white'}} />
                 </Box>
                 <Typography
                     variant='h5'
@@ -138,6 +132,14 @@ const Column = ({ id, idx, type, column, setDraggedItem, children }) => {
                     {columns.get(id)}
                 </Typography>
 
+                <Box
+                    sx={{
+                        display: 'flex',
+                        gap: '1em',
+                        alignItems: 'center',
+                        justifyContent: 'flex-end',
+                    }}
+                >
                 <Button
                     variant='contained'
                     sx={{
@@ -174,6 +176,7 @@ const Column = ({ id, idx, type, column, setDraggedItem, children }) => {
                         }}
                     />
                 </Button>
+                </Box>
                 <Modal
                     open={showUpdateColModal}
                     onClose={() => setShowUpdateColModal(false)}
