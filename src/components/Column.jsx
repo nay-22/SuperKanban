@@ -1,8 +1,8 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import drag from '../assets/drag-white.png'
-import { Box, Button, FormControl, FormGroup, Modal, TextField, Typography } from '@mui/material';
+import { Box, Button, FormControl, FormGroup, Modal, SpeedDial, SpeedDialAction, SpeedDialIcon, TextField, Typography } from '@mui/material';
 import nextFrame from '../utils/nextFrame';
-import { Delete, DragIndicator, Edit } from '@mui/icons-material';
+import { ArrowDropDown, ArrowDropDownCircle, Delete, DragIndicator, Edit, Settings } from '@mui/icons-material';
 import KanbanContext from '../contexts/KanbanContext';
 import ConfirmationModal from './modals/ConfirmationModal';
 const Column = ({ id, idx, type, column, setDraggedItem, children }) => {
@@ -55,7 +55,7 @@ const Column = ({ id, idx, type, column, setDraggedItem, children }) => {
     const deleteColumn = () => {
         const prevColIdx = (columns.size + idx - 1) % columns.size
         const prevCol = columnOrder[prevColIdx];
-        
+
         setItems(prev => {
             const updatedState = { ...prev };
             const currColItems = updatedState[id];
@@ -66,18 +66,18 @@ const Column = ({ id, idx, type, column, setDraggedItem, children }) => {
             updatedState[prevCol] = [...updatedState[prevCol], ...currColItems];
             return updatedState;
         });
-        
+
         setColumns(prev => {
             const map = new Map(prev);
             map.delete(id);
             return map;
         });
-        
+
         setColumnOrder(prev => {
             const updatedState = [...prev];
             updatedState.splice(idx, 1);
             return updatedState;
-        });        
+        });
 
         setShowDeleteColModal(false);
     }
@@ -92,14 +92,10 @@ const Column = ({ id, idx, type, column, setDraggedItem, children }) => {
                 border: '1px solid grey',
                 borderRadius: '.5em',
                 minHeight: '100px',
-                // flex: showColumn ? '1 1 auto' : '0 0 auto',
-                // transition: 'flex 0.3s ease, opacity 0.3s ease',
-                // opacity: showColumn ? 1 : 0,
             }}
             ref={dragRef}
         >
             <Box
-                // className='draggable'
                 onDragStart={handleDragStart}
                 onDragEnd={handleDragEnd}
                 style={{
@@ -122,7 +118,7 @@ const Column = ({ id, idx, type, column, setDraggedItem, children }) => {
                     }}
                     draggable
                 >
-                    <DragIndicator sx={{color: 'white'}} />
+                    <DragIndicator sx={{ color: 'white' }} />
                 </Box>
                 <Typography
                     variant='h5'
@@ -131,52 +127,42 @@ const Column = ({ id, idx, type, column, setDraggedItem, children }) => {
                 >
                     {columns.get(id)}
                 </Typography>
-
-                <Box
+                <SpeedDial
+                    direction='left'
+                    ariaLabel='Column Actions'
+                    icon={<Settings sx={{
+                        fontSize: '30px',
+                        transition: 'transform 0.3s ease-in-out',
+                        '&:hover': {
+                            transform: 'rotate(90deg)',
+                        },
+                    }} />}
                     sx={{
-                        display: 'flex',
-                        gap: '1em',
-                        alignItems: 'center',
-                        justifyContent: 'flex-end',
+                        mr: '1em',
+                        ml: '1em',
                     }}
                 >
-                <Button
-                    variant='contained'
-                    sx={{
-                        minWidth: '0',
-                        minHeight: '0',
-                        width: '30px',
-                        height: '30px',
-                        backgroundColor: 'white',
-                        justifySelf: 'right'
-                    }}
-                    onClick={() => setShowDeleteColModal(true)}
-                >
-                    <Delete
+                    <SpeedDialAction
                         sx={{
-                            color: 'red',
+                            bgcolor: 'white',
+                            boxShadow: 'none',
+                            padding: '0',
                         }}
+                        icon={<Edit sx={{ fontSize: '30px', color: 'orange', bgcolor: 'transparent' }} />}
+                        tooltipTitle='Edit'
+                        onClick={() => setShowUpdateColModal(true)}
                     />
-                </Button>
-                <Button
-                    variant='contained'
-                    sx={{
-                        minWidth: '0',
-                        minHeight: '0',
-                        width: '30px',
-                        height: '30px',
-                        backgroundColor: 'white',
-                        justifySelf: 'right'
-                    }}
-                    onClick={() => setShowUpdateColModal(true)}
-                >
-                    <Edit
+                    <SpeedDialAction
                         sx={{
-                            color: 'orange',
+                            bgcolor: 'white',
+                            boxShadow: 'none',
+                            padding: '0',
                         }}
+                        icon={<Delete sx={{ fontSize: '30px', color: 'red', bgcolor: 'transparent' }} />}
+                        tooltipTitle='Delete'
+                        onClick={() => setShowDeleteColModal(true)}
                     />
-                </Button>
-                </Box>
+                </SpeedDial>
                 <Modal
                     open={showUpdateColModal}
                     onClose={() => setShowUpdateColModal(false)}
