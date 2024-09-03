@@ -1,10 +1,17 @@
-import { Box, Button, Typography } from '@mui/material';
-import React, { useContext } from 'react'
+import { Box, Button, Modal, Tooltip, Typography, useMediaQuery, useScrollTrigger, useTheme } from '@mui/material';
+import React, { useContext, useState } from 'react'
+
+import ColumnForm from "../components/forms/ColumnForm";
 
 import KanbanContext from "../contexts/KanbanContext";
+import { AddOutlined, ViewColumn } from '@mui/icons-material';
 
 const Navbar = () => {
+    const theme = useTheme();
+    const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
+
     const { columns, columnOrder, items } = useContext(KanbanContext);
+    const [showColumnFormModal, setShowColumnFormModal] = useState(false);
     return (
         <Box
             sx={{
@@ -16,7 +23,7 @@ const Navbar = () => {
             }}
         >
             <Box>
-                <Typography variant='h3' color='white'>Kanban Board</Typography>
+                <Typography variant={isSmallScreen ? 'h6' : 'h3'} color='white'>Kanban Board</Typography>
             </Box>
             <Box
                 sx={{
@@ -40,7 +47,7 @@ const Navbar = () => {
                         localStorage.setItem('columns', JSON.stringify([]));
                         localStorage.setItem('columnOrder', JSON.stringify([]));
                     }}
-                >Clear State</Button>
+                >Clear</Button>
                 <Button
                     sx={{
                         textTransform: 'none',
@@ -57,7 +64,49 @@ const Navbar = () => {
                         localStorage.setItem('columnOrder', JSON.stringify(columnOrder));
                         localStorage.setItem('columns', JSON.stringify(Array.from(columns.entries())));
                     }}
-                >Save State</Button>
+                >Save</Button>
+                <Tooltip
+                    title="Add Column"
+                    arrow
+                    placement='bottom-start'
+                >
+                    <Button
+                        variant='outlined'
+                        sx={{
+                            width: '40px'
+                        }}
+                        onClick={() => setShowColumnFormModal(true)}
+                    >
+                        <AddOutlined /> <ViewColumn />
+                    </Button>
+                </Tooltip>
+                <Modal
+                    open={showColumnFormModal}
+                    onClose={() => setShowColumnFormModal(false)}
+                >
+                    <Box
+                        sx={{
+                            position: 'absolute',
+                            top: '50%',
+                            left: '50%',
+                            transform: 'translate(-50%, -50%)',
+                            bgcolor: 'rgb(56, 89, 121)',
+                            borderRadius: '.5em',
+                            padding: '.5em',
+                        }}
+                    >
+                        <Typography
+                            sx={{
+                                fontWeight: 'bold',
+                                padding: '1em',
+                                color: 'white'
+                            }}
+                            variant='h6'
+                        >Add Column
+                        </Typography>
+                        <ColumnForm callback={() => setShowColumnFormModal(false)} />
+                    </Box>
+                </Modal>
             </Box>
         </Box>
     )
