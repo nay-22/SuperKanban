@@ -29,8 +29,8 @@ const ColumnForm = ({ colId, edit = false, callback }) => {
     }
 
     return (
-        <FormGroup
-            sx={{
+        <form
+            style={{
                 display: 'flex',
                 alignItems: 'center',
                 gap: '1em',
@@ -83,6 +83,7 @@ const ColumnForm = ({ colId, edit = false, callback }) => {
                     id="colName"
                 />
                 <Button
+                    type='submit'
                     sx={{
                         backgroundColor: 'orange',
                         textTransform: 'none',
@@ -99,7 +100,7 @@ const ColumnForm = ({ colId, edit = false, callback }) => {
                     {edit ? 'Confirm' : 'Add Column'}
                 </Button>
             </Box>
-        </FormGroup>
+        </form>
     )
 }
 

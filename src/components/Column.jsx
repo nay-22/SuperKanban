@@ -47,10 +47,10 @@ const Column = ({ id, idx, type, column, setDraggedItem, children }) => {
             const updatedState = { ...prev };
             const currColItems = updatedState[id];
             delete updatedState[id];
-            currColItems.map(item => {
+            (currColItems || []).map(item => {
                 item.column = prevCol;
             });
-            updatedState[prevCol] = [...updatedState[prevCol], ...currColItems];
+            updatedState[prevCol] = [...updatedState[prevCol] || [], ...currColItems || []];
             return updatedState;
         });
 
