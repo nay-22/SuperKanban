@@ -1,15 +1,15 @@
 import React, { useContext } from 'react'
+import { Box } from '@mui/material';
+
 import KanbanContext from '../contexts/KanbanContext';
 import DroppableArea from './DroppableArea';
 import Draggable from './Draggable';
 import Column from './Column';
 import Task from './Task';
-import { Box } from '@mui/material';
-import drag from '../assets/drag-white.png';
-import { DragIndicator } from '@mui/icons-material';
+
 
 const Board = () => {
-    const { columnOrder, setColumnOrder, items, setItems, draggedItem, setDraggedItem, } = useContext(KanbanContext);
+    const { columnOrder, setColumnOrder, items, setItems, draggedItem, setDraggedItem, colDropRefs, firstColDropRef } = useContext(KanbanContext);
 
     // IMPORTANT LOGIC (FIXED)
     const handleTaskDrop = (id, idx) => {
@@ -44,6 +44,7 @@ const Board = () => {
         }
     }
 
+
     return (
         <Box
             sx={{
@@ -61,7 +62,9 @@ const Board = () => {
             }}
         >
             <DroppableArea
+                id='column_-1'
                 allowedType='column'
+                dropRef={colDropRefs['column_-1']}
                 dragType={draggedItem !== null ? draggedItem.type : 'null'}
                 onDrop={() => handleColumnDrop(-1)}
             />
@@ -75,6 +78,7 @@ const Board = () => {
                         setDraggedItem={setDraggedItem}
                     >
                         <DroppableArea
+                            id={`task_m_1`}
                             allowedType='task'
                             dragType={draggedItem !== null ? draggedItem.type : 'null'}
                             vertical
@@ -102,6 +106,7 @@ const Board = () => {
                                     />
                                 </Draggable>
                                 <DroppableArea
+                                    id={`task_${index}`}
                                     allowedType='task'
                                     dragType={draggedItem !== null ? draggedItem.type : 'null'}
                                     vertical
@@ -111,6 +116,8 @@ const Board = () => {
                         ))}
                     </Column>
                     <DroppableArea
+                        id={`column_${idx}`}
+                        dropRef={colDropRefs[`column_${idx}`]}
                         allowedType='column'
                         dragType={draggedItem !== null ? draggedItem.type : 'null'}
                         onDrop={() => handleColumnDrop(idx)}

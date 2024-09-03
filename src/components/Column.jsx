@@ -1,6 +1,6 @@
 import { Box, Button, Modal, SpeedDial, SpeedDialAction, Tooltip, Typography } from '@mui/material';
-import { Add, AddRounded, Delete, DragIndicator, Edit, PlusOneRounded, SwapVert, Tune } from '@mui/icons-material';
-import React, { useContext, useRef, useState } from 'react'
+import { AddRounded, Delete, DragIndicator, Edit, SwapVert, Tune } from '@mui/icons-material';
+import React, { useContext, useEffect, useRef, useState } from 'react'
 
 import ConfirmationModal from './modals/ConfirmationModal';
 import KanbanContext from '../contexts/KanbanContext';
@@ -10,16 +10,18 @@ import TaskForm from './forms/TaskForm';
 
 const Column = ({ id, idx, type, column, setDraggedItem, children }) => {
 
-    const { columns, setColumns, columnOrder, setColumnOrder, items, setItems } = useContext(KanbanContext);
+    const { columns, setColumns, columnOrder, setColumnOrder, setItems, colDropBounding, colDropRefs, colDropIds, isTouching, setIsTouching } = useContext(KanbanContext);
 
     const [showUpdateColModal, setShowUpdateColModal] = useState(false);
     const [showDeleteColModal, setShowDeleteColModal] = useState(false);
     const [sortOrder, setSortOrder] = useState(columns.get(id).sortOrder);
     const [showAddTaskForm, setShowAddTaskForm] = useState(false);
     const [showColumn, setShowColumn] = useState(true);
-    const [isTouching, setIsTouching] = useState(false);
+
+    const [colBounds, setColBounds] = useState({});
 
     const dragRef = useRef(null);
+
 
     const handleDragStart = async (e) => {
         setDraggedItem({ id, column, type });
@@ -37,53 +39,94 @@ const Column = ({ id, idx, type, column, setDraggedItem, children }) => {
         }, 0);
     }
 
-    const handleDragEnd = (e) => {
+    const handleDragEnd = () => {
         setShowColumn(true);
         setDraggedItem(null);
     }
 
+    useEffect(() => {
+        // console.log(colDropRefs);
+        // console.log('colDropBoundings' + JSON.stringify(colDropBounding, null, 2));
+        colDropIds.map(id => {
+            const boundingRect = colDropBounding[id];
+
+            if (boundingRect && colBounds.colLeftBound > boundingRect.left &&
+                colBounds.colLeftBound < (boundingRect.left + boundingRect.width) &&
+                colBounds.colTopBound > boundingRect.top &&
+                colBounds.colTopBound < (boundingRect.top + boundingRect.height)
+            ) {
+                console.log(`BOUNDARIES VERIFIED for ${id}`);
+                console.log(colDropRefs[id].current);
+                // TODO: 
+                // If boundary are verfied
+                //      1. Enlarge Drop Area => Show
+            } else {
+                // TODO:
+                // If boundary not verified
+                //      1. Revert Drop Area => Hide
+            }
+        });
+    }, [colBounds, colDropBounding]);
+
+
     const handleTouchStart = async (e) => {
+        console.log(colDropRefs);
+        console.log(colDropIds);
+        console.log(colDropBounding);
+        const colHeight = dragRef.current.clientHeight;
+        const colWidth = dragRef.current.clientWidth;
         setShowColumn(false);
         setDraggedItem({ id, column, type });
-        // Simulate drag start behavior
-        // await handleDragStart(e);
 
-        // Create a custom drag image for touch devices
         const touch = e.touches[0];
         const dragElement = dragRef.current.cloneNode(true);
+
         dragElement.style.position = 'absolute';
         dragElement.style.left = `${touch.clientX}px`;
         dragElement.style.top = `${touch.clientY}px`;
         dragElement.style.width = 'fit-content';
-        dragElement.style.opacity = '0.5'; // Make it semi-transparent
-        dragElement.style.pointerEvents = 'none'; // Ensure it's not interactive
+        dragElement.style.opacity = '0.8';
+        dragElement.style.pointerEvents = 'none';
         document.body.appendChild(dragElement);
 
-        // Move the drag element with the touch movement
         const moveHandler = (moveEvent) => {
+            moveEvent.preventDefault();
+            setIsTouching(true);
+            console.clear()
+
             const touch = moveEvent.touches[0];
+
             dragElement.style.left = `${touch.clientX}px`;
             dragElement.style.top = `${touch.clientY}px`;
+
+            const rect = dragRef.current.getBoundingClientRect();
+            const colLeftBound = touch.clientX - rect.left;
+            const colRightBound = touch.clientX - rect.left + colWidth;
+            const colTopBound = touch.clientY - rect.top;
+            const colBottomBound = touch.clientY - rect.top + colHeight;
+
+            setColBounds({ colLeftBound, colRightBound, colTopBound, colBottomBound });
         };
 
         const endHandler = () => {
+
+            // TODO: Perform Column Sorting
+            
             document.body.removeChild(dragElement);
             setShowColumn(true);
-            // Optionally, handle drag end here
-            // handleDragEnd(e);
             window.removeEventListener('touchmove', moveHandler);
             window.removeEventListener('touchend', endHandler);
         };
 
-        window.addEventListener('touchmove', moveHandler);
+        window.addEventListener('touchmove', moveHandler, { passive: false });
         window.addEventListener('touchend', endHandler, { once: true });
     };
 
-    const handleTouchEnd = (e) => {
+
+    const handleTouchEnd = () => {
         if (isTouching) {
             setShowColumn(true);
-            // Optionally handle touch end
-            // handleDragEnd(e);
+            setIsTouching(false);
         }
     };
 
