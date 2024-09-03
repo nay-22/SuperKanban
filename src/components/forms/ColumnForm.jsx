@@ -19,7 +19,7 @@ const ColumnForm = ({ colId, edit = false, callback }) => {
         setColumnOrder(prev => [...prev, id]);
         setColName();
         console.log(columns);
-
+        callback();
     }
 
     const updateColName = (e) => {
@@ -47,7 +47,7 @@ const ColumnForm = ({ colId, edit = false, callback }) => {
                 }}
             >
                 <TextField
-                    autoFocus={edit}
+                    autoFocus
                     sx={{
                         color: 'white',
                         borderRadius: '.35em',

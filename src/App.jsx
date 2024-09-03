@@ -42,7 +42,6 @@ function App() {
         }}
       >
         <Navbar />
-        <Form />
         <Board />
       </KanbanContext.Provider >
     </>

@@ -12,7 +12,7 @@ const Board = () => {
     const { columnOrder, setColumnOrder, items, setItems, draggedItem, setDraggedItem, } = useContext(KanbanContext);
 
     // IMPORTANT LOGIC (FIXED)
-    const onDrop = (id, idx) => {
+    const handleTaskDrop = (id, idx) => {
         if (draggedItem) {
             columnOrder.map(colId => {
                 if (colId === draggedItem.column) {
@@ -51,8 +51,13 @@ const Board = () => {
                 justifyContent: 'flex-start',
                 alignItems: 'start',
                 gap: '.5em',
-                margin: '1em',
+                margin: '2em 0',
                 overflowX: 'auto',
+                scrollbarWidth: 'none',
+                msOverflowStyle: 'none',
+                '&::-webkit-scrollbar': {
+                    display: 'none',
+                },
             }}
         >
             <DroppableArea
@@ -73,7 +78,7 @@ const Board = () => {
                             allowedType='task'
                             dragType={draggedItem !== null ? draggedItem.type : 'null'}
                             vertical
-                            onDrop={() => onDrop(colId, -1)}
+                            onDrop={() => handleTaskDrop(colId, -1)}
                         />
                         {items[colId] && items[colId].map((item, index) => (
                             <React.Fragment key={item.id}>
@@ -100,7 +105,7 @@ const Board = () => {
                                     allowedType='task'
                                     dragType={draggedItem !== null ? draggedItem.type : 'null'}
                                     vertical
-                                    onDrop={() => onDrop(colId, index)}
+                                    onDrop={() => handleTaskDrop(colId, index)}
                                 />
                             </React.Fragment>
                         ))}
