@@ -1,11 +1,12 @@
-import { Box, Modal, SpeedDial, SpeedDialAction, Tooltip, Typography } from '@mui/material';
-import { Delete, DragIndicator, Edit, SwapVert, Tune } from '@mui/icons-material';
+import { Box, Button, Modal, SpeedDial, SpeedDialAction, Tooltip, Typography } from '@mui/material';
+import { Add, AddRounded, Delete, DragIndicator, Edit, PlusOneRounded, SwapVert, Tune } from '@mui/icons-material';
 import React, { useContext, useRef, useState } from 'react'
 
 import ConfirmationModal from './modals/ConfirmationModal';
 import KanbanContext from '../contexts/KanbanContext';
 import ColumnForm from './forms/ColumnForm';
 import nextFrame from '../utils/nextFrame';
+import TaskForm from './forms/TaskForm';
 
 const Column = ({ id, idx, type, column, setDraggedItem, children }) => {
 
@@ -13,8 +14,9 @@ const Column = ({ id, idx, type, column, setDraggedItem, children }) => {
 
     const [showUpdateColModal, setShowUpdateColModal] = useState(false);
     const [showDeleteColModal, setShowDeleteColModal] = useState(false);
+    const [sortOrder, setSortOrder] = useState(columns.get(id).sortOrder);
+    const [showAddTaskForm, setShowAddTaskForm] = useState(false);
     const [showColumn, setShowColumn] = useState(true);
-    const [sortOrder, setSortOrder] = useState('high');
 
     const dragRef = useRef(null);
 
@@ -69,7 +71,7 @@ const Column = ({ id, idx, type, column, setDraggedItem, children }) => {
         setShowDeleteColModal(false);
     }
 
-    const sortItems = () => {       
+    const sortItems = () => {
         const currSortOrder = sortOrder === 'high' ? 'low' : 'high';
         setSortOrder(currSortOrder);
         const order = {
@@ -79,12 +81,11 @@ const Column = ({ id, idx, type, column, setDraggedItem, children }) => {
             'none': 0,
         };
         setItems(prev => ({ ...prev, [id]: prev[id].sort((a, b) => sortOrder === 'low' ? order[a.priority] - order[b.priority] : order[b.priority] - order[a.priority]) }));
-        
+
     }
 
     return (
         <Box
-            id={col}
             key={idx}
             style={{
                 display: showColumn ? 'block' : 'none',
@@ -101,7 +102,7 @@ const Column = ({ id, idx, type, column, setDraggedItem, children }) => {
                 onDragEnd={handleDragEnd}
                 style={{
                     display: 'grid',
-                    gridTemplateColumns: '25px 1fr 100px',
+                    gridTemplateColumns: '25px 1fr 100px 35px',
                     alignItems: 'center',
                     gap: '10px',
                     cursor: 'default',
@@ -122,7 +123,7 @@ const Column = ({ id, idx, type, column, setDraggedItem, children }) => {
                     <DragIndicator sx={{ color: 'white' }} />
                 </Box>
                 <Typography
-                    variant='h5'
+                    variant='h6'
                     color='white'
                     padding={'.5em'}
                 >
@@ -173,6 +174,22 @@ const Column = ({ id, idx, type, column, setDraggedItem, children }) => {
                         onClick={sortItems}
                     />
                 </SpeedDial>
+                <Tooltip
+                    title='Add Task'
+                    arrow
+                    placement='top-start'
+                >
+                    <Button
+                        variant='outlined'
+                        sx={{
+                            minWidth: '0',
+                            width: '30px',
+                        }}
+                        onClick={() => setShowAddTaskForm(true)}
+                    >
+                        <AddRounded />
+                    </Button>
+                </Tooltip>
                 <Modal
                     open={showUpdateColModal}
                     onClose={() => setShowUpdateColModal(false)}
@@ -192,6 +209,33 @@ const Column = ({ id, idx, type, column, setDraggedItem, children }) => {
                         }}
                     >
                         <ColumnForm edit colId={id} callback={() => setShowUpdateColModal(false)} />
+                    </Box>
+                </Modal>
+                <Modal
+                    open={showAddTaskForm}
+                    onClose={() => setShowAddTaskForm(false)}
+                >
+                    <Box
+                        sx={{
+                            position: 'absolute',
+                            top: '50%',
+                            left: '50%',
+                            transform: 'translate(-50%, -50%)',
+                            bgcolor: 'rgb(56, 89, 121)',
+                            borderRadius: '.5em',
+                            padding: '.5em',
+                        }}
+                    >
+                        <Typography
+                            sx={{
+                                fontWeight: 'bold',
+                                padding: '1em',
+                                color: 'white'
+                            }}
+                            variant='h6'
+                        >Add To: {columns.get(id).colName}
+                        </Typography>
+                        <TaskForm colId={id} callback={() => setShowAddTaskForm(false)} />
                     </Box>
                 </Modal>
                 <ConfirmationModal

@@ -28,17 +28,18 @@ const TaskForm = ({ edit = false, title, priority, taskId, colId, callback }) =>
     }
 
     const addItem = (e) => {
-        e.preventDefault();
-        if (itemDetails && itemDetails.itemName && itemDetails.column) {
+        e.preventDefault();        
+        if (itemDetails && itemDetails.itemName) {
             const newItem = {
                 id: new Date().toISOString(),
-                column: itemDetails.column,
+                column: colId,
                 title: itemDetails.itemName,
                 priority: itemDetails.priority || 'none'
-            };
-            setItems(prev => ({ ...prev, [itemDetails.column]: [...prev[itemDetails.column] || [], newItem] }));
+            };            
+            setItems(prev => ({ ...prev, [colId]: [...prev[colId] || [], newItem] }));
             setItemDetails({});
         }
+        callback();
     }
     return (
         <form
@@ -59,6 +60,7 @@ const TaskForm = ({ edit = false, title, priority, taskId, colId, callback }) =>
             >
 
                 <TextField
+                    autoFocus
                     sx={{
                         color: 'white',
                         borderRadius: '.35em',
@@ -93,81 +95,6 @@ const TaskForm = ({ edit = false, title, priority, taskId, colId, callback }) =>
                     id="itemName"
                     value={edit ? task.title : itemDetails.itemName ? itemDetails.itemName : ""}
                 />
-                {!edit && <FormControl
-                    sx={{
-                        width: '100px',
-                        '& .MuiInputLabel-root': {
-                            color: 'white',
-                        },
-                        '&.Mui-focused .MuiInputLabel-root': {
-                            color: 'white',
-                        },
-                    }}
-                >
-                    <InputLabel id="col">Status</InputLabel>
-                    <Select
-                        labelId="col"
-                        label="Status"
-                        placeholder="Enter Status"
-                        defaultValue=""
-                        onChange={handleColumnSelect}
-                        value={itemDetails ? itemDetails.column || "" : ""}
-                        id="col"
-                        sx={{
-                            color: 'white',
-                            borderRadius: '.35em',
-                            '& .MuiOutlinedInput-notchedOutline': {
-                                borderColor: 'white',
-                            },
-                            '&:hover .MuiOutlinedInput-notchedOutline': {
-                                borderColor: 'orange',
-                            },
-                            '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                                borderColor: 'orange',
-                            },
-                            '& .MuiInputBase-input': {
-                                color: 'white',
-                            },
-                            '& .MuiSvgIcon-root': {
-                                color: 'white',
-                            },
-                        }}
-                        MenuProps={{
-                            PaperProps: {
-                                sx: {
-                                    padding: 0,
-                                    '& .MuiList-root': {
-                                        paddingTop: 0,
-                                        paddingBottom: 0,
-                                    },
-                                },
-                            },
-                        }}
-                    >
-                        {[...columns.entries()].map(([key, value]) => (
-                            <MenuItem
-                                key={key}
-                                value={key}
-                                sx={{
-                                    color: 'white',
-                                    bgcolor: 'rgb(56, 89, 121)',
-                                    '&.Mui-selected': {
-                                        color: 'black',
-                                        bgcolor: 'rgba(255, 255, 255, 0.1)',
-                                    },
-                                    '&.Mui-selected:hover': {
-                                        bgcolor: 'rgba(255, 255, 255, 0.2)',
-                                    },
-                                    '&:hover': {
-                                        bgcolor: 'rgba(56, 89, 121, 0.8)',
-                                    },
-                                }}
-                            >
-                                {value.colName}
-                            </MenuItem>
-                        ))}
-                    </Select>
-                </FormControl>}
                 <FormControl
                     sx={{
                         width: '100px',
@@ -257,7 +184,7 @@ const TaskForm = ({ edit = false, title, priority, taskId, colId, callback }) =>
                     }}
                     variant='contained'
                     onClick={edit ? handleUpdate : addItem}
-                    disabled={!edit && !(itemDetails && itemDetails.itemName && itemDetails.column)}
+                    disabled={!edit && !(itemDetails && itemDetails.itemName)}
                 >
                     {edit ? 'Confirm' : 'Add Item'}
                 </Button>
