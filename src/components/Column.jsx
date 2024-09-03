@@ -17,6 +17,7 @@ const Column = ({ id, idx, type, column, setDraggedItem, children }) => {
     const [sortOrder, setSortOrder] = useState(columns.get(id).sortOrder);
     const [showAddTaskForm, setShowAddTaskForm] = useState(false);
     const [showColumn, setShowColumn] = useState(true);
+    const [isTouching, setIsTouching] = useState(false);
 
     const dragRef = useRef(null);
 
@@ -40,6 +41,51 @@ const Column = ({ id, idx, type, column, setDraggedItem, children }) => {
         setShowColumn(true);
         setDraggedItem(null);
     }
+
+    const handleTouchStart = async (e) => {
+        setShowColumn(false);
+        setDraggedItem({ id, column, type });
+        // Simulate drag start behavior
+        // await handleDragStart(e);
+
+        // Create a custom drag image for touch devices
+        const touch = e.touches[0];
+        const dragElement = dragRef.current.cloneNode(true);
+        dragElement.style.position = 'absolute';
+        dragElement.style.left = `${touch.clientX}px`;
+        dragElement.style.top = `${touch.clientY}px`;
+        dragElement.style.width = 'fit-content';
+        dragElement.style.opacity = '0.5'; // Make it semi-transparent
+        dragElement.style.pointerEvents = 'none'; // Ensure it's not interactive
+        document.body.appendChild(dragElement);
+
+        // Move the drag element with the touch movement
+        const moveHandler = (moveEvent) => {
+            const touch = moveEvent.touches[0];
+            dragElement.style.left = `${touch.clientX}px`;
+            dragElement.style.top = `${touch.clientY}px`;
+        };
+
+        const endHandler = () => {
+            document.body.removeChild(dragElement);
+            setShowColumn(true);
+            // Optionally, handle drag end here
+            // handleDragEnd(e);
+            window.removeEventListener('touchmove', moveHandler);
+            window.removeEventListener('touchend', endHandler);
+        };
+
+        window.addEventListener('touchmove', moveHandler);
+        window.addEventListener('touchend', endHandler, { once: true });
+    };
+
+    const handleTouchEnd = (e) => {
+        if (isTouching) {
+            setShowColumn(true);
+            // Optionally handle touch end
+            // handleDragEnd(e);
+        }
+    };
 
     const deleteColumn = () => {
         const prevColIdx = (columns.size + idx - 1) % columns.size
@@ -100,6 +146,8 @@ const Column = ({ id, idx, type, column, setDraggedItem, children }) => {
             <Box
                 onDragStart={handleDragStart}
                 onDragEnd={handleDragEnd}
+                onTouchStart={handleTouchStart}
+                onTouchEnd={handleTouchEnd}
                 style={{
                     display: 'grid',
                     gridTemplateColumns: '25px 1fr 100px 35px',

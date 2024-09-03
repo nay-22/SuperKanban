@@ -3,7 +3,6 @@ import React, { useEffect, useState } from 'react';
 import KanbanContext from './contexts/KanbanContext';
 import Navbar from './components/Navbar';
 import Board from './components/Board';
-import Form from './components/Form';
 import "./App.css";
 
 function App() {

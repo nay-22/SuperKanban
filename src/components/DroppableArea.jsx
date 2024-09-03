@@ -22,6 +22,7 @@ const DroppableArea = ({ onDrop, allowedType, dragType, vertical = false, childr
             className={showDrop ? `dropArea ${vertical ? 'vertical' : 'horizontal'}` : `hide ${vertical ? 'hide' : 'hide-horizontal'}`}
             onDragEnter={handleDragEnter}
             onDragLeave={handleDragLeave}
+            
             onDragOver={e => e.preventDefault()}
             onDrop={(e) => {
                 onDrop();
