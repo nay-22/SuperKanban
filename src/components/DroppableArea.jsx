@@ -14,7 +14,7 @@ const DroppableArea = ({ onDrop, allowedType, dragType, vertical = false, childr
 
     const handleDragLeave = (e) => {
         e.preventDefault();
-        setShowDrop(false);
+        setTimeout(() => setShowDrop(false), 200);
     }
 
     return (

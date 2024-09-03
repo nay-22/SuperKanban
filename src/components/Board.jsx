@@ -48,12 +48,11 @@ const Board = () => {
         <Box
             sx={{
                 display: 'flex',
-                justifyContent: 'space-around',
+                justifyContent: 'flex-start',
                 alignItems: 'start',
-                justifyContent: 'center',
-                gap: '1em',
-                padding: '2em',
-                overflowX: 'auto'
+                gap: '.5em',
+                margin: '1em',
+                overflowX: 'auto',
             }}
         >
             <DroppableArea

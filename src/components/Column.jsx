@@ -92,6 +92,7 @@ const Column = ({ id, idx, type, column, setDraggedItem, children }) => {
                 border: '1px solid grey',
                 borderRadius: '.5em',
                 minHeight: '100px',
+                minWidth: '325px',
             }}
             ref={dragRef}
         >
@@ -100,7 +101,7 @@ const Column = ({ id, idx, type, column, setDraggedItem, children }) => {
                 onDragEnd={handleDragEnd}
                 style={{
                     display: 'grid',
-                    gridTemplateColumns: '50px 1fr 100px',
+                    gridTemplateColumns: '25px 1fr 100px',
                     alignItems: 'center',
                     gap: '10px',
                     cursor: 'default',
