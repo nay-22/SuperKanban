@@ -1,5 +1,5 @@
-import { Box, Button, Chip, Tooltip, Typography, Modal } from '@mui/material';
-import { Delete, DragIndicator, Edit } from '@mui/icons-material';
+import { Box, Button, Chip, Tooltip, Typography, Modal, SpeedDial, SpeedDialAction } from '@mui/material';
+import { Delete, DragIndicator, Edit, Tune } from '@mui/icons-material';
 import React, { useState } from 'react'
 
 import ConfirmationModal from './modals/ConfirmationModal';
@@ -8,6 +8,15 @@ import TaskForm from './forms/TaskForm';
 const Task = ({ id, title, priority, onDelete, colId }) => {
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+
+  const formatDateTime = () => {
+    const date = new Date(id).toUTCString().split(new Date().getFullYear())[0];
+    const time = new Date(id).toLocaleTimeString();
+    return { date, time };
+  }
+
+
+  const { date, time } = formatDateTime();
 
   return (
     <Box
@@ -22,9 +31,9 @@ const Task = ({ id, title, priority, onDelete, colId }) => {
     >
       <Box
         sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
+          display: "grid",
+          gridTemplateColumns: `25px 2fr ${priority === 'none' ? '' : '75px'} 30px`,
+          alignItems: 'center',
           gap: '1em',
           bgcolor: showDeleteModal ? 'rgb(208, 79, 79)' : 'grey',
           padding: '.5em',
@@ -39,103 +48,95 @@ const Task = ({ id, title, priority, onDelete, colId }) => {
         >
           <DragIndicator />
         </Box>
-        <Tooltip title={`${id.split('T')[1]}`} placement="top" arrow>
-          <Typography style={{ width: '100%', textAlign: 'left' }}>Created: {id.split('T')[0]}</Typography>
-        </Tooltip>
+        <Box>
+          <Tooltip title={'Created At Date'} placement="top" arrow>
+            <Typography style={{ width: '100%', textAlign: 'left' }}>{date}</Typography>
+          </Tooltip>
+          <Tooltip title={'Created At Time'} placement="top" arrow>
+            <Typography style={{fontSize: '.8em', width: '100%', textAlign: 'left' }}>{time}</Typography>
+          </Tooltip>
+        </Box>
         {priority !== 'none' &&
           <Chip
             label={priority}
             sx={{
+              width: 'fit-content',
               bgcolor: priority === 'Medium' ? 'orange' : priority === 'Low' ? 'rgb(31, 107, 31)' : 'rgb(181, 19, 19)',
               fontWeight: 'bold',
               color: 'white'
             }}
           />}
-        <Box
+        <SpeedDial
+          direction='left'
+          ariaLabel='Task Actions'
+          icon={<Tooltip title="Settings">
+            <Tune sx={{
+              fontSize: '25px',
+              transition: 'transform 0.3s ease-in-out',
+            }} />
+          </Tooltip>}
           sx={{
-            display: "flex",
-            gap: "1em",
-            justifyContent: 'right',
-            alignItems: 'center',
+            mr: '1em',
+            ml: '1em',
           }}
         >
-          <Tooltip title={'Delete'} arrow placement='bottom-end'>
-            <Button
-              sx={{
-                backgroundColor: "white",
-                border: "none",
-                cursor: "pointer",
-                outline: "none",
-                minWidth: '0',
-                width: '30px',
-                height: '30px',
-              }}
-              onClick={() => setShowDeleteModal(true)}
-            >
-              <Delete
-                sx={{
-                  color: 'red',
-                }}
-              />
-            </Button>
-          </Tooltip>
-          <Tooltip title={'Edit'} arrow placement='bottom-end'>
-            <Button
-              sx={{
-                backgroundColor: "white",
-                border: "none",
-                cursor: "pointer",
-                outline: "none",
-                minWidth: '0',
-                width: '30px',
-                height: '30px',
-              }}
-              onClick={() => setShowUpdateModal(true)}
-            >
-              <Edit
-                sx={{
-                  color: 'orange',
-                }}
-              />
-            </Button>
-          </Tooltip>
-        </Box>
-        <Modal
-          open={showUpdateModal}
-          onClose={() => setShowUpdateModal(false)}
-        >
-          <Box
+          <SpeedDialAction
             sx={{
-              position: 'absolute',
-              top: '50%',
-              left: '50%',
-              transform: 'translate(-50%, -50%)',
-              bgcolor: 'rgb(56, 89, 121)',
-              borderRadius: '.5em',
-              padding: '.5em',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
+              bgcolor: 'white',
+              boxShadow: 'none',
+              padding: '0',
             }}
-          >
-            <TaskForm
-              edit
-              taskId={id}
-              colId={colId}
-              title={title}
-              priority={priority}
-              callback={() => setShowUpdateModal(false)}
-            />
-
-          </Box>
-        </Modal>
-        <ConfirmationModal
-          onClose={() => setShowDeleteModal(false)}
-          onConfirm={onDelete}
-          open={showDeleteModal}
-          message='Do you want to delete this task?'
-        />
+            icon={<Edit sx={{ fontSize: '30px', color: 'orange', bgcolor: 'transparent' }} />}
+            tooltipTitle='Edit'
+            onClick={() => setShowUpdateModal(true)}
+          />
+          <SpeedDialAction
+            sx={{
+              bgcolor: 'white',
+              boxShadow: 'none',
+              padding: '0',
+            }}
+            icon={<Delete sx={{ fontSize: '30px', color: 'red', bgcolor: 'transparent' }} />}
+            tooltipTitle='Delete'
+            onClick={() => setShowDeleteModal(true)}
+          />
+        </SpeedDial>
       </Box>
+      <Modal
+        open={showUpdateModal}
+        onClose={() => setShowUpdateModal(false)}
+      >
+        <Box
+          sx={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            bgcolor: 'rgb(56, 89, 121)',
+            borderRadius: '.5em',
+            padding: '.5em',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <TaskForm
+            edit
+            taskId={id}
+            colId={colId}
+            title={title}
+            priority={priority}
+            callback={() => setShowUpdateModal(false)}
+          />
+
+        </Box>
+      </Modal>
+      <ConfirmationModal
+        onClose={() => setShowDeleteModal(false)}
+        onConfirm={onDelete}
+        open={showDeleteModal}
+        message='Do you want to delete this task?'
+      />
       <Box
         sx={{ padding: '.5em', }}
       >

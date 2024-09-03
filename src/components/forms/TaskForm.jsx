@@ -4,7 +4,7 @@ import React, { useContext, useState } from 'react'
 import KanbanContext from '../../contexts/KanbanContext';
 
 const TaskForm = ({ edit = false, title, priority, taskId, colId, callback }) => {
-    
+
     const { columns, itemDetails, setItemDetails, setItems } = useContext(KanbanContext);
     const [task, setTask] = useState({ title, priority });
 
@@ -41,8 +41,8 @@ const TaskForm = ({ edit = false, title, priority, taskId, colId, callback }) =>
         }
     }
     return (
-        <FormGroup
-            sx={{
+        <form
+            style={{
                 display: 'flex',
                 alignItems: 'center',
                 gap: '1em',
@@ -245,6 +245,7 @@ const TaskForm = ({ edit = false, title, priority, taskId, colId, callback }) =>
                 </FormControl>
 
                 <Button
+                    type='submit'
                     sx={{
                         backgroundColor: 'orange',
                         textTransform: 'none',
@@ -261,7 +262,7 @@ const TaskForm = ({ edit = false, title, priority, taskId, colId, callback }) =>
                     {edit ? 'Confirm' : 'Add Item'}
                 </Button>
             </Box>
-        </FormGroup>
+        </form>
     )
 }
 
