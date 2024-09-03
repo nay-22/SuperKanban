@@ -32,11 +32,11 @@ const Task = ({ id, title, priority, onDelete, colId }) => {
       <Box
         sx={{
           display: "grid",
-          gridTemplateColumns: `25px 2fr ${priority === 'none' ? '' : '75px'} 30px`,
+          gridTemplateColumns: `25px 1fr ${priority === 'none' ? '' : '1fr'} 30px`,
           alignItems: 'center',
           gap: '1em',
           bgcolor: showDeleteModal ? 'rgb(208, 79, 79)' : 'grey',
-          padding: '.5em',
+          padding: '0 .5em',
           borderRadius: '.35em .35em 0 0'
         }}
       >
@@ -50,16 +50,17 @@ const Task = ({ id, title, priority, onDelete, colId }) => {
         </Box>
         <Box>
           <Tooltip title={'Created At Date'} placement="top" arrow>
-            <Typography style={{ width: '100%', textAlign: 'left' }}>{date}</Typography>
+            <Typography fontWeight={'bold'} sx={{ width: '100%', textAlign: 'left' }}>{date}</Typography>
           </Tooltip>
           <Tooltip title={'Created At Time'} placement="top" arrow>
-            <Typography style={{fontSize: '.8em', width: '100%', textAlign: 'left' }}>{time}</Typography>
+            <Typography sx={{fontWeight: 'bold', fontSize: '.8em', width: '100%', textAlign: 'left', color: '#484848' }}>{time}</Typography>
           </Tooltip>
         </Box>
         {priority !== 'none' &&
           <Chip
             label={priority}
             sx={{
+              justifySelf: 'right',
               width: 'fit-content',
               bgcolor: priority === 'Medium' ? 'orange' : priority === 'Low' ? 'rgb(31, 107, 31)' : 'rgb(181, 19, 19)',
               fontWeight: 'bold',
