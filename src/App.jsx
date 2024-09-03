@@ -17,7 +17,10 @@ function App() {
   const [colDropBounding, setColDropBounding] = useState({});
   const [isTouching, setIsTouching] = useState(false);
   const [colDropRefs, setColDropRefs] = useState([]);
-  const [colDropIds, setColDropIds] = useState([]);
+  const [colDropInfo, setColDropInfo] = useState({});
+  const [colBounds, setColBounds] = useState({});
+  const dragItemInfoRef = useRef(null);
+  const containerRef = useRef(null);
   
 
 
@@ -31,7 +34,9 @@ function App() {
       setColumns(new Map(storedColumns));
       for (let i = -1; i < storedColumnOrder.length; i++) {
         setColDropRefs(prev => ({...prev, [`column_${i}`]: React.createRef(null)}));
-        setColDropIds(prev => [...prev, `column_${i}`]);
+        setColDropInfo(prev => ({...prev, [`column_${i}`]: {
+          show: false
+        }}));
       }
     } else {
       // alert("No saved state found");
@@ -51,7 +56,10 @@ function App() {
           colDropBounding, setColDropBounding,
           colDropRefs, setColDropRefs,
           isTouching, setIsTouching,
-          colDropIds, setColDropIds
+          colDropInfo, setColDropInfo,
+          colBounds, setColBounds,
+          dragItemInfoRef,
+          containerRef
         }}
       >
         <Navbar />

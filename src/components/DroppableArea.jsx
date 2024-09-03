@@ -4,19 +4,26 @@ import "./DroppableArea.css";
 import KanbanContext from '../contexts/KanbanContext';
 
 const DroppableArea = ({ id, onDrop, dropRef, allowedType, dragType, vertical = false, children }) => {
-    
-    const {colDropBounding, setColDropRefs, setColDropBounding, isTouching} = useContext(KanbanContext);
-    const [showDrop, setShowDrop] = useState(false);
 
-    useEffect(() => {              
+    const { colBounds, colDropInfo, setColDropRefs, setColDropBounding, isTouching, draggedItem, dragItemInfoRef } = useContext(KanbanContext);
+    const [showDrop, setShowDrop] = useState(false);
+    const [showDropOnTouch, setShowDropOnTouch] = useState(false);
+
+    useEffect(() => {
         setTimeout(() => {
             if (dropRef) {
                 const rect = dropRef.current.getBoundingClientRect();
                 setColDropBounding((prev) => ({ ...prev, [id]: rect }));
                 setColDropRefs((prev) => ({ ...prev, [id]: dropRef }));
-            }    
-        }, 200);    
+            }
+        }, 200);
     }, [isTouching]);
+
+    useEffect(() => {
+        if (id.includes('column') && dragItemInfoRef !== null) {
+            setShowDropOnTouch((colDropInfo[id] && colDropInfo[id].show) || false);
+        }        
+    }, [colBounds]);
 
     const handleDragEnter = (e) => {
         e.preventDefault();
@@ -34,7 +41,7 @@ const DroppableArea = ({ id, onDrop, dropRef, allowedType, dragType, vertical = 
         <div
             ref={dropRef}
             id={id}
-            className={showDrop ? `dropArea ${vertical ? 'vertical' : 'horizontal'}` : `hide ${vertical ? 'hide' : 'hide-horizontal'}`}
+            className={(showDrop || showDropOnTouch) ? `dropArea ${vertical ? 'vertical' : 'horizontal'}` : `hide ${vertical ? 'hide' : 'hide-horizontal'}`}
             onDragEnter={handleDragEnter}
             onDragLeave={handleDragLeave}
             onDragOver={e => e.preventDefault()}

@@ -9,7 +9,7 @@ import Task from './Task';
 
 
 const Board = () => {
-    const { columnOrder, setColumnOrder, items, setItems, draggedItem, setDraggedItem, colDropRefs, firstColDropRef } = useContext(KanbanContext);
+    const { columns, columnOrder, setColumnOrder, items, setItems, draggedItem, setDraggedItem, colDropRefs, containerRef } = useContext(KanbanContext);
 
     // IMPORTANT LOGIC (FIXED)
     const handleTaskDrop = (id, idx) => {
@@ -36,6 +36,11 @@ const Board = () => {
     const handleColumnDrop = (idx) => {
         if (draggedItem) {
             const { id, column } = draggedItem;
+            console.log(id);
+            console.log(columns.get(id));
+            console.log(idx);
+            console.log(column);
+
             let updatedColumns = [...columnOrder];
             updatedColumns.splice(column, 1);
             if (column > idx) idx++;
@@ -47,13 +52,16 @@ const Board = () => {
 
     return (
         <Box
+            ref={containerRef}
             sx={{
                 display: 'flex',
                 justifyContent: 'flex-start',
                 alignItems: 'start',
                 gap: '.5em',
-                margin: '2em 0',
+                margin: '2em auto',
                 overflowX: 'auto',
+                maxWidth: '100vw',
+                width: 'fit-content',
                 scrollbarWidth: 'none',
                 msOverflowStyle: 'none',
                 '&::-webkit-scrollbar': {
@@ -75,7 +83,6 @@ const Board = () => {
                         idx={idx}
                         id={colId}
                         column={idx}
-                        setDraggedItem={setDraggedItem}
                     >
                         <DroppableArea
                             id={`task_m_1`}
