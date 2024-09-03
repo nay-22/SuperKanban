@@ -45,16 +45,6 @@ const Draggable = ({ id, currIdx, column, type, title, priority, setDraggedItem,
                 cursor: 'default'
             }}
         >
-            {/* <img
-                className='drag'
-                draggable
-                style={{
-                    cursor: 'grab'
-                }}
-                width={'20px'}
-                src={drag}
-                alt="drag"
-            /> */}
             {children}
         </div>
     );

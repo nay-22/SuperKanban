@@ -23,7 +23,6 @@ const Form = () => {
             }}
         >
             <ColumnForm />
-            <TaskForm />
         </Box>
     )
 }
