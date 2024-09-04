@@ -64,10 +64,10 @@ const Column = ({ id, idx, type, column, children }) => {
 
         const dragEle = dragRef.current.cloneNode(true);
         dragEle.style.position = 'absolute';
-        dragEle.style.left = `${touch.clientX}px`;
-        dragEle.style.top = `${touch.clientY}px`;
+        dragEle.style.left = `${touch.clientX - 25}px`;
+        dragEle.style.top = `${touch.clientY - 25}px`;
         dragEle.style.width = 'fit-content';
-        dragEle.style.opacity = '0.8';
+        dragEle.style.opacity = '0.3';
         dragEle.style.pointerEvents = 'none';
         document.body.appendChild(dragEle);
         dragEleRef.current = dragEle;
@@ -78,11 +78,17 @@ const Column = ({ id, idx, type, column, children }) => {
         e.preventDefault();
         const { colHeight, colWidth } = refInitialCoords;
         const touch = e.touches[0];
-        if (dragEleRef.current) {
-            dragEleRef.current.style.left = `${touch.clientX}px`;
-            dragEleRef.current.style.top = `${touch.clientY}px`;
 
-            const rect = dragRef.current.getBoundingClientRect();
+        if (dragEleRef.current) {
+            // Calculate the offset of the touch point within the dragged element
+            const rect = dragEleRef.current.getBoundingClientRect();
+            const offsetX = touch.clientX - rect.left;
+            const offsetY = touch.clientY - rect.top;
+
+            // Translate the element by the touch position minus the offset
+            dragEleRef.current.style.transform = `translate(${touch.clientX - offsetX}px, ${touch.clientY - offsetY}px)`;
+
+            // Update the column bounds
             const colLeftBound = touch.clientX - rect.left;
             const colRightBound = touch.clientX - rect.left + colWidth;
             const colTopBound = touch.clientY - rect.top;
@@ -102,6 +108,7 @@ const Column = ({ id, idx, type, column, children }) => {
             container.scrollLeft += scrollSpeed;
         }
     };
+
 
     const handleTouchEnd = () => {
         setShowColumn(true);
@@ -157,6 +164,8 @@ const Column = ({ id, idx, type, column, children }) => {
                 dragIndicatorRef.current.removeEventListener('touchend', handleTouchEnd);
             };
         }
+        console.log('');
+
     }, [handleTouchStart, handleTouchMove, handleTouchEnd]);
 
 

@@ -61,6 +61,7 @@ const Board = () => {
                 margin: '2em auto',
                 overflowX: 'auto',
                 maxWidth: '100vw',
+                height: '100vh',
                 width: 'fit-content',
                 scrollbarWidth: 'none',
                 msOverflowStyle: 'none',
