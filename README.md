@@ -1,12 +1,26 @@
 # Kanban Board
 
 ## To-Do:
-- Refactor Column component into a Draggable
-- Implement action buttons for tasks to shift to the previous or next column
-- Touch Events Drag & Drop Implementation
+- Move from LocalStorage to SQLite
+- Ability to lock column order
+- Integrate light & dark mode
+- Multiple project creation
+- Re-Design mobile view
+- More task features
+- Re-Design theme
+- FIX BUGS
+
   (non-exhaustive)
   
 # Current Implementation
+
+## v2.0.1
+   ### Features
+  - Drag N' Drop works for touch inputs
+  - Refined Drag N' Drop
+  - Revised Task View
+  ![image](https://github.com/user-attachments/assets/10363059-634f-46da-b41f-fa3525d82d32)
+
 ## v2.1.0
    ### Features
   - Refactored task form as Modal for each Column
@@ -15,10 +29,6 @@
   ![image](https://github.com/user-attachments/assets/18900c22-67bf-4173-9d65-e782b9b564b8)
   ![image](https://github.com/user-attachments/assets/6c0bee63-9e26-41f3-be49-127f3eb075f3)
   ![image](https://github.com/user-attachments/assets/09ac20ee-5d3f-443c-a330-8781b66b4ddc)
-
-
-
-
 
 ## v2.0.0
    ### Features
