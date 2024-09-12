@@ -23,7 +23,6 @@ const Task = ({ id, title, priority, onDelete, colId }) => {
       sx={{
         bgcolor: '#484848',
         borderRadius: '.35em',
-        border: '1px solid #656565',
         color: 'white',
         boxShadow: '0 2px 5px rgba(0, 0, 0, 0.2)',
         width: '100%',
@@ -32,41 +31,56 @@ const Task = ({ id, title, priority, onDelete, colId }) => {
       <Box
         sx={{
           display: "grid",
-          gridTemplateColumns: `25px 1fr ${priority === 'none' ? '' : '1fr'} 30px`,
+          gridTemplateColumns: `10px 1fr 30px`,
+          // gridTemplateColumns: `1fr ${priority === 'none' ? '' : '1fr'} 30px`,
           alignItems: 'center',
           gap: '1em',
           bgcolor: showDeleteModal ? 'rgb(208, 79, 79)' : 'grey',
-          padding: '0 .5em',
+          padding: '0 .5em 0 0',
           borderRadius: '.35em .35em 0 0'
         }}
       >
         <Box
+          sx={{
+              borderRadius: '.35em 0 0 0',
+            width: '10px',
+            height: '100%',
+            justifySelf: 'right',
+            // width: 'fit-content',
+            bgcolor: priority === 'Medium' ? 'darkorange' : priority === 'Low' ? 'rgb(31, 107, 31)' : 'rgb(181, 19, 19)',
+            fontWeight: 'bold',
+            color: 'white'
+          }}
+        />
+        {/* <Box
           draggable
           sx={{
             cursor: 'grab',
           }}
         >
           <DragIndicator />
-        </Box>
+        </Box> */}
         <Box>
           <Tooltip title={'Created At Date'} placement="top" arrow>
             <Typography fontWeight={'bold'} sx={{ width: '100%', textAlign: 'left' }}>{date}</Typography>
           </Tooltip>
           <Tooltip title={'Created At Time'} placement="top" arrow>
-            <Typography sx={{fontWeight: 'bold', fontSize: '.8em', width: '100%', textAlign: 'left', color: '#484848' }}>{time}</Typography>
+            <Typography sx={{ fontWeight: 'bold', fontSize: '.8em', width: '100%', textAlign: 'left', color: '#484848' }}>{time}</Typography>
           </Tooltip>
         </Box>
-        {priority !== 'none' &&
+        {/* {priority !== 'none' &&
           <Chip
-            label={priority}
+            // label={priority}
             sx={{
+              width: '20px',
+              height: '20px',
               justifySelf: 'right',
-              width: 'fit-content',
-              bgcolor: priority === 'Medium' ? 'orange' : priority === 'Low' ? 'rgb(31, 107, 31)' : 'rgb(181, 19, 19)',
+              // width: 'fit-content',
+              bgcolor: priority === 'Medium' ? 'darkorange' : priority === 'Low' ? 'rgb(31, 107, 31)' : 'rgb(181, 19, 19)',
               fontWeight: 'bold',
               color: 'white'
             }}
-          />}
+          />} */}
         <SpeedDial
           direction='left'
           ariaLabel='Task Actions'
