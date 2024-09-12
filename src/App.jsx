@@ -13,17 +13,7 @@ function App() {
   const [columns, setColumns] = useState(new Map());
   const [colName, setColName] = useState('');
   const [items, setItems] = useState({});
-
-  const [colDropBounding, setColDropBounding] = useState({});
-  const [isTouching, setIsTouching] = useState(false);
-  const [colDropRefs, setColDropRefs] = useState([]);
-  const [colDropInfo, setColDropInfo] = useState({});
-  const [colBounds, setColBounds] = useState({});
-  const dragItemInfoRef = useRef(null);
-  const containerRef = useRef(null);
   
-
-
   useEffect(() => {
     const storedColumnOrder = JSON.parse(localStorage.getItem('columnOrder'));
     const storedColumns = JSON.parse(localStorage.getItem('columns'));
@@ -32,12 +22,6 @@ function App() {
       setItems(storedItems);
       setColumnOrder(storedColumnOrder);
       setColumns(new Map(storedColumns));
-      for (let i = -1; i < storedColumnOrder.length; i++) {
-        setColDropRefs(prev => ({...prev, [`column_${i}`]: React.createRef(null)}));
-        setColDropInfo(prev => ({...prev, [`column_${i}`]: {
-          show: false
-        }}));
-      }
     } else {
       // alert("No saved state found");
     }
@@ -53,13 +37,6 @@ function App() {
           columns, setColumns,
           colName, setColName,
           items, setItems,
-          colDropBounding, setColDropBounding,
-          colDropRefs, setColDropRefs,
-          isTouching, setIsTouching,
-          colDropInfo, setColDropInfo,
-          colBounds, setColBounds,
-          dragItemInfoRef,
-          containerRef
         }}
       >
         <Navbar />
