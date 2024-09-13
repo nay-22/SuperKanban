@@ -1,0 +1,23 @@
+{
+  "files": [],
+  "references": [
+    {
+      "path": "./tsconfig.app.json"
+    },
+    {
+      "path": "./tsconfig.node.json"
+    }
+  ],
+  "compilerOptions": {
+    "lib": ["es6", "dom"],
+    "jsx": "react-jsx",        // Enables JSX support
+    "module": "esnext",        // Ensures support for modern module syntax
+    "strict": true,
+    "noImplicitAny": true,
+    "noImplicitThis": true,
+    "strictNullChecks": true,
+    "esModuleInterop": true,   // Helps with CommonJS/ES module interop
+    "allowSyntheticDefaultImports": true, // Simplifies default import handling
+    "skipLibCheck": true       // Skips checking of library files for faster build
+  }
+}

@@ -1,0 +1,15 @@
+body {
+    background-color: rgb(32, 36, 38);
+}
+
+* {
+    scrollbar-width: none;
+}
+
+.item {
+    color: rgba(13, 16, 19, 0.718);
+}
+
+.grey {
+    color: rgb(133, 160, 186);
+}
