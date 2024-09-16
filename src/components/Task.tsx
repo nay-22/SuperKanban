@@ -2,7 +2,8 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Id, KBTask } from '../types';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import DeleteIcon from '../icons/DeleteIcon';
+import { Tooltip } from '@mui/material';
+import { DeleteOutline, DragIndicator } from '@mui/icons-material';
 
 interface TaskProps {
     task: KBTask;
@@ -11,8 +12,6 @@ interface TaskProps {
 }
 
 const Task: React.FC<TaskProps> = React.memo(({ task, deleteTask, updateTask }) => {
-    const [hasTouch] = useState(() => 'ontouchstart' in window);
-    const [showActions, setShowActions] = useState(false);
     const [editContent, setEditContent] = useState(false);
     const [editPriority, setEditPriority] = useState(false);
     const [content, setContent] = useState(task.content);
@@ -50,12 +49,9 @@ const Task: React.FC<TaskProps> = React.memo(({ task, deleteTask, updateTask }) 
     return (
         <div
             ref={setNodeRef}
-            style={{...style}}
+            style={{ ...style }}
             {...attributes}
-            {...listeners}
-            className={`touch-none bg-mainBackgroundColor rounded-lg p-3 ${isDragging && 'opacity-50'}`}
-            onPointerEnter={() => setShowActions(true)}
-            onPointerLeave={() => setShowActions(false)}
+            className={`cursor-auto bg-mainBackgroundColor rounded-lg p-3 ${isDragging && 'opacity-50'}`}
             onKeyDown={(e) => {
                 if (e.key === 'Enter') {
                     setEditContent(true);
@@ -63,16 +59,21 @@ const Task: React.FC<TaskProps> = React.memo(({ task, deleteTask, updateTask }) 
             }}
         >
             <div className='flex align-center justify-between'>
-                <div>
-                    <div className='text-sm text-slate-100'>{`${task.createdAt[0]}, ${task.createdAt[1]}`}</div>
-                    <div className='text-xs text-slate-400'>{task.createdAt[2]}</div>
+                <div className={`flex justify-items-center gap-2`}>
+                    <div {...listeners} className={`touch-none ${isDragging ? 'cursor-grabbing' : 'cursor-move'}`}>
+                        <DragIndicator />
+                    </div>
+                    <div>
+                        <div className='text-sm text-slate-100'>{`${task.createdAt[0]}, ${task.createdAt[1]}`}</div>
+                        <div className='text-xs text-slate-400'>{task.createdAt[2]}</div>
+                    </div>
                 </div>
-                <div className='flex items-center justify-center gap-4'>
+                <div className='flex items-center justify-center gap-2 cursor-pointer'>
                     <button
-                        className={`${hasTouch || showActions ? 'visible' : 'hidden'} flex items-center justify-center stroke-red-400 ring-red-950 hover:ring-2 rounded-sm px-2 py-1`}
+                        className={`hover:bg-slate-700 rounded-full flex items-center justify-center text-red-400 px-1 py-1`}
                         onClick={() => deleteTask(task.id)}
                     >
-                        <DeleteIcon />
+                        <DeleteOutline />
                     </button>
                     <div
                         ref={priorityRef}
@@ -92,7 +93,7 @@ const Task: React.FC<TaskProps> = React.memo(({ task, deleteTask, updateTask }) 
                                         updateTask(task.id, content, 1);
                                         setEditPriority(false);
                                     }}
-                                    className="w-full p-1 rounded-lg hover:bg-green-500 hover:text-white text-green-500"
+                                    className="w-full cursor-pointer p-1 rounded-lg hover:bg-green-500 hover:text-black text-green-500"
                                 >
                                     Low
                                 </div>
@@ -101,7 +102,7 @@ const Task: React.FC<TaskProps> = React.memo(({ task, deleteTask, updateTask }) 
                                         updateTask(task.id, content, 2);
                                         setEditPriority(false);
                                     }}
-                                    className="w-full p-1 rounded-lg hover:bg-orange-400 hover:text-white text-orange-400"
+                                    className="w-full cursor-pointer p-1 rounded-lg hover:bg-orange-400 hover:text-white text-orange-400"
                                 >
                                     Medium
                                 </div>
@@ -110,7 +111,7 @@ const Task: React.FC<TaskProps> = React.memo(({ task, deleteTask, updateTask }) 
                                         updateTask(task.id, content, 3);
                                         setEditPriority(false);
                                     }}
-                                    className="w-full p-1 rounded-lg hover:bg-red-500 hover:text-white text-red-500"
+                                    className="w-full cursor-pointer p-1 rounded-lg hover:bg-red-500 hover:text-white text-red-500"
                                 >
                                     High
                                 </div>
@@ -131,7 +132,6 @@ const Task: React.FC<TaskProps> = React.memo(({ task, deleteTask, updateTask }) 
                         onBlur={() => {
                             setEditContent(false);
                             updateTask(task.id, content, task.priority);
-                            setShowActions(true);
                         }}
                         onKeyDown={(e) => {
                             if (e.key === 'Enter') {
@@ -147,14 +147,15 @@ const Task: React.FC<TaskProps> = React.memo(({ task, deleteTask, updateTask }) 
                     />
                 </div>
             ) : (
-                <div
-                    onClick={() => {
-                        setEditContent(true);
-                        setShowActions(false);
-                    }}
-                >
-                    {task.content}
-                </div>
+                <Tooltip className='cursor-pointer' title='Click To Edit' placement='bottom-start' sx={{ left: 0 }} enterDelay={2000} leaveDelay={0}>
+                    <div
+                        onClick={() => {
+                            setEditContent(true);
+                        }}
+                    >
+                        {task.content}
+                    </div>
+                </Tooltip>
             )}
         </div>
     );

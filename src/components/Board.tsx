@@ -15,7 +15,6 @@ const Board = () => {
     const [tasks, setTasks] = useState<KBTask[]>(JSON.parse(localStorage.getItem('tasks')!) || []);
     const [activeItem, setActiveItem] = useState<KBColumn | KBTask | null>(null);
     const columnsId = useMemo(() => columns.map(col => col.id), [columns]);
-    const tasksId = useMemo(() => tasks.map(task => task.id), [tasks]);
 
     const sensors = useSensors(useSensor(PointerSensor, {
         activationConstraint: { distance: 10 }
@@ -25,6 +24,7 @@ const Board = () => {
         const column: KBColumn = {
             id: uuid(),
             title: 'Column ' + (columns.length + 1),
+            taskLen: 0,
         };
         setColumns(prev => [...prev, column])
     }
@@ -54,10 +54,22 @@ const Board = () => {
             content: 'Task ' + (tasks?.length + 1)
         }
         setTasks(prev => [task, ...prev])
+        setColumns(prev => prev.map(col => {
+            if (col.id === columnId) {
+                return { ...col, taskLen: col.taskLen + 1 }
+            }
+            return col;
+        }));
     }
 
     const deleteTask = (id: Id) => {
-        setTasks(prev => prev.filter(task => task.id !== id))
+        setTasks(prev => prev.filter(task => task.id !== id));
+        setColumns(prev => prev.map(col => {
+            if (col.id === activeItem?.id) {
+                return { ...col, taskLen: col.taskLen - 1 }
+            }
+            return col;
+        }));
     }
 
     const updateTask = (id: Id, content: string, priority: number) => {
@@ -77,7 +89,6 @@ const Board = () => {
         else if (type === 'task') setActiveItem(current.task);
     }
 
-    // TODO: Fix logic when a task from a column is taken to another column
     const handleDragOver = (e: DragOverEvent) => {
         const { active, over } = e;
         if (!over) return;
@@ -86,22 +97,23 @@ const Board = () => {
         if (activeId === overId) return;
         const isActiveATask = active.data.current?.type === 'task';
         const isOverATask = over.data.current?.type === 'task';
-
-        if (!isActiveATask) return;
-
-        // if (isActiveATask && isOverATask) {
-        //     setTasks(prev => {
-        //         const activeIndex = prev.findIndex(task => task.id === activeId);
-        //         const overIndex = prev.findIndex(task => task.id === overId);
-        //         if (activeIndex === overIndex) return prev;
-        //             tasks[activeIndex].columnId = tasks[overIndex].columnId;
-        //         return arrayMove(prev, activeIndex, overIndex);
-        //     });
-        // }
-
         const isOverAColumn = over.data.current?.type === 'column';
 
-        if (isActiveATask && isOverAColumn) {
+        if (!isActiveATask) return;
+        else if (isActiveATask && isOverATask) { // FIXED
+            const currentColumn = active.data.current?.task.columnId;
+            const targetColumn = over.data.current?.task.columnId;
+            if (currentColumn === targetColumn) return;
+            else {
+                setTasks(prev => prev.map(task => task.id === active.id ? {...task, columnId: targetColumn} : task))
+            }
+        }
+        else if (isActiveATask && isOverAColumn) {
+            if (active.data.current?.task.columnId === overId) {
+                console.log('task over column, but same column');
+                
+                return;
+            }
             setTasks(prev => {
                 const activeIndex = prev.findIndex(task => task.id === activeId);
                 prev[activeIndex].columnId = overId;
@@ -131,7 +143,7 @@ const Board = () => {
                 return arrayMove(prev, activeIndex, overIndex);
             });
         }
-        
+
         setColumns(prev => {
             const activeColumnIndex = prev.findIndex(col => col.id === activeColumnId);
             const overColumnIndex = prev.findIndex(col => col.id === overColumnId);
@@ -166,54 +178,6 @@ const Board = () => {
                 >
                     Add Column
                     <PlusIcon />
-                </button>
-                <button
-                    onClick={() => console.log(columns)}
-                    className="
-                    flex
-                    items-center
-                    justify-center
-                    h-16
-                    w-48
-                    cursor-pointer
-                    rounded-lg
-                    bg-mainBackgroundColor
-                    border-2
-                    border-columnBackgroundColor
-                    p-4
-                    mx-auto
-                    mt-10
-                    hover:ring-2
-                    hover:ring-rose-500
-                    transition-all
-                    duration-200
-                    "
-                >
-                    Log Columns
-                </button>
-                <button
-                    onClick={() => console.log(tasks)}
-                    className="
-                    flex
-                    items-center
-                    justify-center
-                    h-16
-                    w-48
-                    cursor-pointer
-                    rounded-lg
-                    bg-mainBackgroundColor
-                    border-2
-                    border-columnBackgroundColor
-                    p-4
-                    mx-auto
-                    mt-10
-                    hover:ring-2
-                    hover:ring-rose-500
-                    transition-all
-                    duration-200
-                    "
-                >
-                    Log Tasks
                 </button>
                 <button
                     onClick={() => {
@@ -277,9 +241,9 @@ const Board = () => {
                     onDragEnd={handleDragEnd}
                     onDragMove={handleDragOver}
                 >
-                    <div className="m-auto flex gap-4">
-                        <div className='flex flex-grow gap-4 overflow-x-auto overflow-y-hidden scrollbar-thumb-red-400
-                scrollbar-track-transparent scrollbar-thin'>
+                    <div className="m-auto flex gap-4 p-4 overflow-x-auto overflow-y-hidden scrollbar-thumb-red-400
+                scrollbar-track-transparent scrollbar-thin">
+                        <div className='flex flex-grow gap-4 '>
                             <SortableContext items={columnsId}>
                                 {columns.map(col => (
                                     <Column key={col.id} column={col} deleteColumn={deleteColumn} updateColumn={updateColumn} createTask={createTask}>
@@ -294,7 +258,7 @@ const Board = () => {
                         </div>
                     </div>
                     {createPortal(
-                        <DragOverlay>
+                        <DragOverlay >
                             {activeItem && (
                                 "content" in activeItem ?
                                     <Task task={activeItem} deleteTask={deleteTask} updateTask={updateTask} /> :

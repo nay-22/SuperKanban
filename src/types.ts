@@ -3,6 +3,7 @@ export type Id = string | number;
 export type KBColumn = {
     id: Id;
     title: string;
+    taskLen: number;
 }
 
 export type KBTask = {

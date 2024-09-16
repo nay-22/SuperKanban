@@ -1,9 +1,9 @@
 import React, { isValidElement, useState } from 'react'
 import { Id, KBColumn } from '../types'
-import DeleteIcon from '../icons/DeleteIcon';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities'
-import PlusIcon from '../icons/PlusIcon';
+import { Button, Tooltip } from '@mui/material';
+import { Add, DeleteOutline } from '@mui/icons-material';
 
 interface ColumnProps {
     column: KBColumn;
@@ -19,12 +19,11 @@ const Column: React.FC<ColumnProps> = ({ column, deleteColumn, updateColumn, cre
     if (isValidElement(children)) {
         sortableContextArrayLen = children.props.items.length
     }
-    
-    
+
+
 
     const [editMode, setEditMode] = useState(false);
     const [title, setTitle] = useState(column.title);
-    const [hasTouch] = useState(() => 'ontouchstart' in window);
     const [isPointerIn, setIsPointerIn] = useState(false);
 
     const { setNodeRef, isDragging, attributes, listeners, transform, transition } = useSortable({
@@ -46,15 +45,13 @@ const Column: React.FC<ColumnProps> = ({ column, deleteColumn, updateColumn, cre
             ref={setNodeRef}
             style={style}
             {...attributes}
-            {...listeners}
             className={`
             touch-none
             bg-columnBackgroundColor
             backdrop-filter
             backdrop-blur-sm
             w-[350px]
-
-            max-h-[500px]
+            h-[80vh]
             rounded-md
             flex
             flex-col
@@ -65,17 +62,16 @@ const Column: React.FC<ColumnProps> = ({ column, deleteColumn, updateColumn, cre
                     setEditMode(true);
                 }
             }}
-            onPointerEnter={() => setIsPointerIn(true)}
-            onPointerLeave={() => setIsPointerIn(false)}
         >
             <div
+                {...listeners}
                 className='
+                cursor-move
             flex
             items-center
             justify-between
             bg-mainBackgroundColor 
             text-md h-[60px] 
-            cursor-grab 
             rounded-md 
             rounded-b-none 
             p-4'
@@ -92,7 +88,7 @@ const Column: React.FC<ColumnProps> = ({ column, deleteColumn, updateColumn, cre
                     text-sm 
                     rounded-full'
                     >
-                        0
+                        {column.taskLen}
                     </div>
                     {editMode
                         ? <input
@@ -119,31 +115,36 @@ const Column: React.FC<ColumnProps> = ({ column, deleteColumn, updateColumn, cre
                             outline-none
                             focus:outline-red-400 rounded-sm'
                         />
-                        : column.title
+                        : <Tooltip title='Click To Edit' placement='top' arrow enterDelay={1000} leaveDelay={500}><p className='flex items-center justify-center'>{column.title}</p></Tooltip>
                     }
                 </div>
                 <div
-                    className='flex items-center justify-end gap-2'
+                    className='flex items-center justify-end gap-2 cursor-pointer'
                 >
                     <button
                         onClick={(e) => {
                             e.stopPropagation();
                             deleteColumn(column.id)
                         }}
-                        className='flex items-center justify-center stroke-red-400 ring-red-950 hover:ring-2 rounded-sm px-2 py-1'>
-                        <DeleteIcon />
+                        className='flex items-center justify-center text-red-400 rounded-sm px-2 py-1'>
+                        <DeleteOutline />
                     </button>
-                    <button
+                    <Button
+                        sx={{ minWidth: 0, width: '40px' }}
+                        variant='outlined'
                         onClick={(e) => {
                             e.stopPropagation();
                             createTask(column.id)
                         }}
-                        className='flex items-center justify-center stroke-indigo-400 ring-indigo-400 hover:ring-2 rounded-sm px-2 py-1'>
-                        <PlusIcon />
-                    </button>
+                        className='text-indigo-400 rounded-sm px-2 py-1'>
+                        <Add />
+                    </Button>
                 </div>
             </div>
-            <div className={`
+            <div
+                onPointerEnter={() => setIsPointerIn(true)}
+                onPointerLeave={() => setIsPointerIn(false)}
+                className={`
                 flex 
                 flex-grow 
                 p-4 
@@ -151,7 +152,8 @@ const Column: React.FC<ColumnProps> = ({ column, deleteColumn, updateColumn, cre
                 gap-4 
                 overflow-x-hidden 
                 overflow-y-auto 
-                scrollbar-${hasTouch || isPointerIn ? 'thin' : 'hide'}
+                cursor-auto
+                ${isDragging || isPointerIn ? 'scrollbar-thin' : 'scrollbar-none'}
                 scrollbar-thumb-red-400
                 scrollbar-track-transparent`
                 }
