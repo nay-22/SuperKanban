@@ -79,10 +79,17 @@ const Task: React.FC<TaskProps> = React.memo(({ task, deleteTask, updateTask }) 
                         ref={priorityRef}
                         className='relative'
                     >
-                        <div
-                            onClick={() => setEditPriority(!editPriority)}
-                            className={`w-5 h-5 ${task.priority === 1 ? 'bg-green-500' : task.priority === 2 ? 'bg-orange-400' : 'bg-red-500'} rounded-full cursor-pointer`}
-                        />
+                        <Tooltip
+                            title={`Priority: ${task.priority === 1 ? 'Low' : task.priority === 2 ? 'Medium' : 'High'}`}
+                            placement='top-start'
+                            enterDelay={500}
+                            arrow
+                        >
+                            <div
+                                onClick={() => setEditPriority(!editPriority)}
+                                className={`w-5 h-5 ${task.priority === 1 ? 'bg-green-500' : task.priority === 2 ? 'bg-orange-400' : 'bg-red-500'} rounded-full cursor-pointer`}
+                            />
+                        </Tooltip>
                         {editPriority && (
                             <div
                                 ref={dropdownRef}

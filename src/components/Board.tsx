@@ -99,19 +99,22 @@ const Board = () => {
         const isOverATask = over.data.current?.type === 'task';
         const isOverAColumn = over.data.current?.type === 'column';
 
+        const currentColumn = active.data.current?.task.columnId;
         if (!isActiveATask) return;
         else if (isActiveATask && isOverATask) { // FIXED
-            const currentColumn = active.data.current?.task.columnId;
             const targetColumn = over.data.current?.task.columnId;
             if (currentColumn === targetColumn) return;
             else {
-                setTasks(prev => prev.map(task => task.id === active.id ? {...task, columnId: targetColumn} : task))
+                setTasks(prev => prev.map(task => task.id === active.id ? { ...task, columnId: targetColumn } : task));
+                setColumns(prev => prev.map(column => (
+                    column.id === currentColumn ? { ...column, taskLen: (column.taskLen - 1) >= 0 ? column.taskLen - 1 : 0 } : (
+                        column.id === targetColumn ? { ...column, taskLen: column.taskLen + 1 } : column
+                    )))
+                );
             }
         }
         else if (isActiveATask && isOverAColumn) {
             if (active.data.current?.task.columnId === overId) {
-                console.log('task over column, but same column');
-                
                 return;
             }
             setTasks(prev => {
@@ -119,6 +122,11 @@ const Board = () => {
                 prev[activeIndex].columnId = overId;
                 return arrayMove(prev, activeIndex, activeIndex);
             });
+            setColumns(prev => prev.map(column => (
+                column.id === currentColumn ? { ...column, taskLen: (column.taskLen - 1) >= 0 ? column.taskLen - 1 : 0 } : (
+                    column.id === over.id ? { ...column, taskLen: column.taskLen + 1 } : column
+                )))
+            );
         }
 
     }
