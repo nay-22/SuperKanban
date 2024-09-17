@@ -5,14 +5,16 @@ import { CSS } from '@dnd-kit/utilities';
 import { Tooltip } from '@mui/material';
 import { DeleteOutline, DragIndicator } from '@mui/icons-material';
 import { useTaskActions } from '../hooks/TaskActions';
+import ConfirmationModal from './modals/ConfirmationModal';
 
 interface TaskProps {
     task: KBTask;
 }
 
 const Task: React.FC<TaskProps> = React.memo(({ task }) => {
-    const [editContent, setEditContent] = useState(false);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [editPriority, setEditPriority] = useState(false);
+    const [editContent, setEditContent] = useState(false);
     const [content, setContent] = useState(task.content);
     const dropdownRef = useRef<HTMLDivElement>(null);
     const priorityRef = useRef<HTMLDivElement>(null);
@@ -72,7 +74,7 @@ const Task: React.FC<TaskProps> = React.memo(({ task }) => {
                 <div className='flex items-center justify-center gap-2 cursor-pointer'>
                     <button
                         className={`hover:bg-slate-700 rounded-full flex items-center justify-center text-red-400 px-1 py-1`}
-                        onClick={() => deleteTask(task.id)}
+                        onClick={() => setShowDeleteModal(true)}
                     >
                         <DeleteOutline />
                     </button>
@@ -128,7 +130,6 @@ const Task: React.FC<TaskProps> = React.memo(({ task }) => {
                     </div>
                 </div>
             </div>
-            {/* <hr className='my-2 border-solid border-1 border-slate-950' /> */}
             {editContent ? (
                 <div className='flex items-center justify-between gap-2 bg-taskBackgroundSecondary p-3 rounded-b-lg'>
                     <input
@@ -151,7 +152,7 @@ const Task: React.FC<TaskProps> = React.memo(({ task }) => {
                             }
                             e.stopPropagation();
                         }}
-                        className='bg-transparent outline-none w-full focus:outline-red-400 rounded-sm'
+                        className='bg-transparent outline-none w-full focus:outline-indigo-400 rounded-sm'
                     />
                 </div>
             ) : (
@@ -166,6 +167,7 @@ const Task: React.FC<TaskProps> = React.memo(({ task }) => {
                     </div>
                 </Tooltip>
             )}
+            <ConfirmationModal  onConfirm={() => deleteTask(task.id)} open={showDeleteModal} onClose={() => setShowDeleteModal(false)} />
         </div>
     );
 })

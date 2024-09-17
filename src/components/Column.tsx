@@ -2,11 +2,12 @@ import React, { isValidElement, useContext, useState } from 'react'
 import { KBColumn } from '../types'
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities'
-import { Button, Tooltip } from '@mui/material';
+import { Badge, Button, Tooltip } from '@mui/material';
 import { Add, DeleteOutline, DragIndicator, SwapVert } from '@mui/icons-material';
 import { useTaskActions } from '../hooks/TaskActions';
 import { useColumnActions } from '../hooks/ColumnActions';
 import KanbanContext from '../contexts/KanbanContext';
+import ConfirmationModal from './modals/ConfirmationModal';
 
 interface ColumnProps {
     column: KBColumn;
@@ -14,6 +15,8 @@ interface ColumnProps {
 }
 
 const Column: React.FC<ColumnProps> = ({ column, children }) => {
+
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
 
     const { updateColumn, deleteColumn } = useColumnActions();
     const { hasTouch } = useContext(KanbanContext);
@@ -116,7 +119,7 @@ const Column: React.FC<ColumnProps> = ({ column, children }) => {
                             }}
                             className='bg-transparent 
                             outline-none w-[90%]
-                            focus:outline-red-400 rounded-sm'
+                            focus:outline-indigo-400 rounded-sm'
                         />
                         : <Tooltip title='Click To Edit' placement='top' arrow enterDelay={1000} leaveDelay={500}><p className='flex items-center justify-center'>{column.title}</p></Tooltip>
                     }
@@ -129,17 +132,27 @@ const Column: React.FC<ColumnProps> = ({ column, children }) => {
                         placement='top'
                         arrow
                     >
-                        <button
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                const sortOrders = ['none', 'low', 'high'];
-                                const currIndex = sortOrders.indexOf(column.sortOrder);
-                                const nextIndex = (currIndex + 1) % sortOrders.length;
-                                updateColumn(column.id, column.title, sortOrders[nextIndex]);
+                        <Badge
+                            badgeContent={column.sortOrder.charAt(0).toUpperCase()}
+                            sx={{
+                                '& .MuiBadge-badge': {
+                                    bgcolor: 'rgba(40, 56, 71)',
+                                    color: 'white',
+                                },
                             }}
-                            className='flex items-center justify-center text-blue-300 rounded-sm px-2 py-1'>
-                            <SwapVert />
-                        </button>
+                        >
+                            <button
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    const sortOrders = ['none', 'low', 'high'];
+                                    const currIndex = sortOrders.indexOf(column.sortOrder);
+                                    const nextIndex = (currIndex + 1) % sortOrders.length;
+                                    updateColumn(column.id, column.title, sortOrders[nextIndex]);
+                                }}
+                                className='flex items-center justify-center text-blue-300 rounded-sm px-2 py-1'>
+                                <SwapVert />
+                            </button>
+                        </Badge>
                     </Tooltip>
                     <Tooltip
                         title={`Delete ${column.title}`}
@@ -150,7 +163,7 @@ const Column: React.FC<ColumnProps> = ({ column, children }) => {
                         <button
                             onClick={(e) => {
                                 e.stopPropagation();
-                                deleteColumn(column.id)
+                                setShowDeleteModal(true);
                             }}
                             className='flex items-center justify-center text-red-400 rounded-sm px-2 py-1'>
                             <DeleteOutline />
@@ -210,6 +223,7 @@ const Column: React.FC<ColumnProps> = ({ column, children }) => {
                     children
                 }
             </div>
+            <ConfirmationModal message={`Confirm Deletion of "${column.title}"?`} onConfirm={() => deleteColumn(column.id)} open={showDeleteModal} onClose={() => setShowDeleteModal(false)} />
         </div>
     );
 }
