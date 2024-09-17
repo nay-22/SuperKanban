@@ -1,50 +1,57 @@
-# React + TypeScript + Vite
+# Kanban Board
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## To-Do:
+- Move from LocalStorage to SQLite
+- Ability to lock column order
+- Integrate light & dark mode
+- Multiple project creation
+- Re-Design mobile view
+- More task features
+- Re-Design theme
+- FIX BUGS
 
-Currently, two official plugins are available:
+  (non-exhaustive)
+  
+# Current Implementation
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## v2.0.1
+   ### Features
+  - Drag N' Drop works for touch inputs
+  - Refined Drag N' Drop
+  - Revised Task View
+  ![image](https://github.com/user-attachments/assets/10363059-634f-46da-b41f-fa3525d82d32)
 
-## Expanding the ESLint configuration
+## v2.1.0
+   ### Features
+  - Refactored task form as Modal for each Column
+  - Improved task readability
+  - Better Responsiveness
+  ![image](https://github.com/user-attachments/assets/18900c22-67bf-4173-9d65-e782b9b564b8)
+  ![image](https://github.com/user-attachments/assets/6c0bee63-9e26-41f3-be49-127f3eb075f3)
+  ![image](https://github.com/user-attachments/assets/09ac20ee-5d3f-443c-a330-8781b66b4ddc)
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+## v2.0.0
+   ### Features
+  - Assign priority to tasks
+  - Sort tasks by priority
+  - Detailed task view - further future scope
+  - Better column and task management
+  ![image](https://github.com/user-attachments/assets/cf6493e9-9ad2-481c-acd9-4d4eef7aa3c5)
 
-- Configure the top-level `parserOptions` property like this:
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+## v1.1.0
+   ### Features
+  - Edit task name
+  - Edit column name
+  - Delete column - moves column items to previous columns
+  ![image](https://github.com/user-attachments/assets/677c7c67-a34c-41df-b81e-822a73532f2c)
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
-
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
-
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
+## v1.0.0
+  ### Features
+  - Add infinite columns
+  - Add tasks to columns
+  - Delete tasks
+  - Drag and drop tasks to any column or same column - sort tasks as required
+  - Drag and drop columns - sort columns as required
+  - Save and clear state
+  ![image](https://github.com/user-attachments/assets/cb887e10-4eee-4b18-a1da-d4a6d36e6c7b)
