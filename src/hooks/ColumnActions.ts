@@ -4,13 +4,12 @@ import { useContext } from "react";
 import KanbanContext from "../contexts/KanbanContext";
 
 export const useColumnActions = () => {
-    const { columns, setColumns } = useContext(KanbanContext);
+    const { setColumns } = useContext(KanbanContext);
 
     const createColumn = () => {
         const column: KBColumn = {
             id: uuid(),
-            title: 'Column ' + (columns.length + 1),
-            taskLen: 0,
+            title: 'Column',
         };
         setColumns(prev => [...prev, column]);
     };

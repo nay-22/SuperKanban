@@ -1,4 +1,4 @@
-import React, { isValidElement, useState } from 'react'
+import React, { isValidElement, useContext, useState } from 'react'
 import { KBColumn } from '../types'
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities'
@@ -6,6 +6,7 @@ import { Button, Tooltip } from '@mui/material';
 import { Add, DeleteOutline, DragIndicator } from '@mui/icons-material';
 import { useTaskActions } from '../hooks/TaskActions';
 import { useColumnActions } from '../hooks/ColumnActions';
+import KanbanContext from '../contexts/KanbanContext';
 
 interface ColumnProps {
     column: KBColumn;
@@ -15,6 +16,7 @@ interface ColumnProps {
 const Column: React.FC<ColumnProps> = ({ column, children }) => {
 
     const { updateColumn, deleteColumn } = useColumnActions();
+    const { hasTouch } = useContext(KanbanContext);
     const { createTask } = useTaskActions();
 
     let sortableContextArrayLen = 0;
@@ -154,7 +156,7 @@ const Column: React.FC<ColumnProps> = ({ column, children }) => {
                 overflow-x-hidden 
                 overflow-y-auto 
                 cursor-auto
-                ${isDragging || isPointerIn ? 'scrollbar-thin' : 'scrollbar-none'}
+                ${isDragging || isPointerIn || hasTouch ? 'scrollbar-thin' : 'scrollbar-none'}
                 scrollbar-thumb-red-400
                 scrollbar-track-transparent`
                 }
