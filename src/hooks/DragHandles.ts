@@ -10,9 +10,7 @@ export const useDragHandles = () => {
     const { setActiveItem, setTasks, setColumns } = useContext(KanbanContext);
 
     const handleDragStart = (e: DragStartEvent) => {
-        const { current } = e.active.data;
-        console.log(e);
-        
+        const { current } = e.active.data;        
         if (!current) return;
         const { type } = current;
         if (type === 'column') setActiveItem(current.column);
