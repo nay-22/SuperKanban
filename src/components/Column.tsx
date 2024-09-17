@@ -50,8 +50,6 @@ const Column: React.FC<ColumnProps> = ({ column, children }) => {
             className={`
             touch-none
             bg-columnBackgroundColor
-            backdrop-filter
-            backdrop-blur-sm
             w-[350px]
             h-[75vh]
             rounded-md
@@ -86,12 +84,12 @@ const Column: React.FC<ColumnProps> = ({ column, children }) => {
                     flex 
                     justify-center 
                     items-center 
-                    bg-columnBackgroundColor 
+                    bg-taskBackgroundSecondary 
                     px-2 py-1 
                     text-sm 
                     rounded-full'
                     >
-                        {column.taskLen}
+                        {sortableContextArrayLen}
                     </div>
                     {editMode
                         ? <input
@@ -115,7 +113,7 @@ const Column: React.FC<ColumnProps> = ({ column, children }) => {
                                 e.stopPropagation();
                             }}
                             className='bg-transparent 
-                            outline-none
+                            outline-none w-[90%]
                             focus:outline-red-400 rounded-sm'
                         />
                         : <Tooltip title='Click To Edit' placement='top' arrow enterDelay={1000} leaveDelay={500}><p className='flex items-center justify-center'>{column.title}</p></Tooltip>

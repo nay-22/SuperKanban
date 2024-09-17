@@ -34,11 +34,6 @@ export const useDragHandles = () => {
             if (currentColumn === targetColumn) return;
             else {
                 setTasks(prev => prev.map(task => task.id === active.id ? { ...task, columnId: targetColumn } : task));
-                setColumns(prev => prev.map(column => (
-                    column.id === currentColumn ? { ...column, taskLen: (column.taskLen - 1) >= 0 ? column.taskLen - 1 : 0 } : (
-                        column.id === targetColumn ? { ...column, taskLen: column.taskLen + 1 } : column
-                    )))
-                );
             }
         }
         else if (isActiveATask && isOverAColumn) {
@@ -51,11 +46,6 @@ export const useDragHandles = () => {
                 prev[activeIndex].columnId = overId;
                 return arrayMove(prev, activeIndex, activeIndex);
             });
-            setColumns(prev => prev.map(column => (
-                column.id === currentColumn ? { ...column, taskLen: (column.taskLen - 1) >= 0 ? column.taskLen - 1 : 0 } : (
-                    column.id === over.id ? { ...column, taskLen: column.taskLen + 1 } : column
-                )))
-            );
         }
 
     }
