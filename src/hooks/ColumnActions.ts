@@ -10,6 +10,7 @@ export const useColumnActions = () => {
         const column: KBColumn = {
             id: uuid(),
             title: 'Column',
+            sortOrder: 'none',
         };
         setColumns(prev => [...prev, column]);
     };
@@ -18,10 +19,10 @@ export const useColumnActions = () => {
         setColumns(prev => prev.filter(col => col.id !== id));
     };
 
-    const updateColumn = (id: Id, title: string) => {
+    const updateColumn = (id: Id, title: string, sortOrder: string) => {
         setColumns(prev => prev.map(col => {
             if (col.id === id) {
-                return { ...col, title };
+                return { ...col, title, sortOrder };
             }
             return col;
         }));

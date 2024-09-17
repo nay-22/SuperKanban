@@ -3,7 +3,7 @@ import { KBColumn } from '../types'
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities'
 import { Button, Tooltip } from '@mui/material';
-import { Add, DeleteOutline, DragIndicator } from '@mui/icons-material';
+import { Add, DeleteOutline, DragIndicator, SwapVert } from '@mui/icons-material';
 import { useTaskActions } from '../hooks/TaskActions';
 import { useColumnActions } from '../hooks/ColumnActions';
 import KanbanContext from '../contexts/KanbanContext';
@@ -102,12 +102,12 @@ const Column: React.FC<ColumnProps> = ({ column, children }) => {
                             onChange={(e) => setTitle(e.target.value)}
                             onBlur={() => {
                                 setEditMode(false);
-                                updateColumn(column.id, title);
+                                updateColumn(column.id, title, column.sortOrder);
                             }}
                             onKeyDown={(e) => {
                                 if (e.key === 'Enter') {
                                     setEditMode(false);
-                                    updateColumn(column.id, title);
+                                    updateColumn(column.id, title, column.sortOrder);
                                 } else if (e.key === 'Escape') {
                                     setEditMode(false);
                                     setTitle(column.title);
@@ -122,26 +122,57 @@ const Column: React.FC<ColumnProps> = ({ column, children }) => {
                     }
                 </div>
                 <div
-                    className='flex items-center justify-end gap-2 cursor-pointer'
+                    className='flex items-center justify-end gap-1 cursor-pointer'
                 >
-                    <button
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            deleteColumn(column.id)
-                        }}
-                        className='flex items-center justify-center text-red-400 rounded-sm px-2 py-1'>
-                        <DeleteOutline />
-                    </button>
-                    <Button
-                        sx={{ minWidth: 0, width: '40px' }}
-                        variant='outlined'
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            createTask(column.id);
-                        }}
-                        className='text-indigo-400 rounded-sm px-2 py-1'>
-                        <Add />
-                    </Button>
+                    <Tooltip
+                        title={`Sorted By: ${column.sortOrder.toUpperCase()}`}
+                        placement='top'
+                        arrow
+                    >
+                        <button
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                const sortOrders = ['none', 'low', 'high'];
+                                const currIndex = sortOrders.indexOf(column.sortOrder);
+                                const nextIndex = (currIndex + 1) % sortOrders.length;
+                                updateColumn(column.id, column.title, sortOrders[nextIndex]);
+                            }}
+                            className='flex items-center justify-center text-blue-300 rounded-sm px-2 py-1'>
+                            <SwapVert />
+                        </button>
+                    </Tooltip>
+                    <Tooltip
+                        title={`Delete ${column.title}`}
+                        placement='top'
+                        arrow
+                        enterDelay={2000}
+                    >
+                        <button
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                deleteColumn(column.id)
+                            }}
+                            className='flex items-center justify-center text-red-400 rounded-sm px-2 py-1'>
+                            <DeleteOutline />
+                        </button>
+                    </Tooltip>
+                    <Tooltip
+                        title={`Add Task`}
+                        placement='top'
+                        arrow
+                        enterDelay={2000}
+                    >
+                        <Button
+                            sx={{ minWidth: 0, width: '40px' }}
+                            variant='outlined'
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                createTask(column.id);
+                            }}
+                            className='text-indigo-400 rounded-sm px-2 py-1'>
+                            <Add />
+                        </Button>
+                    </Tooltip>
                 </div>
             </div>
             <div

@@ -35,8 +35,8 @@ const Board = () => {
                         <SortableContext items={columnsId}>
                             {columns.map(col => (
                                 <Column key={col.id} column={col}>
-                                    <SortableContext items={tasks.filter(task => task.columnId === col.id)}>
-                                        {tasks.filter(task => task.columnId === col.id).map(task => (
+                                    <SortableContext items={tasks.filter(task => task.columnId === col.id).sort((a, b) => col.sortOrder === 'low' ? a.priority - b.priority : col.sortOrder === 'high' ? b.priority - a.priority : 0)}>
+                                        {tasks.filter(task => task.columnId === col.id).sort((a, b) => col.sortOrder === 'low' ? a.priority - b.priority : col.sortOrder === 'high' ? b.priority - a.priority : 0).map(task => (
                                             <Task key={task.id} task={task} />
                                         ))}
                                     </SortableContext>

@@ -5,6 +5,7 @@ export type Id = string | number;
 export type KBColumn = {
     id: Id;
     title: string;
+    sortOrder: string;
 }
 
 export type KBTask = {
