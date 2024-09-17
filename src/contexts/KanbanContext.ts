@@ -1,8 +1,13 @@
 import { createContext } from "react";
+import { KBContext } from "../types";
 
-const KanbanContext = createContext({
-  kanban: null,
-  setKanban: (kanban: any) => {},
+const KanbanContext = createContext<KBContext>({
+  columns: [],
+  setColumns: () => {},
+  tasks: [],
+  setTasks: () => {},
+  activeItem: null,
+  setActiveItem: () => {},
 });
 
 export default KanbanContext;
