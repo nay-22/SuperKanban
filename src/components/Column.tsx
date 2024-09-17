@@ -53,7 +53,7 @@ const Column: React.FC<ColumnProps> = ({ column, children }) => {
             touch-none
             bg-columnBackgroundColor
             w-[350px]
-            h-[75vh]
+            h-[76vh]
             rounded-md
             flex
             flex-col

@@ -52,7 +52,7 @@ const Task: React.FC<TaskProps> = React.memo(({ task }) => {
             ref={setNodeRef}
             style={{ ...style }}
             {...attributes}
-            className={`cursor-auto bg-taskBackgroundPrimary rounded-lg  ${isDragging && 'opacity-10'}`}
+            className={`cursor-auto bg-taskBackgroundPrimary rounded-lg ${isDragging && 'opacity-10'}`}
             onKeyDown={(e) => {
                 if (e.key === 'Enter') {
                     setEditContent(true);

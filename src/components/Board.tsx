@@ -33,15 +33,23 @@ const Board = () => {
                 scrollbar-track-transparent scrollbar-thin">
                     <div className='flex flex-grow gap-4 '>
                         <SortableContext items={columnsId}>
-                            {columns.map(col => (
-                                <Column key={col.id} column={col}>
-                                    <SortableContext items={tasks.filter(task => task.columnId === col.id).sort((a, b) => col.sortOrder === 'low' ? a.priority - b.priority : col.sortOrder === 'high' ? b.priority - a.priority : 0)}>
-                                        {tasks.filter(task => task.columnId === col.id).sort((a, b) => col.sortOrder === 'low' ? a.priority - b.priority : col.sortOrder === 'high' ? b.priority - a.priority : 0).map(task => (
+                            {columns.map(col => {
+                                const sortedItems = tasks
+                                    .filter(task => task.columnId === col.id)
+                                    .sort((a, b) => col.sortOrder === 'low' ?
+                                        a.priority - b.priority :
+                                        col.sortOrder === 'high' ?
+                                            b.priority - a.priority :
+                                            0
+                                    );
+                                return <Column key={col.id} column={col}>
+                                    <SortableContext items={sortedItems}>
+                                        {sortedItems.map(task => (
                                             <Task key={task.id} task={task} />
                                         ))}
                                     </SortableContext>
                                 </Column>
-                            ))}
+                            })}
                         </SortableContext>
                     </div>
                 </div>

@@ -3,6 +3,7 @@ import KanbanContext from "../contexts/KanbanContext";
 import { arrayMove } from "@dnd-kit/sortable";
 import { DragStartEvent, DragOverEvent, DragEndEvent } from "@dnd-kit/core";
 import { Id } from "../types";
+import { cacheItem } from "../utils/CacheUtils";
 
 export const useDragHandles = () => {
 
@@ -10,6 +11,8 @@ export const useDragHandles = () => {
 
     const handleDragStart = (e: DragStartEvent) => {
         const { current } = e.active.data;
+        console.log(e);
+        
         if (!current) return;
         const { type } = current;
         if (type === 'column') setActiveItem(current.column);
@@ -33,7 +36,11 @@ export const useDragHandles = () => {
             currentColumn = active.data.current?.task.columnId
             if (currentColumn === targetColumn) return;
             else {
-                setTasks(prev => prev.map(task => task.id === active.id ? { ...task, columnId: targetColumn } : task));
+                setTasks(prev => {
+                    const newState = prev.map(task => task.id === active.id ? { ...task, columnId: targetColumn } : task);
+                    cacheItem('tasks', newState);
+                    return newState;
+                });
             }
         }
         else if (isActiveATask && isOverAColumn) {
@@ -44,7 +51,9 @@ export const useDragHandles = () => {
             setTasks(prev => {
                 const activeIndex = prev.findIndex(task => task.id === activeId);
                 prev[activeIndex].columnId = overId;
-                return arrayMove(prev, activeIndex, activeIndex);
+                const newState = arrayMove(prev, activeIndex, activeIndex);
+                cacheItem('tasks', newState);
+                return newState;
             });
         }
 
@@ -67,14 +76,18 @@ export const useDragHandles = () => {
                 const overIndex = prev.findIndex(task => task.id === over.id);
                 if (activeIndex === overIndex) return prev;
                 prev[activeIndex].columnId = prev[overIndex].columnId;
-                return arrayMove(prev, activeIndex, overIndex);
+                const newState = arrayMove(prev, activeIndex, overIndex);
+                cacheItem('tasks', newState);
+                return newState;
             });
         }
 
         setColumns(prev => {
             const activeColumnIndex = prev.findIndex(col => col.id === activeColumnId);
             const overColumnIndex = prev.findIndex(col => col.id === overColumnId);
-            return arrayMove(prev, activeColumnIndex, overColumnIndex);
+            const newState = arrayMove(prev, activeColumnIndex, overColumnIndex);
+            cacheItem('columns', newState);
+            return newState;
         });
     }
 

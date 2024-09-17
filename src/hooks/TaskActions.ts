@@ -3,46 +3,47 @@ import { v4 as uuid } from "uuid";
 
 import { Id, KBTask } from "../types";
 import KanbanContext from "../contexts/KanbanContext";
+import { cacheItem } from "../utils/CacheUtils";
 
 export const useTaskActions = () => {
 
-    const { activeItem, tasks, setTasks, setColumns } = useContext(KanbanContext);
+    const { setTasks } = useContext(KanbanContext);
 
     const createTask = (columnId: Id) => {
         const date = new Date().toLocaleString('en-US', { day: '2-digit', month: 'short', year: 'numeric', hour: 'numeric', minute: 'numeric' });
-        const task: KBTask = {
-            id: uuid(),
-            columnId,
-            createdAt: date.split(','),
-            priority: 1,
-            content: 'Task ' + (tasks?.length + 1)
-        }
-        setTasks(prev => [task, ...prev])
-        setColumns(prev => prev.map(col => {
-            if (col.id === columnId) {
-                return { ...col, taskLen: col.taskLen + 1 }
+        setTasks(prev => {
+            const task: KBTask = {
+                id: uuid(),
+                columnId,
+                createdAt: date.split(','),
+                priority: 1,
+                content: 'Task ' + (prev.length + 1)
             }
-            return col;
-        }));
+            const newState = [task, ...prev];
+            cacheItem('tasks', newState);
+            return newState;
+        });
     }
 
     const deleteTask = (id: Id) => {
-        setTasks(prev => prev.filter(task => task.id !== id));
-        setColumns(prev => prev.map(col => {
-            if (col.id === activeItem?.id) {
-                return { ...col, taskLen: col.taskLen - 1 }
-            }
-            return col;
-        }));
+        setTasks(prev => {
+            const newState = prev.filter(task => task.id !== id);
+            cacheItem('tasks', newState);
+            return newState;
+        });
     }
 
     const updateTask = (id: Id, content: string, priority: number) => {
-        setTasks(prev => prev.map(task => {
-            if (task.id === id) {
-                return { ...task, content, priority }
-            }
-            return task;
-        }))
+        setTasks(prev => {
+            const newState = prev.map(task => {
+                if (task.id === id) {
+                    return { ...task, content, priority };
+                }
+                return task;
+            });
+            cacheItem('tasks', newState);
+            return newState;
+        });
     }
 
     return { createTask, updateTask, deleteTask };
