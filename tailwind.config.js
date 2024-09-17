@@ -7,7 +7,9 @@ module.exports = {
     extend: {
       colors: {
         'mainBackgroundColor': '#0D1117',
-        'columnBackgroundColor': '#161C22',
+        'columnBackgroundColor': 'rgba(13, 17, 23, 0.8)',
+        'taskBackgroundPrimary': 'rgba(27, 33, 41)',
+        'taskBackgroundSecondary': 'rgba(40, 56, 71)',
       }
     },
   },

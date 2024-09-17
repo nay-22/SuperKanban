@@ -37,8 +37,7 @@ const Board = () => {
                     cursor-pointer
                     rounded-lg
                     bg-mainBackgroundColor
-                    border-2
-                    border-columnBackgroundColor
+                    border-none
                     p-4
                     mx-auto
                     mt-10

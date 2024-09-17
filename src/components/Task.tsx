@@ -52,14 +52,14 @@ const Task: React.FC<TaskProps> = React.memo(({ task }) => {
             ref={setNodeRef}
             style={{ ...style }}
             {...attributes}
-            className={`cursor-auto bg-mainBackgroundColor rounded-lg p-3 ${isDragging && 'opacity-50'}`}
+            className={`cursor-auto bg-taskBackgroundPrimary rounded-lg  ${isDragging && 'opacity-50'}`}
             onKeyDown={(e) => {
                 if (e.key === 'Enter') {
                     setEditContent(true);
                 }
             }}
         >
-            <div className='flex align-center justify-between'>
+            <div className='flex align-center justify-between p-3'>
                 <div className={`flex justify-items-center gap-2`}>
                     <div {...listeners} className={`touch-none ${isDragging ? 'cursor-grabbing' : 'cursor-move'}`}>
                         <DragIndicator />
@@ -72,7 +72,6 @@ const Task: React.FC<TaskProps> = React.memo(({ task }) => {
                 <div className='flex items-center justify-center gap-2 cursor-pointer'>
                     <button
                         className={`hover:bg-slate-700 rounded-full flex items-center justify-center text-red-400 px-1 py-1`}
-                        // onClick={() => deleteTask(task.id)}
                         onClick={() => deleteTask(task.id)}
                     >
                         <DeleteOutline />
@@ -129,9 +128,9 @@ const Task: React.FC<TaskProps> = React.memo(({ task }) => {
                     </div>
                 </div>
             </div>
-            <hr className='my-2 border-solid border-1 border-slate-700' />
+            {/* <hr className='my-2 border-solid border-1 border-slate-950' /> */}
             {editContent ? (
-                <div className='flex items-center justify-between gap-2'>
+                <div className='flex items-center justify-between gap-2 bg-taskBackgroundSecondary p-3 rounded-b-lg'>
                     <input
                         autoFocus
                         type="text"
@@ -161,6 +160,7 @@ const Task: React.FC<TaskProps> = React.memo(({ task }) => {
                         onClick={() => {
                             setEditContent(true);
                         }}
+                        className='bg-taskBackgroundSecondary p-3 rounded-b-lg'
                     >
                         {task.content}
                     </div>
