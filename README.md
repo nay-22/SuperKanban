@@ -1,6 +1,7 @@
 # Kanban Board
 
 ## To-Do:
+- Re-implement task sorting in column
 - Move from LocalStorage to SQLite
 - Ability to lock column order
 - Integrate light & dark mode
@@ -13,6 +14,16 @@
   (non-exhaustive)
   
 # Current Implementation
+
+## v3.0.0
+   ### Features
+  - Keyboard actions for Task/Column Editing
+  - Smoother Drag N' Drop for touch inputs
+  - Refined Drag N' Drop - Using overlay to avoid re-render on column change
+  - Revised Column/Task Editing
+    ![image](https://github.com/user-attachments/assets/3ca8e0f9-3113-4050-b4bb-19218ade5f78)
+
+
 
 ## v2.0.1
    ### Features
