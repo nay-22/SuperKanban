@@ -1,19 +1,21 @@
 import React, { isValidElement, useState } from 'react'
-import { Id, KBColumn } from '../types'
+import { KBColumn } from '../types'
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities'
 import { Button, Tooltip } from '@mui/material';
-import { Add, DeleteOutline } from '@mui/icons-material';
+import { Add, DeleteOutline, DragIndicator } from '@mui/icons-material';
+import { useTaskActions } from '../hooks/TaskActions';
+import { useColumnActions } from '../hooks/ColumnActions';
 
 interface ColumnProps {
     column: KBColumn;
-    deleteColumn: (id: Id) => void;
-    updateColumn: (id: Id, title: string) => void;
-    createTask: (columnId: Id) => void;
     children?: React.ReactNode;
 }
 
-const Column: React.FC<ColumnProps> = ({ column, deleteColumn, updateColumn, createTask, children }) => {
+const Column: React.FC<ColumnProps> = ({ column, children }) => {
+
+    const { updateColumn, deleteColumn } = useColumnActions();
+    const { createTask } = useTaskActions();
 
     let sortableContextArrayLen = 0;
     if (isValidElement(children)) {
@@ -51,7 +53,7 @@ const Column: React.FC<ColumnProps> = ({ column, deleteColumn, updateColumn, cre
             backdrop-filter
             backdrop-blur-sm
             w-[350px]
-            h-[80vh]
+            h-[75vh]
             rounded-md
             flex
             flex-col
@@ -64,20 +66,21 @@ const Column: React.FC<ColumnProps> = ({ column, deleteColumn, updateColumn, cre
             }}
         >
             <div
-                {...listeners}
                 className='
-                cursor-move
-            flex
-            items-center
-            justify-between
-            bg-mainBackgroundColor 
-            text-md h-[60px] 
-            rounded-md 
-            rounded-b-none 
-            p-4'
+                flex
+                items-center
+                justify-between
+                bg-mainBackgroundColor 
+                text-md h-[60px] 
+                rounded-md 
+                rounded-b-none 
+                p-4'
                 onClick={() => setEditMode(true)}
             >
                 <div className='flex gap-2'>
+                    <div {...listeners} className='cursor-move'>
+                        <DragIndicator />
+                    </div>
                     <div
                         className='
                     flex 
@@ -134,7 +137,7 @@ const Column: React.FC<ColumnProps> = ({ column, deleteColumn, updateColumn, cre
                         variant='outlined'
                         onClick={(e) => {
                             e.stopPropagation();
-                            createTask(column.id)
+                            createTask(column.id);
                         }}
                         className='text-indigo-400 rounded-sm px-2 py-1'>
                         <Add />

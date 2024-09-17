@@ -1,22 +1,23 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Id, KBTask } from '../types';
+import { KBTask } from '../types';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { Tooltip } from '@mui/material';
 import { DeleteOutline, DragIndicator } from '@mui/icons-material';
+import { useTaskActions } from '../hooks/TaskActions';
 
 interface TaskProps {
     task: KBTask;
-    updateTask: (id: Id, content: string, priority: number) => void;
-    deleteTask: (id: Id) => void;
 }
 
-const Task: React.FC<TaskProps> = React.memo(({ task, deleteTask, updateTask }) => {
+const Task: React.FC<TaskProps> = React.memo(({ task }) => {
     const [editContent, setEditContent] = useState(false);
     const [editPriority, setEditPriority] = useState(false);
     const [content, setContent] = useState(task.content);
     const dropdownRef = useRef<HTMLDivElement>(null);
     const priorityRef = useRef<HTMLDivElement>(null);
+
+    const { updateTask, deleteTask } = useTaskActions();
 
     const { isDragging, setNodeRef, attributes, listeners, transform, transition } = useSortable({
         id: task.id,
@@ -71,6 +72,7 @@ const Task: React.FC<TaskProps> = React.memo(({ task, deleteTask, updateTask }) 
                 <div className='flex items-center justify-center gap-2 cursor-pointer'>
                     <button
                         className={`hover:bg-slate-700 rounded-full flex items-center justify-center text-red-400 px-1 py-1`}
+                        // onClick={() => deleteTask(task.id)}
                         onClick={() => deleteTask(task.id)}
                     >
                         <DeleteOutline />
@@ -97,7 +99,7 @@ const Task: React.FC<TaskProps> = React.memo(({ task, deleteTask, updateTask }) 
                             >
                                 <div
                                     onClick={() => {
-                                        updateTask(task.id, content, 1);
+                                        updateTask(task.id, task.content, 1);
                                         setEditPriority(false);
                                     }}
                                     className="w-full cursor-pointer p-1 rounded-lg hover:bg-green-500 hover:text-black text-green-500"
@@ -106,7 +108,7 @@ const Task: React.FC<TaskProps> = React.memo(({ task, deleteTask, updateTask }) 
                                 </div>
                                 <div
                                     onClick={() => {
-                                        updateTask(task.id, content, 2);
+                                        updateTask(task.id, task.content, 2);
                                         setEditPriority(false);
                                     }}
                                     className="w-full cursor-pointer p-1 rounded-lg hover:bg-orange-400 hover:text-white text-orange-400"
@@ -115,7 +117,7 @@ const Task: React.FC<TaskProps> = React.memo(({ task, deleteTask, updateTask }) 
                                 </div>
                                 <div
                                     onClick={() => {
-                                        updateTask(task.id, content, 3);
+                                        updateTask(task.id, task.content, 3);
                                         setEditPriority(false);
                                     }}
                                     className="w-full cursor-pointer p-1 rounded-lg hover:bg-red-500 hover:text-white text-red-500"

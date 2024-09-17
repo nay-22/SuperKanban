@@ -1,3 +1,5 @@
+import { Dispatch, SetStateAction } from "react";
+
 export type Id = string | number;
 
 export type KBColumn = {
@@ -12,4 +14,13 @@ export type KBTask = {
     content: string;
     priority: number;
     createdAt: string[];
+}
+
+export type KBContext = {
+    columns: KBColumn[];
+    setColumns: Dispatch<SetStateAction<KBColumn[]>>;
+    tasks: KBTask[];
+    setTasks: Dispatch<SetStateAction<KBTask[]>>;
+    activeItem: KBColumn | KBTask | null;
+    setActiveItem: Dispatch<SetStateAction<KBColumn | KBTask | null>>;
 }
