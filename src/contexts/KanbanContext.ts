@@ -9,6 +9,8 @@ const KanbanContext = createContext<KBContext>({
   activeItem: null,
   setActiveItem: () => {},
   hasTouch: false,
+  newItemId: null, 
+  setNewItemId: () => {}
 });
 
 export default KanbanContext;
