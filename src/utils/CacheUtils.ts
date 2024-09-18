@@ -3,6 +3,5 @@ export const cacheItem = (key: string, value: any) => {
 }
 
 export const clearCache = () => {
-    localStorage.setItem('columns', JSON.stringify([]));
-    localStorage.setItem('tasks', JSON.stringify([]));
+    localStorage.setItem('projects', JSON.stringify({}));
 }
