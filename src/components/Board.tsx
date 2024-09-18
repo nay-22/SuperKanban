@@ -3,18 +3,23 @@ import { SortableContext } from '@dnd-kit/sortable';
 import { useContext, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 
+import { useDragHandles } from '../hooks/DragHandles';
 import KanbanContext from '../contexts/KanbanContext';
 import Column from './Column';
 import Task from './Task';
-import { useDragHandles } from '../hooks/DragHandles';
-
 
 const Board = () => {
 
     const { handleDragStart, handleDragOver, handleDragEnd } = useDragHandles();
-    const { columns, tasks, activeItem } = useContext(KanbanContext);
+    const { projects, activeItem, projectId, boardId } = useContext(KanbanContext);
 
-    const columnsId = useMemo(() => columns.map(col => col.id), [columns]);
+    const columnsId = useMemo(() => {
+        if (projects[projectId]?.boards?.[boardId]?.columns) {
+            return projects[projectId].boards[boardId].columns.map(col => col.id);
+        }
+        return [];
+    }, [projects, projectId, boardId]);
+
 
     const sensors = useSensors(useSensor(PointerSensor, {
         activationConstraint: { distance: 10 }
@@ -22,19 +27,19 @@ const Board = () => {
 
     return (
 
-        <div className="flex mt-10 items-start justify-center">
+        <div className="flex mt-5 items-start justify-center">
             <DndContext
                 sensors={sensors}
                 onDragStart={handleDragStart}
                 onDragEnd={handleDragEnd}
                 onDragMove={handleDragOver}
             >
-                <div className="m-auto flex gap-4 p-4 overflow-x-auto overflow-y-hidden scrollbar-thumb-red-400
+                <div className="m-auto flex gap-4 px-4 overflow-x-auto overflow-y-hidden scrollbar-thumb-indigo-400
                 scrollbar-track-transparent scrollbar-thin">
                     <div className='flex flex-grow gap-4 '>
                         <SortableContext items={columnsId}>
-                            {columns.map(col => {
-                                const sortedItems = tasks
+                            {projects[projectId]?.boards?.[boardId]?.columns.map(col => {
+                                const sortedItems = projects[projectId]?.boards?.[boardId]?.tasks
                                     .filter(task => task.columnId === col.id)
                                     .sort((a, b) => col.sortOrder === 'low' ?
                                         a.priority - b.priority :
@@ -59,8 +64,8 @@ const Board = () => {
                             "content" in activeItem ?
                                 <Task task={activeItem} /> :
                                 <Column column={activeItem}>
-                                    <SortableContext items={tasks.filter(task => task.columnId === activeItem.id)}>
-                                        {tasks.filter(task => task.columnId === activeItem.id).map(task => (
+                                    <SortableContext items={projects[projectId]?.boards?.[boardId]?.tasks.filter(task => task.columnId === activeItem.id)}>
+                                        {projects[projectId]?.boards?.[boardId]?.tasks.filter(task => task.columnId === activeItem.id).map(task => (
                                             <Task key={task.id} task={task} />
                                         ))}
                                     </SortableContext>

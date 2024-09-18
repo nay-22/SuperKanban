@@ -77,8 +77,8 @@ const Task: React.FC<TaskProps> = React.memo(({ task }) => {
                         <DragIndicator />
                     </div>
                     <div>
-                        <div className='text-sm text-slate-100'>{`${task.createdAt[0]}, ${task.createdAt[1]}`}</div>
-                        <div className='text-xs text-slate-400'>{task.createdAt[2]}</div>
+                        <div className='text-sm text-slate-100'>{`${task.createdAt.date}, ${task.createdAt.year}`}</div>
+                        <div className='text-xs text-slate-400'>{task.createdAt.time}</div>
                     </div>
                 </div>
                 <div className='flex items-center justify-center gap-2 cursor-pointer'>

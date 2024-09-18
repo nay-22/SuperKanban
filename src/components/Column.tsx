@@ -1,13 +1,14 @@
+import { Add, DeleteOutline, DragIndicator, SwapVert } from '@mui/icons-material';
 import React, { isValidElement, useContext, useEffect, useState } from 'react'
-import { KBColumn } from '../types'
+import { Badge, Button, Tooltip } from '@mui/material';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities'
-import { Badge, Button, Tooltip } from '@mui/material';
-import { Add, DeleteOutline, DragIndicator, SwapVert } from '@mui/icons-material';
-import { useTaskActions } from '../hooks/TaskActions';
-import { useColumnActions } from '../hooks/ColumnActions';
-import KanbanContext from '../contexts/KanbanContext';
+
 import ConfirmationModal from './modals/ConfirmationModal';
+import { useColumnActions } from '../hooks/ColumnActions';
+import { useTaskActions } from '../hooks/TaskActions';
+import KanbanContext from '../contexts/KanbanContext';
+import { KBColumn } from '../types'
 
 interface ColumnProps {
     column: KBColumn;
