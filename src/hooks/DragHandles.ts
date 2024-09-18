@@ -1,16 +1,17 @@
-import { useContext } from "react";
-import KanbanContext from "../contexts/KanbanContext";
-import { arrayMove } from "@dnd-kit/sortable";
 import { DragStartEvent, DragOverEvent, DragEndEvent } from "@dnd-kit/core";
-import { Id } from "../types";
+import { arrayMove } from "@dnd-kit/sortable";
+import { useContext } from "react";
+
+import KanbanContext from "../contexts/KanbanContext";
 import { cacheItem } from "../utils/CacheUtils";
+import { Id } from "../types";
 
 export const useDragHandles = () => {
 
-    const { setActiveItem, setTasks, setColumns } = useContext(KanbanContext);
+    const { setActiveItem, setProjects, projectId, boardId } = useContext(KanbanContext);
 
     const handleDragStart = (e: DragStartEvent) => {
-        const { current } = e.active.data;        
+        const { current } = e.active.data;
         if (!current) return;
         const { type } = current;
         if (type === 'column') {
@@ -39,23 +40,49 @@ export const useDragHandles = () => {
             const targetColumn = over.data.current?.task.columnId;
             currentColumn = active.data.current?.task.columnId;
             if (currentColumn === targetColumn) return;
-            setTasks(prev => {
-                const newState = prev.map(task =>
-                    task.id === activeId ? { ...task, columnId: targetColumn } : task
-                );
-                cacheItem('tasks', newState);
+            setProjects(prev => {
+                const newState = {
+                    ...prev,
+                    [projectId]: {
+                        ...prev[projectId],
+                        boards: {
+                            ...prev[projectId].boards,
+                            [boardId]: {
+                                ...prev[projectId].boards[boardId],
+                                tasks: prev[projectId].boards[boardId].tasks.map(task =>
+                                    task.id === activeId ? { ...task, columnId: targetColumn } : task
+                                )
+                            }
+                        }
+                    }
+                }
+                cacheItem('projects', newState);
                 return newState;
-            });
+            })
         }
 
         if (isActiveATask && isOverAColumn) {
             currentColumn = active.data.current?.task.columnId;
             if (currentColumn === overId) return;
-            setTasks(prev => {
-                const activeIndex = prev.findIndex(task => task.id === activeId);
-                prev[activeIndex].columnId = overId;
-                const newState = arrayMove(prev, activeIndex, activeIndex);
-                cacheItem('tasks', newState);
+            setProjects(prev => {
+                const tasks = [...prev[projectId].boards[boardId].tasks];
+                const activeIndex = tasks.findIndex(task => task.id === activeId);
+                tasks[activeIndex].columnId = overId;
+                const newTasks = arrayMove(tasks, activeIndex, activeIndex);
+                const newState = {
+                    ...prev,
+                    [projectId]: {
+                        ...prev[projectId],
+                        boards: {
+                            ...prev[projectId].boards,
+                            [boardId]: {
+                                ...prev[projectId].boards[boardId],
+                                tasks: newTasks
+                            }
+                        }
+                    }
+                }
+                cacheItem('projects', newState);
                 return newState;
             });
         }
@@ -75,24 +102,52 @@ export const useDragHandles = () => {
         const isOverATask = over.data.current?.type === 'task';
 
         if (isActiveATask && isOverATask) {
-            setTasks(prev => {
-                const activeIndex = prev.findIndex(task => task.id === activeId);
-                const overIndex = prev.findIndex(task => task.id === overId);
+            setProjects(prev => {
+                const tasks = [...prev[projectId].boards[boardId].tasks];
+                const activeIndex = tasks.findIndex(task => task.id === activeId);
+                const overIndex = tasks.findIndex(task => task.id === overId);
                 if (activeIndex === overIndex) return prev;
-                const newState = arrayMove(prev, activeIndex, overIndex);
-                cacheItem('tasks', newState);
+                const newTasks = arrayMove(tasks, activeIndex, overIndex);
+                const newState = {
+                    ...prev,
+                    [projectId]: {
+                        ...prev[projectId],
+                        boards: {
+                            ...prev[projectId].boards,
+                            [boardId]: {
+                                ...prev[projectId].boards[boardId],
+                                tasks: newTasks
+                            }
+                        }
+                    }
+                }
+                cacheItem('projects', newState);
                 return newState;
             });
         }
 
         if (!isActiveATask) {
-            setColumns(prev => {
-                const activeColumnIndex = prev.findIndex(col => col.id === activeId);
-                const overColumnIndex = prev.findIndex(col => col.id === overId);
-                const newState = arrayMove(prev, activeColumnIndex, overColumnIndex);
-                cacheItem('columns', newState);
+            setProjects(prev => {
+                const columns = [...prev[projectId].boards[boardId].columns];
+                const activeColumnIndex = columns.findIndex(col => col.id === activeId);
+                const overColumnIndex = columns.findIndex(col => col.id === overId);
+                const newColumns = arrayMove(columns, activeColumnIndex, overColumnIndex);
+                const newState = {
+                    ...prev,
+                    [projectId]: {
+                        ...prev[projectId],
+                        boards: {
+                            ...prev[projectId].boards,
+                            [boardId]: {
+                                ...prev[projectId].boards[boardId],
+                                columns: newColumns
+                            }
+                        }
+                    }
+                };
+                cacheItem('projects', newState);
                 return newState;
-            });
+            })
         }
     }
 

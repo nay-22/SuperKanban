@@ -1,6 +1,5 @@
 import { AppBar, Button, Drawer, InputAdornment, TextField, Toolbar, Typography, useMediaQuery, useTheme } from '@mui/material'
-import { Add, Menu, Search, ViewColumn } from '@mui/icons-material';
-import { useColumnActions } from '../hooks/ColumnActions';
+import { Menu, Search } from '@mui/icons-material';
 import { useState } from 'react';
 
 import Sidebar from './Sidebar';
@@ -8,14 +7,13 @@ import { clearCache } from '../utils/CacheUtils';
 
 const Navbar = () => {
     const [showDrawer, setShowDrawer] = useState(false);
-    const { createColumn } = useColumnActions();
 
     const theme = useTheme();
     const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
     return (
         <AppBar sx={{ bgcolor: 'transparent' }} position='sticky'>
-            <Toolbar disableGutters className='bg-mainBackgroundColor' sx={{justifyContent: 'space-between'}}>
+            <Toolbar disableGutters className='bg-mainBackgroundColor' sx={{ justifyContent: 'space-between' }}>
                 <Toolbar>
                     <Button onClick={() => setShowDrawer(true)}>
                         <Menu />
@@ -26,7 +24,7 @@ const Navbar = () => {
                 </Toolbar>
                 {!isSmallScreen && <TextField
                     size="small"
-                    placeholder="Search Projects, Boards..."
+                    placeholder="Search Teams, Projects, Boards & more..."
                     sx={{
                         width: '60%',
                         '& .MuiOutlinedInput-root': {
@@ -58,8 +56,7 @@ const Navbar = () => {
                     }}
                 />}
                 <Toolbar className='flex items-center justify-between gap-5'>
-                    {isSmallScreen ? <Button><Search /></Button> :<Button onClick={clearCache} variant='outlined' sx={{ textTransform: 'none', minWidth: '0px' }}>Clear</Button>}
-                    <Button onClick={createColumn} variant='outlined' sx={{ textTransform: 'none', minWidth: '0px', width: '60px' }}><ViewColumn /><Add /></Button>
+                    {isSmallScreen ? <Button><Search /></Button> : <Button onClick={clearCache} variant='outlined' sx={{ textTransform: 'none', minWidth: '0px' }}>Clear</Button>}
                 </Toolbar>
             </Toolbar>
             <Drawer
@@ -72,7 +69,7 @@ const Navbar = () => {
                 }}
             >
                 <div className='w-[225px]'>
-                    <Sidebar />
+                    <Sidebar callback={() => setShowDrawer(false)} />
                 </div>
             </Drawer>
         </AppBar>

@@ -5,42 +5,81 @@ import KanbanContext from "../contexts/KanbanContext";
 import { cacheItem } from "../utils/CacheUtils";
 
 export const useColumnActions = () => {
-    const { setNewItemId, setColumns } = useContext(KanbanContext);
+    const { setNewItemId, setProjects, projectId, boardId } = useContext(KanbanContext);
 
-    const createColumn = () => {
+    const createColumn = (projectId: Id, boardId: Id) => {
         const id = uuid();
         const column: KBColumn = {
             id,
             title: '',
             sortOrder: 'none',
         };
-        setColumns(prev => {
-            const newState = [...prev, column];
-            cacheItem('columns', newState);
+
+        setProjects(prev => {
+            const newState = {
+                ...prev,
+                [projectId]: {
+                    ...prev[projectId],
+                    boards: {
+                        ...prev[projectId].boards,
+                        [boardId]: {
+                            ...prev[projectId].boards[boardId],
+                            columns: [...prev[projectId].boards[boardId].columns, column]
+                        }
+                    }
+                }
+            };
+            cacheItem('projects', newState);
             return newState;
         });
+
         setNewItemId(id);
     };
 
     const deleteColumn = (id: Id) => {
-        setColumns(prev => {
-            const newState = prev.filter(col => col.id !== id);
-            cacheItem('columns', newState);
+        setProjects(prev => {
+            const newState = {
+                ...prev,
+                [projectId]: {
+                    ...prev[projectId],
+                    boards: {
+                        ...prev[projectId].boards,
+                        [boardId]: {
+                            ...prev[projectId].boards[boardId],
+                            columns: prev[projectId].boards[boardId].columns.filter(col => col.id !== id)
+                        }
+                    }
+                }
+            };
+            cacheItem('projects', newState);
             return newState;
         });
     };
 
     const updateColumn = (id: Id, title: string, sortOrder: string) => {
-        setColumns(prev => {
-            const newState = prev.map(col => {
-                if (col.id === id) {
-                    return { ...col, title, sortOrder };
+        setProjects(prev => {
+            const newState = {
+                ...prev,
+                [projectId]: {
+                    ...prev[projectId],
+                    boards: {
+                        ...prev[projectId].boards,
+                        [boardId]: {
+                            ...prev[projectId].boards[boardId],
+                            columns: prev[projectId].boards[boardId].columns.map(col => {
+                                if (col.id === id) {
+                                    return { ...col, title, sortOrder };
+                                }
+                                return col;
+                            })
+                        }
+                    }
                 }
-                return col;
-            });
-            cacheItem('columns', newState);
+            };
+            cacheItem('projects', newState);
             return newState;
         });
+        
     };
 
     return { createColumn, updateColumn, deleteColumn };

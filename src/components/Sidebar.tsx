@@ -1,16 +1,29 @@
 import { ViewQuilt, ViewColumn, Settings, PowerSettingsNew, History, StarOutlineOutlined, ClearAll, Home, PeopleAltOutlined } from '@mui/icons-material'
 import { Divider, List, ListItem, ListItemButton, ListItemIcon, ListItemText, useMediaQuery, useTheme } from '@mui/material'
 import { clearCache } from '../utils/CacheUtils';
+import { useNavigate } from 'react-router-dom';
 
-const Sidebar = () => {
+type SidebarProps = {
+    callback: () => void
+}
+
+const Sidebar: React.FC<SidebarProps> = ({ callback }) => {
 
     const theme = useTheme();
     const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
+    const navigate = useNavigate();
+
     return (
         <List disablePadding className='h-full'>
             <ListItem disablePadding className='text-slate-300 cursor-pointer hover:bg-slate-700'>
-                <ListItemButton sx={{ padding: '1em 2em' }}>
+                <ListItemButton
+                    sx={{ padding: '1em 2em' }}
+                    onClick={() => {
+                        navigate('/');
+                        callback();
+                    }}
+                >
                     <ListItemIcon>
                         <Home sx={{ color: 'white' }} className='mr-2' />
                     </ListItemIcon>
@@ -19,7 +32,13 @@ const Sidebar = () => {
             </ListItem>
             <Divider sx={{ bgcolor: 'grey.800', margin: '0 auto' }} />
             <ListItem disablePadding className='text-slate-300 cursor-pointer hover:bg-slate-700'>
-                <ListItemButton sx={{ padding: '1em 2em' }}>
+                <ListItemButton
+                    sx={{ padding: '1em 2em' }}
+                    onClick={() => {
+                        navigate('/projects');
+                        callback();
+                    }}
+                >
                     <ListItemIcon>
                         <ViewQuilt sx={{ color: 'white' }} className='mr-2' />
                     </ListItemIcon>
@@ -27,7 +46,13 @@ const Sidebar = () => {
                 </ListItemButton>
             </ListItem>
             <ListItem disablePadding className='text-slate-300 cursor-pointer hover:bg-slate-700'>
-                <ListItemButton sx={{ padding: '1em 2em' }}>
+                <ListItemButton
+                    sx={{ padding: '1em 2em' }}
+                    onClick={() => {
+                        navigate('/board');
+                        callback();
+                    }}
+                >
                     <ListItemIcon>
                         <ViewColumn sx={{ color: 'white' }} className='mr-2' />
                     </ListItemIcon>
