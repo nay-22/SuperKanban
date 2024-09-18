@@ -1,29 +1,34 @@
+import { AppBar, Button, Drawer, InputAdornment, TextField, Toolbar, Typography, useMediaQuery, useTheme } from '@mui/material'
 import { Add, Menu, Search, ViewColumn } from '@mui/icons-material';
-import { AppBar, Button, InputAdornment, TextField, Toolbar, Typography } from '@mui/material'
 import { useColumnActions } from '../hooks/ColumnActions';
+import { useState } from 'react';
+
+import Sidebar from './Sidebar';
+import { clearCache } from '../utils/CacheUtils';
 
 const Navbar = () => {
+    const [showDrawer, setShowDrawer] = useState(false);
     const { createColumn } = useColumnActions();
 
-    const clearKanban = () => {
-        localStorage.setItem('columns', JSON.stringify([]));
-        localStorage.setItem('tasks', JSON.stringify([]));
-    }
+    const theme = useTheme();
+    const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
     return (
         <AppBar sx={{ bgcolor: 'transparent' }} position='sticky'>
-            <Toolbar className='bg-mainBackgroundColor' sx={{ gap: '1em', justifyContent: 'space-between' }}>
-                <Button>
-                    <Menu />
-                </Button>
-                <Typography variant='h5'>
-                    SuperKanban
-                </Typography>
-                <TextField
+            <Toolbar disableGutters className='bg-mainBackgroundColor' sx={{justifyContent: 'space-between'}}>
+                <Toolbar>
+                    <Button onClick={() => setShowDrawer(true)}>
+                        <Menu />
+                    </Button>
+                    <Typography variant='h5'>
+                        SuperKanban
+                    </Typography>
+                </Toolbar>
+                {!isSmallScreen && <TextField
                     size="small"
                     placeholder="Search Projects, Boards..."
                     sx={{
-                        width: '80%',
+                        width: '60%',
                         '& .MuiOutlinedInput-root': {
                             '& fieldset': {
                                 borderColor: 'rgba(255, 255, 255, 0.3)',
@@ -51,14 +56,25 @@ const Navbar = () => {
                             )
                         }
                     }}
-                />
-
-
-                <div className='flex items-center justify-between gap-5'>
-                    <Button onClick={clearKanban} variant='outlined' sx={{ textTransform: 'none', minWidth: '0px' }}>Clear</Button>
-                    <Button onClick={createColumn} variant='outlined' sx={{ textTransform: 'none', minWidth: '0px' }}><ViewColumn /><Add /></Button>
-                </div>
+                />}
+                <Toolbar className='flex items-center justify-between gap-5'>
+                    {isSmallScreen ? <Button><Search /></Button> :<Button onClick={clearCache} variant='outlined' sx={{ textTransform: 'none', minWidth: '0px' }}>Clear</Button>}
+                    <Button onClick={createColumn} variant='outlined' sx={{ textTransform: 'none', minWidth: '0px', width: '60px' }}><ViewColumn /><Add /></Button>
+                </Toolbar>
             </Toolbar>
+            <Drawer
+                open={showDrawer}
+                onClose={() => setShowDrawer(false)}
+                sx={{
+                    '& .MuiPaper-root': {
+                        backgroundColor: 'rgba(27, 33, 41)',
+                    },
+                }}
+            >
+                <div className='w-[225px]'>
+                    <Sidebar />
+                </div>
+            </Drawer>
         </AppBar>
     )
 }
