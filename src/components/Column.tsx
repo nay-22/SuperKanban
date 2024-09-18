@@ -1,4 +1,4 @@
-import React, { isValidElement, useContext, useState } from 'react'
+import React, { isValidElement, useContext, useEffect, useState } from 'react'
 import { KBColumn } from '../types'
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities'
@@ -16,22 +16,27 @@ interface ColumnProps {
 
 const Column: React.FC<ColumnProps> = ({ column, children }) => {
 
+    const { hasTouch, newItemId, setNewItemId } = useContext(KanbanContext);
+    const { updateColumn, deleteColumn } = useColumnActions();
+    const { createTask } = useTaskActions();
+
     const [showDeleteModal, setShowDeleteModal] = useState(false);
 
-    const { updateColumn, deleteColumn } = useColumnActions();
-    const { hasTouch } = useContext(KanbanContext);
-    const { createTask } = useTaskActions();
+    const [editMode, setEditMode] = useState(false);
+    const [isPointerIn, setIsPointerIn] = useState(false);
+    const [title, setTitle] = useState(column.title);
+
+    useEffect(() => {
+        if (column.id === newItemId) {
+            setEditMode(true);
+            setNewItemId(null);
+        }
+    }, []);
 
     let sortableContextArrayLen = 0;
     if (isValidElement(children)) {
         sortableContextArrayLen = children.props.items.length
     }
-
-
-
-    const [editMode, setEditMode] = useState(false);
-    const [title, setTitle] = useState(column.title);
-    const [isPointerIn, setIsPointerIn] = useState(false);
 
     const { setNodeRef, isDragging, attributes, listeners, transform, transition } = useSortable({
         id: column.id,
@@ -121,7 +126,11 @@ const Column: React.FC<ColumnProps> = ({ column, children }) => {
                             outline-none w-[90%]
                             focus:outline-indigo-400 rounded-sm'
                         />
-                        : <Tooltip title='Click To Edit' placement='top' arrow enterDelay={1000} leaveDelay={500}><p className='flex items-center justify-center'>{column.title}</p></Tooltip>
+                        : <Tooltip title='Click To Edit' placement='top' arrow enterDelay={1000} leaveDelay={500}>
+                            <p className='flex items-center justify-center'>
+                                {column.title ? column.title : <span className='text-slate-500'>Edit Column</span>}
+                            </p>
+                        </Tooltip>
                     }
                 </div>
                 <div

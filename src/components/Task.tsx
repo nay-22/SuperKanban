@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { KBTask } from '../types';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
@@ -6,12 +6,16 @@ import { Tooltip } from '@mui/material';
 import { DeleteOutline, DragIndicator } from '@mui/icons-material';
 import { useTaskActions } from '../hooks/TaskActions';
 import ConfirmationModal from './modals/ConfirmationModal';
+import KanbanContext from '../contexts/KanbanContext';
 
 interface TaskProps {
     task: KBTask;
 }
 
 const Task: React.FC<TaskProps> = React.memo(({ task }) => {
+    const { updateTask, deleteTask } = useTaskActions();
+    const { newItemId, setNewItemId } = useContext(KanbanContext);
+    
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [editPriority, setEditPriority] = useState(false);
     const [editContent, setEditContent] = useState(false);
@@ -19,7 +23,6 @@ const Task: React.FC<TaskProps> = React.memo(({ task }) => {
     const dropdownRef = useRef<HTMLDivElement>(null);
     const priorityRef = useRef<HTMLDivElement>(null);
 
-    const { updateTask, deleteTask } = useTaskActions();
 
     const { isDragging, setNodeRef, attributes, listeners, transform, transition } = useSortable({
         id: task.id,
@@ -47,6 +50,13 @@ const Task: React.FC<TaskProps> = React.memo(({ task }) => {
         return () => {
             document.removeEventListener('pointerdown', handleClickOutside);
         };
+    }, []);
+
+    useEffect(() => {
+        if (newItemId === task.id) {
+            setEditContent(true);
+            setNewItemId(null);
+        }
     }, []);
 
     return (
@@ -134,8 +144,8 @@ const Task: React.FC<TaskProps> = React.memo(({ task }) => {
                 <div className='flex items-center justify-between gap-2 bg-taskBackgroundSecondary p-3 rounded-b-lg'>
                     <input
                         autoFocus
-                        type="text"
-                        placeholder='Enter column name'
+                        type='text'
+                        placeholder='Enter task content'
                         value={content}
                         onChange={(e) => setContent(e.target.value)}
                         onBlur={() => {
@@ -156,18 +166,18 @@ const Task: React.FC<TaskProps> = React.memo(({ task }) => {
                     />
                 </div>
             ) : (
-                <Tooltip className='cursor-pointer' title='Click To Edit' placement='bottom-start' sx={{ left: 0 }} enterDelay={2000} leaveDelay={0}>
+                <Tooltip className='cursor-pointer' title='Click To Edit' placement='bottom-start' arrow enterDelay={2000} leaveDelay={0}>
                     <div
                         onClick={() => {
                             setEditContent(true);
                         }}
-                        className='bg-taskBackgroundSecondary p-3 rounded-b-lg'
+                        className='bg-taskBackgroundSecondary p-3 rounded-b-lg overflow-y-auto scrollbar-thin'
                     >
-                        {task.content}
+                        {task.content ? task.content : <p className='text-slate-500'>Empty, click to enter task content</p>}
                     </div>
                 </Tooltip>
             )}
-            <ConfirmationModal  onConfirm={() => deleteTask(task.id)} open={showDeleteModal} onClose={() => setShowDeleteModal(false)} />
+            <ConfirmationModal onConfirm={() => deleteTask(task.id)} open={showDeleteModal} onClose={() => setShowDeleteModal(false)} />
         </div>
     );
 })

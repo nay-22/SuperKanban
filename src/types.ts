@@ -24,4 +24,6 @@ export type KBContext = {
     activeItem: KBColumn | KBTask | null;
     setActiveItem: Dispatch<SetStateAction<KBColumn | KBTask | null>>;
     hasTouch: boolean;
+    newItemId: Id | null;
+    setNewItemId: Dispatch<SetStateAction<Id | null>>;
 }
