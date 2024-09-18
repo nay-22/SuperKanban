@@ -5,12 +5,13 @@ import KanbanContext from "../contexts/KanbanContext";
 import { cacheItem } from "../utils/CacheUtils";
 
 export const useColumnActions = () => {
-    const { setColumns } = useContext(KanbanContext);
+    const { setNewItemId, setColumns } = useContext(KanbanContext);
 
     const createColumn = () => {
+        const id = uuid();
         const column: KBColumn = {
-            id: uuid(),
-            title: 'Column',
+            id,
+            title: '',
             sortOrder: 'none',
         };
         setColumns(prev => {
@@ -18,6 +19,7 @@ export const useColumnActions = () => {
             cacheItem('columns', newState);
             return newState;
         });
+        setNewItemId(id);
     };
 
     const deleteColumn = (id: Id) => {

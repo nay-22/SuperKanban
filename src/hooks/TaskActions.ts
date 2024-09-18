@@ -7,17 +7,19 @@ import { cacheItem } from "../utils/CacheUtils";
 
 export const useTaskActions = () => {
 
-    const { setTasks } = useContext(KanbanContext);
+    const { setTasks, setNewItemId } = useContext(KanbanContext);
 
     const createTask = (columnId: Id) => {
         const date = new Date().toLocaleString('en-US', { day: '2-digit', month: 'short', year: 'numeric', hour: 'numeric', minute: 'numeric' });
         setTasks(prev => {
+            const id = uuid();
+            setNewItemId(id);
             const task: KBTask = {
-                id: uuid(),
+                id,
                 columnId,
                 createdAt: date.split(','),
                 priority: 1,
-                content: 'Task ' + (prev.length + 1)
+                content: ''
             }
             const newState = [task, ...prev];
             cacheItem('tasks', newState);
