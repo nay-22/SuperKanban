@@ -1,16 +1,21 @@
 import { createContext } from "react";
+
 import { KBContext } from "../types";
 
 const KanbanContext = createContext<KBContext>({
-  columns: [],
-  setColumns: () => {},
-  tasks: [],
-  setTasks: () => {},
+  currentUser: null,
+  setCurrentUser: () => { },
   activeItem: null,
-  setActiveItem: () => {},
+  setActiveItem: () => { },
   hasTouch: false,
-  newItemId: null, 
-  setNewItemId: () => {}
+  newItemId: null,
+  setNewItemId: () => { },
+  projects: {},
+  setProjects: () => { },
+  projectId: '',
+  setProjectId: () => { },
+  boardId: '',
+  setBoardId: () => { }
 });
 
 export default KanbanContext;
