@@ -5,6 +5,7 @@ import { useContext } from "react";
 import KanbanContext from "../contexts/KanbanContext";
 import { cacheItem } from "../utils/CacheUtils";
 import { Id } from "../types";
+import { debounce } from "@mui/material";
 
 export const useDragHandles = () => {
 
@@ -21,7 +22,7 @@ export const useDragHandles = () => {
         }
     }
 
-    const handleDragOver = (e: DragOverEvent) => {
+    const handleDragOver = debounce((e: DragOverEvent) => {
         const { active, over } = e;
         if (!over) return;
 
@@ -86,7 +87,7 @@ export const useDragHandles = () => {
                 return newState;
             });
         }
-    }
+    }, 75);
 
     const handleDragEnd = (e: DragEndEvent) => {
         setActiveItem(null);
