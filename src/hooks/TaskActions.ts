@@ -8,16 +8,19 @@ import { Id, KBTask } from "../types";
 
 export const useTaskActions = () => {
 
-    const { setNewItemId, setProjects, projectId, boardId } = useContext(KanbanContext);
+    const { currentUser, setNewItemId, setProjects, projectId, boardId } = useContext(KanbanContext);
 
     const createTask = (columnId: Id) => {
+        if (currentUser === null) return;
         const id = uuid();
         const task: KBTask = {
             id,
             columnId,
             createdAt: timestamp(),
             priority: 1,
-            content: ''
+            content: '',
+            createdBy: currentUser,
+            assignedTo: []
         }
         setProjects(prev => {
             setNewItemId(id);

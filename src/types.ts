@@ -21,6 +21,8 @@ export type KBTask = {
     content: string;
     priority: number;
     createdAt: Timestamp;
+    createdBy: KBMember;
+    assignedTo: KBMember[];
 }
 
 export type KBProject = {
