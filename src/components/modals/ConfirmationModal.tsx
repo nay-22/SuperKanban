@@ -27,7 +27,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({ message = 'Do you
                     minWidth: '350px',
                 }}
             >
-                <Typography variant='h5' fontWeight={'bold'}>{message}</Typography>
+                <Typography variant='h6' fontWeight={'bold'}>{message}</Typography>
                 <Box
                     sx={{
                         mt: '2em',
@@ -42,9 +42,9 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({ message = 'Do you
                         sx={{
                             backgroundColor: 'royalblue',
                             textTransform: 'none',
-                            height: '55px',
+                            height: '40px',
                             width: '100%',
-                            fontSize: '1em',
+                            fontSize: '.9em',
                         }}
                         variant='contained'
                         onClick={onClose}
@@ -55,12 +55,15 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({ message = 'Do you
                         sx={{
                             textTransform: 'none',
                             bgcolor: 'maroon',
-                            height: '55px',
+                            height: '40px',
                             width: '100%',
-                            fontSize: '1em',
+                            fontSize: '.9em',
                         }}
                         variant='contained'
-                        onClick={onConfirm}
+                        onClick={() => {
+                            onConfirm();
+                            onClose();
+                        }}
                     >
                         Confirm
                     </Button>

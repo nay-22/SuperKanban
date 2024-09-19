@@ -1,19 +1,42 @@
 import { Add, Dashboard, DeleteOutline, KeyboardArrowDown, Launch, PeopleAlt, ViewWeek } from '@mui/icons-material'
 import { Accordion, AccordionActions, AccordionDetails, AccordionSummary, Button, Modal, Tooltip, Typography } from '@mui/material'
-import { KBProject } from '../types';
+import { KBMember, KBProject } from '../types';
 import React, { useState } from 'react';
 import BoardForm from './forms/BoardForm';
 import { Link } from 'react-router-dom';
 import MemberForm from './forms/MemberForm';
 import { useProjectActions } from '../hooks/ProjectActions';
+import ConfirmationModal from './modals/ConfirmationModal';
 
 type ProjectProps = {
     project: KBProject;
 }
 
+const MemberItem: React.FC<{ member: KBMember, callback: () => void }> = ({ member, callback }) => {
+    const [showConfirmation, setShowConfirmation] = useState(false);
+    return <>
+        <div className='flex items-center justify-between p-2 w-full hover:bg-slate-800 rounded-lg'>
+            <div className='flex items-center justify-center gap-2'>
+                <img className='w-[30px] h-[30px] rounded-full' src={member.avatar} alt={member.name} />
+                <Typography>
+                    {member.name}
+                </Typography>
+            </div>
+            <div className='flex items-center justify-center gap-2'>
+                <Button onClick={() => setShowConfirmation(true)}>
+                    <DeleteOutline sx={{ color: 'maroon' }} />
+                </Button>
+                <Launch />
+            </div>
+        </div>
+        <ConfirmationModal open={showConfirmation} onClose={() => setShowConfirmation(false)} onConfirm={callback} />
+    </>
+}
+
 const Project: React.FC<ProjectProps> = ({ project }) => {
     const [showBoardForm, setShowBoardForm] = useState(false);
     const [showMemberForm, setShowMemberForm] = useState(false);
+
     const { removeMember } = useProjectActions();
 
     return <>
@@ -29,7 +52,7 @@ const Project: React.FC<ProjectProps> = ({ project }) => {
             </div>
             <hr className='my-2 border-1 border-slate-600' />
             <div className='flex flex-col gap-4'>
-                <Accordion sx={{ bgcolor: 'rgba(40, 56, 71)', color: 'white' }} >
+                <Accordion disableGutters sx={{ bgcolor: 'rgba(40, 56, 71)', color: 'white' }} >
                     <AccordionSummary expandIcon={<KeyboardArrowDown sx={{ color: 'white' }} />} >
                         <div className='flex items-center justify-between w-full'>
                             <div className='flex items-center justify-center gap-2'>
@@ -43,7 +66,10 @@ const Project: React.FC<ProjectProps> = ({ project }) => {
                             </div>
                         </div>
                     </AccordionSummary>
-                    <AccordionDetails sx={{ bgcolor: 'rgba(27, 33, 41)' }}>
+                    <AccordionDetails
+                        className='scrollbar-thin scrollbar-thumb-indigo-400 scrollbar-track-transparent'
+                        sx={{ bgcolor: 'rgba(27, 33, 41)', maxHeight: '150px', overflowY: 'auto', overflowX: 'hidden' }}
+                    >
                         {Object.entries(project.boards).length !== 0 ? Object.entries(project.boards).map(([_, board]) => (
                             <Link to={`/project/${project.id}/board/${board.id}`} key={board.id} className='flex items-center justify-between p-2 w-full hover:bg-slate-800 rounded-lg'>
                                 <div className='flex items-center justify-center gap-2'>
@@ -60,7 +86,7 @@ const Project: React.FC<ProjectProps> = ({ project }) => {
                         <Button variant='outlined' startIcon={<Add />} sx={{ textTransform: 'none' }} onClick={() => setShowBoardForm(true)}>Add Board</Button>
                     </AccordionActions>
                 </Accordion>
-                <Accordion sx={{ bgcolor: 'rgba(40, 56, 71)', color: 'white' }} >
+                <Accordion disableGutters sx={{ bgcolor: 'rgba(40, 56, 71)', color: 'white' }} >
                     <AccordionSummary expandIcon={<KeyboardArrowDown sx={{ color: 'white' }} />} >
                         <div className='flex items-center justify-between w-full'>
                             <div className='flex items-center justify-center gap-2'>
@@ -74,22 +100,12 @@ const Project: React.FC<ProjectProps> = ({ project }) => {
                             </div>
                         </div>
                     </AccordionSummary>
-                    <AccordionDetails sx={{ bgcolor: 'rgba(27, 33, 41)' }}>
+                    <AccordionDetails
+                        className='scrollbar-thin scrollbar-thumb-indigo-400 scrollbar-track-transparent'
+                        sx={{ bgcolor: 'rgba(27, 33, 41)', maxHeight: '150px', overflowY: 'auto', overflowX: 'hidden' }}
+                    >
                         {Object.entries(project.members).length !== 0 ? Object.entries(project.members).map(([_, member]) => (
-                            <div key={member.id} className='flex items-center justify-between p-2 w-full hover:bg-slate-800 rounded-lg'>
-                                <div className='flex items-center justify-center gap-2'>
-                                    <img className='w-[30px] h-[30px] rounded-full' src={member.avatar} alt={member.name} />
-                                    <Typography>
-                                        {member.name}
-                                    </Typography>
-                                </div>
-                                <div className='flex items-center justify-center gap-2'>
-                                    <Button onClick={() => removeMember(project.id, member.id)}>
-                                        <DeleteOutline sx={{ color: 'maroon' }} />
-                                    </Button>
-                                    <Launch />
-                                </div>
-                            </div>
+                            <MemberItem key={member.id} member={member} callback={() => removeMember(project.id, member.id)} />
                         )) : <div className='text-center text-slate-400'>No Members</div>}
                     </AccordionDetails>
                     <AccordionActions>
