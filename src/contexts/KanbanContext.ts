@@ -16,7 +16,7 @@ const KanbanContext = createContext<KBContext>({
   setProjectId: () => { },
   boardId: '',
   setBoardId: () => { },
-  toast: { open: false, message: '', autoHide: 6000, anchor: {vertical: 'bottom', horizontal: 'center'} },
+  toast: { open: false, message: ''},
   setToast: () => {}
 });
 

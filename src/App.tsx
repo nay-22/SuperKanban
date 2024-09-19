@@ -59,11 +59,11 @@ function App() {
         </Routes>
         <Snackbar
           open={toast.open}
-          autoHideDuration={6000}
+          autoHideDuration={toast.autoHide || 6000}
           message={toast.message}
-          onClose={() => setToast({open: false, message: '', anchor: {vertical: 'bottom', horizontal: 'center'}})}
+          onClose={() => setToast({open: false, message: '', })}
           anchorOrigin={toast.anchor}
-          action={toast.action || <Button color="inherit" size="small" onClick={() => setToast({open: false, message: '', anchor: {vertical: 'bottom', horizontal: 'center'}})}>Close</Button>}
+          action={toast.action || <Button color="inherit" size="small" onClick={() => setToast({open: false, message: '', })}>Close</Button>}
         />
       </KanbanContext.Provider>
     </BrowserRouter>

@@ -56,14 +56,12 @@ export const useProjectActions = () => {
     }
 
     const addMember = (id: Id, memberId: Id) => {
-
         const users: KBMember[] = JSON.parse(localStorage.getItem('users')!);
         const user = users.find(u => u.id === memberId);
-
-        if (!user) return;
+        if (!user) throw Error('User not found');
         if (!user.projects) user.projects = [];
+        if (user.projects.includes(id)) throw Error('User already assigned to project');
         user.projects = [...user.projects, id];
-
         setProjects(prev => {
             const newState = {
                 ...prev,
@@ -78,9 +76,22 @@ export const useProjectActions = () => {
             cacheItem('projects', newState);
             return newState;
         });
-
         localStorage.setItem('users', JSON.stringify(users));
     }
 
-    return { createProject, addBoard, addMember };
+    const removeMember = (id: Id, memberId: Id) => {
+        setProjects(prev => {
+            const newState = { ...prev };
+            delete newState[id].members[memberId];
+            cacheItem('projects', newState);
+            return newState;
+        });
+        const users: KBMember[] = JSON.parse(localStorage.getItem('users')!);
+        if (!users) return;
+        const user: KBMember | undefined = users.find(u => u.id === memberId);
+        if (!user || !user.projects) return;
+        user.projects = user.projects.filter(pId => pId !== id);
+    }
+
+    return { createProject, addBoard, addMember, removeMember };
 }

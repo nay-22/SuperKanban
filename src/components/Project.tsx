@@ -1,10 +1,11 @@
-import { Add, Dashboard, KeyboardArrowDown, Launch, PeopleAlt, ViewWeek } from '@mui/icons-material'
+import { Add, Dashboard, DeleteOutline, KeyboardArrowDown, Launch, PeopleAlt, ViewWeek } from '@mui/icons-material'
 import { Accordion, AccordionActions, AccordionDetails, AccordionSummary, Button, Modal, Tooltip, Typography } from '@mui/material'
 import { KBProject } from '../types';
 import React, { useState } from 'react';
 import BoardForm from './forms/BoardForm';
 import { Link } from 'react-router-dom';
 import MemberForm from './forms/MemberForm';
+import { useProjectActions } from '../hooks/ProjectActions';
 
 type ProjectProps = {
     project: KBProject;
@@ -13,6 +14,7 @@ type ProjectProps = {
 const Project: React.FC<ProjectProps> = ({ project }) => {
     const [showBoardForm, setShowBoardForm] = useState(false);
     const [showMemberForm, setShowMemberForm] = useState(false);
+    const { removeMember } = useProjectActions();
 
     return <>
         <div className='border-2 border-slate-800 rounded-lg p-4 h-fit'>
@@ -74,15 +76,20 @@ const Project: React.FC<ProjectProps> = ({ project }) => {
                     </AccordionSummary>
                     <AccordionDetails sx={{ bgcolor: 'rgba(27, 33, 41)' }}>
                         {Object.entries(project.members).length !== 0 ? Object.entries(project.members).map(([_, member]) => (
-                            <button key={member.id} className='flex items-center justify-between p-2 w-full hover:bg-slate-800 rounded-lg'>
+                            <div key={member.id} className='flex items-center justify-between p-2 w-full hover:bg-slate-800 rounded-lg'>
                                 <div className='flex items-center justify-center gap-2'>
                                     <img className='w-[30px] h-[30px] rounded-full' src={member.avatar} alt={member.name} />
                                     <Typography>
                                         {member.name}
                                     </Typography>
                                 </div>
-                                <Launch />
-                            </button>
+                                <div className='flex items-center justify-center gap-2'>
+                                    <Button onClick={() => removeMember(project.id, member.id)}>
+                                        <DeleteOutline sx={{ color: 'maroon' }} />
+                                    </Button>
+                                    <Launch />
+                                </div>
+                            </div>
                         )) : <div className='text-center text-slate-400'>No Members</div>}
                     </AccordionDetails>
                     <AccordionActions>

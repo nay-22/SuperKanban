@@ -1,5 +1,5 @@
 import { Button, InputAdornment, TextField, Typography } from '@mui/material';
-import React, { useEffect, useRef, useState } from 'react'
+import React, { ErrorInfo, useEffect, useRef, useState } from 'react'
 import { useProjectActions } from '../../hooks/ProjectActions';
 import { AlternateEmail } from '@mui/icons-material';
 import { FormProps, KBProject } from '../../types';
@@ -18,8 +18,12 @@ const MemberForm: React.FC<MemberFormProps> = ({ project, callback }) => {
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        addMember(project.id, email);
-        enqueue('Member added successfully', 2000, {vertical: 'bottom', horizontal: 'center'});
+        try {
+            addMember(project.id, email);
+            enqueue('Member added successfully', 2000);
+        } catch (error: any) {
+            enqueue(error.message, 2000);
+        }
         callback();
     }
 
