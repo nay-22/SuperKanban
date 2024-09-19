@@ -25,8 +25,11 @@ const Board = () => {
         activationConstraint: { distance: 10 }
     }), useSensor(KeyboardSensor));
 
-    return (
+    return <>
 
+        {projects[projectId]?.boards[boardId]?.columns.length === 0 && <div className="h-[60vh] p-5 mx-10 flex items-center justify-center border-2 border-slate-400 border-dashed rounded-lg">
+            Board Empty
+        </div>}
         <div className="flex mt-5 items-start justify-center">
             <DndContext
                 sensors={sensors}
@@ -77,7 +80,7 @@ const Board = () => {
             </DndContext>
         </div>
 
-    );
+    </>;
 };
 
 export default Board;
