@@ -3,7 +3,8 @@ import { Accordion, AccordionActions, AccordionDetails, AccordionSummary, Button
 import { KBProject } from '../types';
 import React, { useState } from 'react';
 import BoardForm from './forms/BoardForm';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import MemberForm from './forms/MemberForm';
 
 type ProjectProps = {
     project: KBProject;
@@ -11,7 +12,7 @@ type ProjectProps = {
 
 const Project: React.FC<ProjectProps> = ({ project }) => {
     const [showBoardForm, setShowBoardForm] = useState(false);
-    const navigate = useNavigate();
+    const [showMemberForm, setShowMemberForm] = useState(false);
 
     return <>
         <div className='border-2 border-slate-800 rounded-lg p-4 h-fit'>
@@ -42,7 +43,7 @@ const Project: React.FC<ProjectProps> = ({ project }) => {
                     </AccordionSummary>
                     <AccordionDetails sx={{ bgcolor: 'rgba(27, 33, 41)' }}>
                         {Object.entries(project.boards).length !== 0 ? Object.entries(project.boards).map(([_, board]) => (
-                            <button onClick={() => navigate(`/project/${project.id}/board/${board.id}`)} key={board.id} className='flex items-center justify-between p-2 w-full hover:bg-slate-800 rounded-lg'>
+                            <Link to={`/project/${project.id}/board/${board.id}`} key={board.id} className='flex items-center justify-between p-2 w-full hover:bg-slate-800 rounded-lg'>
                                 <div className='flex items-center justify-center gap-2'>
                                     <ViewWeek />
                                     <Typography>
@@ -50,7 +51,7 @@ const Project: React.FC<ProjectProps> = ({ project }) => {
                                     </Typography>
                                 </div>
                                 <Launch />
-                            </button>
+                            </Link>
                         )) : <div className='text-center text-slate-400'>No Boards</div>}
                     </AccordionDetails>
                     <AccordionActions>
@@ -85,7 +86,7 @@ const Project: React.FC<ProjectProps> = ({ project }) => {
                         )) : <div className='text-center text-slate-400'>No Members</div>}
                     </AccordionDetails>
                     <AccordionActions>
-                        <Button variant='outlined' startIcon={<Add />} sx={{ textTransform: 'none' }}>Add Member</Button>
+                        <Button variant='outlined' startIcon={<Add />} sx={{ textTransform: 'none' }} onClick={() => setShowMemberForm(true)}>Add Member</Button>
                     </AccordionActions>
                 </Accordion>
 
@@ -102,6 +103,19 @@ const Project: React.FC<ProjectProps> = ({ project }) => {
                 className='bg-taskBackgroundPrimary p-10 rounded-lg'
             >
                 <BoardForm project={project} callback={() => setShowBoardForm(false)} />
+            </div>
+        </Modal>
+        <Modal open={showMemberForm} onClose={() => setShowMemberForm(false)}>
+            <div
+                style={{
+                    position: 'absolute',
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)',
+                }}
+                className='bg-taskBackgroundPrimary p-10 rounded-lg'
+            >
+                <MemberForm project={project} callback={() => setShowMemberForm(false)} />
             </div>
         </Modal>
     </>
