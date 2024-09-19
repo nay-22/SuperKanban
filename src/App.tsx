@@ -1,7 +1,7 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 
-import { Id, KBColumn, KBMember, KBProject, KBTask } from './types';
+import { Id, KBColumn, KBMember, KBProject, KBTask, Toast } from './types';
 import KanbanContext from './contexts/KanbanContext';
 import ProjectsPage from './pages/ProjectsPage';
 import BoardPage from './pages/BoardPage';
@@ -9,6 +9,7 @@ import Navbar from './components/Navbar';
 import HomePage from './pages/HomePage';
 
 import './App.css'
+import { Button, Snackbar } from '@mui/material';
 
 function App() {
   const [currentUser, setCurrentUser] = useState<KBMember | null>(null);
@@ -17,7 +18,8 @@ function App() {
   const [newItemId, setNewItemId] = useState<Id | null>(null);
   const [projectId, setProjectId] = useState<Id>('');
   const [boardId, setBoardId] = useState<Id>('');
-  const [hasTouch] = useState(() => 'ontouchstart' in window || navigator.maxTouchPoints > 0)
+  const [hasTouch] = useState(() => 'ontouchstart' in window || navigator.maxTouchPoints > 0);
+  const [toast, setToast] = useState<Toast>({open: false, message: ''});
 
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem('currentUser')!);
@@ -44,7 +46,9 @@ function App() {
         projectId,
         setProjectId,
         boardId,
-        setBoardId
+        setBoardId,
+        toast,
+        setToast
       }}>
         <Navbar />
 
@@ -53,6 +57,14 @@ function App() {
           <Route path='/projects' element={<ProjectsPage />} />
           <Route path='/' element={<HomePage />} />
         </Routes>
+        <Snackbar
+          open={toast.open}
+          autoHideDuration={6000}
+          message={toast.message}
+          onClose={() => setToast({open: false, message: '', anchor: {vertical: 'bottom', horizontal: 'center'}})}
+          anchorOrigin={toast.anchor}
+          action={toast.action || <Button color="inherit" size="small" onClick={() => setToast({open: false, message: '', anchor: {vertical: 'bottom', horizontal: 'center'}})}>Close</Button>}
+        />
       </KanbanContext.Provider>
     </BrowserRouter>
   )

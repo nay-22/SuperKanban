@@ -1,4 +1,5 @@
-import { Dispatch, SetStateAction } from "react";
+import { SnackbarOrigin } from "@mui/material";
+import { Dispatch, ReactNode, SetStateAction } from "react";
 
 export type Id = string | number;
 
@@ -45,6 +46,17 @@ export type KBMember = {
     name: string;
     email: string;
     avatar: string;
+    createdAt: Timestamp;
+    projects?: Id[];
+    boards?: Id[];
+}
+
+export type Toast = {
+    message: string;
+    open: boolean;
+    action?: ReactNode;
+    autoHide?: number;
+    anchor?: SnackbarOrigin;
 }
 
 export type KBContext = {
@@ -61,6 +73,8 @@ export type KBContext = {
     setProjectId: Dispatch<SetStateAction<Id>>;
     boardId: Id;
     setBoardId: Dispatch<SetStateAction<Id>>;
+    toast: Toast;
+    setToast: Dispatch<SetStateAction<Toast>>;
 }
 
 export type FormProps = {
