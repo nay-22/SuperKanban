@@ -83,8 +83,33 @@ export const useTaskActions = () => {
         });
     }
 
-    
+    const assignTask = (taskId: Id, memberIds: Id[], comment?: string) => {
+        setProjects(prev => ({
+            ...prev,
+            [projectId]: {
+                ...prev[projectId],
+                boards: {
+                    ...prev[projectId].boards,
+                    [boardId]: {
+                        ...prev[projectId].boards[boardId],
+                        tasks: prev[projectId].boards[boardId].tasks.map(task => {
+                            if (task.id === taskId) {
+                                return {...task, assignedTo: [...task.assignedTo, ...getAssignees(memberIds)]}
+                            }
+                            return task;
+                        })
+                    }
+                }
+            }
+        }));
+    }
 
-    return { createTask, updateTask, deleteTask };
+    const getAssignees = (memberIds: Id[]): KBMember[] => {
+        const users: KBMember[] = JSON.parse(localStorage.getItem('users')!);
+        if (!users || users === null) return [];
+        return users.filter(user => memberIds.includes(user.id));
+    }
+
+    return { createTask, updateTask, deleteTask, assignTask };
 
 }

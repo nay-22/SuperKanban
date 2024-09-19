@@ -25,6 +25,11 @@ export type KBTask = {
     assignedTo: KBMember[];
 }
 
+export type Assigned = {
+    members: KBMember[];
+    comment: string;
+}
+
 export type KBProject = {
     id: Id;
     name: string;

@@ -197,23 +197,26 @@ const Task: React.FC<TaskProps> = React.memo(({ task }) => {
                         }}
                         expandIcon={<KeyboardArrowDown sx={{ color: 'white' }} />}
                     >
-                        <div className='px-1 py-1 flex items-center justify-left gap-2'>
-                            <Avatar sx={{ width: '25px', height: '25px' }} src={task.createdBy.avatar} alt={task.createdBy.name} />
-                            <span className='text-xs text-slate-400'>Created By {task.createdBy.name}</span>
+                        <div className='px-1 py-1 flex items-center justify-between gap-2 w-full'>
+                            <div className='flex items-center justify-center gap-2'>
+                                <Avatar sx={{ width: '25px', height: '25px' }} src={task.createdBy.avatar} alt={task.createdBy.name} />
+                                <span className='text-xs text-slate-400'>Created By {task.createdBy.name}</span>
+                            </div>
+                            <span className='text-xs text-slate-400'>Assigned: {task.assignedTo.length}</span>
                         </div>
                     </AccordionSummary>
+                    {task.assignedTo.length !== 0 && <AccordionDetails className='bg-mainBackgroundColor'>
+                        {task.assignedTo?.map(person => (
+                            <div key={person.id} className='px-1 py-1 flex items-center justify-left gap-2'>
+                                <Avatar sx={{ width: '25px', height: '25px' }} src={person.avatar} alt={person.name} />
+                                <span className='text-xs text-slate-400'>{person.name}</span>
+                            </div>
+                        ))}
+                    </AccordionDetails>}
                     <AccordionActions sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', }}>
                         <p className='text-xs text-slate-400'>{task.assignedTo.length === 0 && 'Not Assigned'}</p>
                         <Button onClick={() => setShowAssigneeForm(true)} variant='outlined' sx={{ textTransform: 'none' }} startIcon={<Add />}>Assign</Button>
                     </AccordionActions>
-                    {task.assignedTo.length !== 0 && <AccordionDetails>
-                        {task.assignedTo?.map(person => (
-                            <div className='px-1 py-1 flex items-center justify-left gap-2'>
-                                <Avatar sx={{ width: '25px', height: '25px' }} src={person.avatar} alt={person.name} />
-                                <span className='text-xs text-slate-400'>Created By {person.name}</span>
-                            </div>
-                        ))}
-                    </AccordionDetails>}
                 </Accordion>
             </div>
             <ConfirmationModal onConfirm={() => deleteTask(task.id)} open={showDeleteModal} onClose={() => setShowDeleteModal(false)} />
