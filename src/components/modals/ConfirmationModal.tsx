@@ -24,7 +24,8 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({ message = 'Do you
                     border: '1px solid grey',
                     borderRadius: '1em',
                     padding: '2em',
-                    minWidth: '350px',
+                    maxWidth: '350px',
+                    minWidth: '300px',
                 }}
             >
                 <Typography variant='h6' fontWeight={'bold'}>{message}</Typography>

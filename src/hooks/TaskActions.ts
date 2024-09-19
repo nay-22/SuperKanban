@@ -83,7 +83,7 @@ export const useTaskActions = () => {
         });
     }
 
-    const assignTask = (taskId: Id, memberIds: Id[], comment?: string) => {
+    const assignTask = (taskId: Id, memberIds: Id[]) => {
         setProjects(prev => ({
             ...prev,
             [projectId]: {
@@ -94,7 +94,28 @@ export const useTaskActions = () => {
                         ...prev[projectId].boards[boardId],
                         tasks: prev[projectId].boards[boardId].tasks.map(task => {
                             if (task.id === taskId) {
-                                return {...task, assignedTo: [...task.assignedTo, ...getAssignees(memberIds)]}
+                                return { ...task, assignedTo: [...task.assignedTo, ...getAssignees(memberIds)] }
+                            }
+                            return task;
+                        })
+                    }
+                }
+            }
+        }));
+    }
+
+    const revokeTask = (taskId: Id, memberIds: Id[]) => {
+        setProjects(prev => ({
+            ...prev,
+            [projectId]: {
+                ...prev[projectId],
+                boards: {
+                    ...prev[projectId].boards,
+                    [boardId]: {
+                        ...prev[projectId].boards[boardId],
+                        tasks: prev[projectId].boards[boardId].tasks.map(task => {
+                            if (task.id === taskId) {
+                                return { ...task, assignedTo: task.assignedTo.filter(user => !memberIds.includes(user.id)) }
                             }
                             return task;
                         })
@@ -110,6 +131,6 @@ export const useTaskActions = () => {
         return users.filter(user => memberIds.includes(user.id));
     }
 
-    return { createTask, updateTask, deleteTask, assignTask };
+    return { createTask, updateTask, deleteTask, assignTask, revokeTask };
 
 }

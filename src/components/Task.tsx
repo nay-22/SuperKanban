@@ -1,9 +1,9 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
-import { KBTask } from '../types';
+import { Id, KBMember, KBTask } from '../types';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { Accordion, AccordionActions, AccordionDetails, AccordionSummary, Avatar, Button, Modal, Tooltip } from '@mui/material';
-import { Add, DeleteOutline, DragIndicator, KeyboardArrowDown } from '@mui/icons-material';
+import { Add, DeleteOutline, DoNotDisturbOnTotalSilence, DragIndicator, KeyboardArrowDown } from '@mui/icons-material';
 import { useTaskActions } from '../hooks/TaskActions';
 import ConfirmationModal from './modals/ConfirmationModal';
 import KanbanContext from '../contexts/KanbanContext';
@@ -13,14 +13,42 @@ interface TaskProps {
     task: KBTask;
 }
 
+const Assignee: React.FC<{ taskId: Id, member: KBMember }> = ({ taskId, member }) => {
+    const [showConfirmation, setShowConfirmation] = useState(false);
+    const { revokeTask } = useTaskActions();
+    return <>
+        <div className='px-1 py-1 flex items-center justify-between gap-2'>
+            <div className='flex items-center justify-left gap-2'>
+                <Avatar sx={{ width: '25px', height: '25px' }} src={member.avatar} alt={member.name} />
+                <span className='text-xs text-slate-400'>{member.name}</span>
+            </div>
+            <Tooltip
+                title={`Revoke Assignee`}
+                placement='right'
+                arrow
+            >
+                <Button sx={{ minWidth: 0, width: '20px' }} onClick={() => setShowConfirmation(true)} >
+                    <DoNotDisturbOnTotalSilence className='text-indigo-400' />
+                </Button>
+            </Tooltip>
+            <ConfirmationModal
+                onConfirm={() => revokeTask(taskId, [member.id])}
+                onClose={() => setShowConfirmation(false)}
+                message={`Are you sure you want to revoke ${member.name} from this task?`}
+                open={showConfirmation}
+            />
+        </div>
+    </>
+}
+
 const Task: React.FC<TaskProps> = React.memo(({ task }) => {
     const { updateTask, deleteTask } = useTaskActions();
     const { newItemId, setNewItemId } = useContext(KanbanContext);
 
-    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [showAssigneeForm, setShowAssigneeForm] = useState(false)
+    const [showConfirmation, setShowConfirmation] = useState(false);
     const [editPriority, setEditPriority] = useState(false);
     const [editContent, setEditContent] = useState(false);
-    const [showAssigneeForm, setShowAssigneeForm] = useState(false)
     const [content, setContent] = useState(task.content);
     const dropdownRef = useRef<HTMLDivElement>(null);
     const priorityRef = useRef<HTMLDivElement>(null);
@@ -86,7 +114,7 @@ const Task: React.FC<TaskProps> = React.memo(({ task }) => {
                 <div className='flex items-center justify-center gap-2 cursor-pointer'>
                     <button
                         className={`hover:bg-slate-700 rounded-full flex items-center justify-center text-red-400 px-1 py-1`}
-                        onClick={() => setShowDeleteModal(true)}
+                        onClick={() => setShowConfirmation(true)}
                     >
                         <DeleteOutline />
                     </button>
@@ -169,7 +197,7 @@ const Task: React.FC<TaskProps> = React.memo(({ task }) => {
                         />
                     </div>
                 ) : (
-                    <Tooltip className='cursor-pointer' title='Click To Edit' placement='bottom-start' arrow enterDelay={2000} leaveDelay={0}>
+                    <Tooltip className='cursor-pointer' title='Click To Edit' placement='left' arrow enterDelay={2000} leaveDelay={0}>
                         <div
                             onClick={() => {
                                 setEditContent(true);
@@ -205,12 +233,9 @@ const Task: React.FC<TaskProps> = React.memo(({ task }) => {
                             <span className='text-xs text-slate-400'>Assigned: {task.assignedTo.length}</span>
                         </div>
                     </AccordionSummary>
-                    {task.assignedTo.length !== 0 && <AccordionDetails className='bg-mainBackgroundColor'>
+                    {task.assignedTo.length !== 0 && <AccordionDetails className='bg-taskBackgroundPrimary'>
                         {task.assignedTo?.map(person => (
-                            <div key={person.id} className='px-1 py-1 flex items-center justify-left gap-2'>
-                                <Avatar sx={{ width: '25px', height: '25px' }} src={person.avatar} alt={person.name} />
-                                <span className='text-xs text-slate-400'>{person.name}</span>
-                            </div>
+                            <Assignee key={task.id} taskId={task.id} member={person} />
                         ))}
                     </AccordionDetails>}
                     <AccordionActions sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', }}>
@@ -219,7 +244,7 @@ const Task: React.FC<TaskProps> = React.memo(({ task }) => {
                     </AccordionActions>
                 </Accordion>
             </div>
-            <ConfirmationModal onConfirm={() => deleteTask(task.id)} open={showDeleteModal} onClose={() => setShowDeleteModal(false)} />
+            <ConfirmationModal onConfirm={() => deleteTask(task.id)} open={showConfirmation} onClose={() => setShowConfirmation(false)} />
             <Modal
                 open={showAssigneeForm}
                 onClose={() => setShowAssigneeForm(false)}

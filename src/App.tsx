@@ -34,7 +34,6 @@ function App() {
 
   useEffect(() => {
     if (Object.keys(projects).length !== 0) cacheItem('projects', projects);
-    else setProjects(JSON.parse(localStorage.getItem('projects')!));
   }, [projects]);
 
   return (

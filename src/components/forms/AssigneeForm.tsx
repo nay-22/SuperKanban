@@ -1,6 +1,5 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
-import { Button, FormControl, InputAdornment, InputLabel, MenuItem, Select, SelectChangeEvent, TextField, Typography } from '@mui/material';
-import { AddComment } from '@mui/icons-material';
+import { Button, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, Typography } from '@mui/material';
 import KanbanContext from '../../contexts/KanbanContext';
 import { FormProps, Id } from '../../types';
 import { useTaskActions } from '../../hooks/TaskActions';
@@ -11,7 +10,6 @@ interface AssigneeFormProps extends FormProps {
 
 const AssigneeForm: React.FC<AssigneeFormProps> = ({ taskId, callback }) => {
     const [assignees, setAssignees] = useState<string[]>([]);
-    const [comment, setComment] = useState('');
     const titleRef = useRef<HTMLFormElement>(null);
 
     const { currentUser, projects, projectId, boardId } = useContext(KanbanContext);
@@ -23,7 +21,7 @@ const AssigneeForm: React.FC<AssigneeFormProps> = ({ taskId, callback }) => {
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        assignTask(taskId, assignees, comment);
+        assignTask(taskId, assignees);
         callback();
     };
 
@@ -120,50 +118,6 @@ const AssigneeForm: React.FC<AssigneeFormProps> = ({ taskId, callback }) => {
                         ))}
                     </Select>
                 </FormControl>
-
-
-                <TextField
-                    variant='filled'
-                    size="small"
-                    label="Task Comment"
-                    placeholder="Enter Comments"
-                    onChange={(e) => setComment(e.target.value)}
-                    sx={{
-                        width: '100%',
-                        '& .MuiOutlinedInput-root': {
-                            '& fieldset': {
-                                borderColor: 'rgba(255, 255, 255, 0.3)',
-                            },
-                            '&:hover fieldset': {
-                                borderColor: 'white',
-                            },
-                            '&.Mui-focused fieldset': {
-                                borderColor: 'white',
-                            },
-                            '&.Mui-focused': {
-                                backgroundColor: 'transparent',
-                            },
-                        },
-                        '& .MuiInputLabel-root': {
-                            color: 'white',
-                        },
-                        '& .MuiInputLabel-root.Mui-focused': {
-                            color: 'white',
-                        },
-                        input: {
-                            color: 'white',
-                        },
-                    }}
-                    slotProps={{
-                        input: {
-                            startAdornment: (
-                                <InputAdornment position='start'>
-                                    <AddComment sx={{ color: 'white' }} />
-                                </InputAdornment>
-                            ),
-                        },
-                    }}
-                />
                 <div className='flex items-center justify-between gap-4'>
                     <Button variant='outlined' sx={{ textTransform: 'none', width: '100%', height: '50px' }} onClick={callback}>Cancel</Button>
                     <Button
