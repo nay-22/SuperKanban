@@ -3,7 +3,6 @@ import { arrayMove } from "@dnd-kit/sortable";
 import { useContext } from "react";
 
 import KanbanContext from "../contexts/KanbanContext";
-import { cacheItem } from "../utils/CacheUtils";
 import { Id } from "../types";
 import { debounce } from "@mui/material";
 
@@ -57,7 +56,6 @@ export const useDragHandles = () => {
                         }
                     }
                 }
-                cacheItem('projects', newState);
                 return newState;
             })
         }
@@ -83,11 +81,10 @@ export const useDragHandles = () => {
                         }
                     }
                 }
-                cacheItem('projects', newState);
                 return newState;
             });
         }
-    }, 75);
+    }, 50);
 
     const handleDragEnd = (e: DragEndEvent) => {
         setActiveItem(null);
@@ -122,7 +119,6 @@ export const useDragHandles = () => {
                         }
                     }
                 }
-                cacheItem('projects', newState);
                 return newState;
             });
         }
@@ -146,7 +142,6 @@ export const useDragHandles = () => {
                         }
                     }
                 };
-                cacheItem('projects', newState);
                 return newState;
             })
         }

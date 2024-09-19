@@ -2,7 +2,6 @@ import { v4 as uuid } from "uuid";
 import { Id, KBColumn } from "../types";
 import { useContext } from "react";
 import KanbanContext from "../contexts/KanbanContext";
-import { cacheItem } from "../utils/CacheUtils";
 
 export const useColumnActions = () => {
     const { setNewItemId, setProjects, projectId, boardId } = useContext(KanbanContext);
@@ -29,7 +28,6 @@ export const useColumnActions = () => {
                     }
                 }
             };
-            cacheItem('projects', newState);
             return newState;
         });
 
@@ -51,7 +49,6 @@ export const useColumnActions = () => {
                     }
                 }
             };
-            cacheItem('projects', newState);
             return newState;
         });
     };
@@ -76,7 +73,6 @@ export const useColumnActions = () => {
                     }
                 }
             };
-            cacheItem('projects', newState);
             return newState;
         });
         

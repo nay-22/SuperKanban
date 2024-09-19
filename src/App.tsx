@@ -10,6 +10,7 @@ import HomePage from './pages/HomePage';
 
 import './App.css'
 import { Button, Snackbar } from '@mui/material';
+import { cacheItem } from './utils/CacheUtils';
 
 function App() {
   const [currentUser, setCurrentUser] = useState<KBMember | null>(null);
@@ -30,6 +31,11 @@ function App() {
     }
     else alert('Error parsing user from localStorage');
   }, []);
+
+  useEffect(() => {
+    if (Object.keys(projects).length !== 0) cacheItem('projects', projects);
+    else setProjects(JSON.parse(localStorage.getItem('projects')!));
+  }, [projects]);
 
   return (
     <BrowserRouter>

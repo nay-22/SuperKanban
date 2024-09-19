@@ -3,8 +3,7 @@ import { v4 as uuid } from "uuid";
 
 import KanbanContext from "../contexts/KanbanContext";
 import { timestamp } from "../utils/ResourceUtils";
-import { cacheItem } from "../utils/CacheUtils";
-import { Id, KBTask } from "../types";
+import { Id, KBMember, KBTask } from "../types";
 
 export const useTaskActions = () => {
 
@@ -37,7 +36,6 @@ export const useTaskActions = () => {
                     }
                 }
             }
-            cacheItem('projects', newState);
             return newState;
         });
     }
@@ -57,7 +55,6 @@ export const useTaskActions = () => {
                     }
                 }
             }
-            cacheItem('projects', newState);
             return newState;
         });
     }
@@ -82,10 +79,11 @@ export const useTaskActions = () => {
                     }
                 }
             }
-            cacheItem('projects', newState);
             return newState;
         });
     }
+
+    
 
     return { createTask, updateTask, deleteTask };
 
