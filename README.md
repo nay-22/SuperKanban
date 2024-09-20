@@ -18,9 +18,19 @@
   
 # Current Implementation
 
+## v4.1.0-dev
+   ### Features
+  - Project Dashboard with board details (ongoing)
+  - View Board status via Pie Chart (MUI Charts)
+      - Total Columns
+      - Total Tasks
+      - Tasks per Column
+  - Trail Links for quick navigation
+       
+    <video width="630" height="300" src="https://github.com/user-attachments/assets/4124c6ed-18b5-40fe-a2f0-8bcedad67a13"></video>    
+
 ## v4.0.0-dev
    ### Features
-  - Refined Drag N' Drop - Using overlay to avoid re-render on column change
   - Debounced DragOver Event for smoother Drag operation
   - Multi-Project Setup
       - A Project can have multiple boards
