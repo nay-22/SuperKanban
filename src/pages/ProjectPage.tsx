@@ -1,13 +1,15 @@
 import { useContext, useEffect } from 'react'
-import { Typography } from '@mui/material'
+import { Button } from '@mui/material'
 import KanbanContext from '../contexts/KanbanContext';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import TrailLinks from '../components/TrailLinks';
+import ProjectDashboard from '../components/ProjectDashboard';
+import { Settings } from '@mui/icons-material';
 
 const ProjectPage = () => {
     const { projectId } = useParams();
     const navigate = useNavigate();
-    const { setProjectId, projects } = useContext(KanbanContext);
+    const { setProjectId } = useContext(KanbanContext);
 
     useEffect(() => {
         if (projectId) {
@@ -17,11 +19,10 @@ const ProjectPage = () => {
         }
     }, []);
     return <>
-        <TrailLinks />
-        <Typography variant='h3' className='text-center'>Project Page</Typography>
-        {projects[projectId || ''] && Object.entries(projects[projectId || '']?.boards).map(([id, board]) => (
-            <Link key={id} to={`board/${id}`}>{board.title}</Link>
-        ))}
+        <TrailLinks>
+            <Button variant='outlined' startIcon={<Settings />} sx={{ textTransform: 'none' }} onClick={() => { }}>Project Settings</Button>
+        </TrailLinks>
+        <ProjectDashboard />
     </>
 }
 
