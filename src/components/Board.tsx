@@ -6,7 +6,7 @@ import { createPortal } from 'react-dom';
 import { useDragHandles } from '../hooks/DragHandles';
 import KanbanContext from '../contexts/KanbanContext';
 import Column from './Column';
-import Task from './Task';
+import Task from './task/Task';
 
 const Board = () => {
 
