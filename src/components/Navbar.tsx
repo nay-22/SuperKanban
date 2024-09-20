@@ -5,6 +5,7 @@ import { useState } from 'react';
 import Sidebar from './Sidebar';
 import { clearCache } from '../utils/CacheUtils';
 import { useLocation } from 'react-router-dom';
+import React from 'react';
 
 const Navbar = () => {
     const [showDrawer, setShowDrawer] = useState(false);
@@ -79,4 +80,4 @@ const Navbar = () => {
     )
 }
 
-export default Navbar
+export default React.memo(Navbar);
