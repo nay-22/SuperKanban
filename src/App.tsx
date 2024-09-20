@@ -1,4 +1,4 @@
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 
 import { Id, KBColumn, KBMember, KBProject, KBTask, Toast } from './types';
@@ -11,6 +11,7 @@ import HomePage from './pages/HomePage';
 import './App.css'
 import { Button, Snackbar } from '@mui/material';
 import { cacheItem } from './utils/CacheUtils';
+import ProjectPage from './pages/ProjectPage';
 
 function App() {
   const [currentUser, setCurrentUser] = useState<KBMember | null>(null);
@@ -37,7 +38,6 @@ function App() {
   }, [projects]);
 
   return (
-    <BrowserRouter>
       <KanbanContext.Provider value={{
         hasTouch,
         currentUser,
@@ -56,9 +56,9 @@ function App() {
         setToast
       }}>
         <Navbar />
-
         <Routes>
           <Route path='/project/:projectId/board/:boardId' element={<BoardPage />} />
+          <Route path='/project/:projectId' element={<ProjectPage />} />
           <Route path='/projects' element={<ProjectsPage />} />
           <Route path='/' element={<HomePage />} />
         </Routes>
@@ -71,7 +71,6 @@ function App() {
           action={toast.action || <Button color="inherit" size="small" onClick={() => setToast({open: false, message: '', })}>Close</Button>}
         />
       </KanbanContext.Provider>
-    </BrowserRouter>
   )
 }
 

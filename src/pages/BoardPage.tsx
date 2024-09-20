@@ -1,17 +1,18 @@
-import { Link, useNavigate, useParams } from 'react-router-dom'
-import { Breadcrumbs, Button, Typography } from '@mui/material'
+import { useNavigate, useParams } from 'react-router-dom'
+import { Button } from '@mui/material'
 import { Add, ViewColumn } from '@mui/icons-material';
 import { useContext, useEffect } from 'react';
 
 import { useColumnActions } from '../hooks/ColumnActions';
 import KanbanContext from '../contexts/KanbanContext';
 import Board from '../components/Board'
+import TrailLinks from '../components/TrailLinks';
 
 const BoardPage = () => {
     const { projectId, boardId } = useParams();
     const navigate = useNavigate();
 
-    const { projects, setProjectId, setBoardId } = useContext(KanbanContext);
+    const { setProjectId, setBoardId } = useContext(KanbanContext);
     const { createColumn } = useColumnActions();
 
     useEffect(() => {
@@ -24,14 +25,7 @@ const BoardPage = () => {
     }, []);
 
     return <>
-        <div className='flex items-center justify-between py-4 px-10'>
-            <div role="presentation">
-                <Breadcrumbs aria-label="breadcrumb" sx={{ color: 'white' }}>
-                    <Link to='/'>Home</Link>
-                    <Link to='/projects'>Projects</Link>
-                    <Typography className='text-indigo-300 font-bold'>{projects[projectId!]?.boards[boardId!]?.title}</Typography>
-                </Breadcrumbs>
-            </div>
+        <TrailLinks>
             <Button
                 onClick={() => {
                     if (boardId && projectId) createColumn(projectId, boardId);
@@ -44,7 +38,7 @@ const BoardPage = () => {
                 }}>
                 <ViewColumn /><Add />
             </Button>
-        </div>
+        </TrailLinks>
         <Board />
     </>
 }

@@ -1,25 +1,22 @@
 import { Add } from '@mui/icons-material'
-import { Breadcrumbs, Button, Modal, Typography } from '@mui/material'
-import { Link } from 'react-router-dom'
+import { Button, Modal } from '@mui/material'
 import Project from '../components/Project'
 import { useContext, useState } from 'react'
 import KanbanContext from '../contexts/KanbanContext'
 import ProjectForm from '../components/forms/ProjectForm'
+import TrailLinks from '../components/TrailLinks'
 
 
 const ProjectsPage = () => {
     const { projects } = useContext(KanbanContext);
     const [showProjectForm, setShowProjectForm] = useState(false);
     return <>
-        <div className='flex items-center justify-between py-4 px-10'>
-            <div role="presentation">
-                <Breadcrumbs aria-label="breadcrumb" sx={{ color: 'white' }}>
-                    <Link to='/'>Home</Link>
-                    <Typography className='text-indigo-300 font-bold'>Projects</Typography>
-                </Breadcrumbs>
-            </div>
+        <TrailLinks>
             <Button variant='outlined' startIcon={<Add />} sx={{ textTransform: 'none' }} onClick={() => setShowProjectForm(true)}>New Project</Button>
-        </div>
+        </TrailLinks>
+        {Object.keys(projects)?.length === 0 && <div className="h-[60vh] p-5 mx-10 flex items-center justify-center border-2 border-slate-400 border-dashed rounded-lg">
+            No Projects Created Yet
+        </div>}
         <div className='grid grid-cols-4 gap-4 px-10'>
             {Object.entries(projects).map(([_, project]) => <Project project={project} key={project.id} />)}
         </div>
