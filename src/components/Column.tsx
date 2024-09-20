@@ -204,14 +204,14 @@ const Column: React.FC<ColumnProps> = ({ column, children }) => {
                 className={`
                 flex 
                 flex-grow 
-                p-4 
+                p-2
                 flex-col 
                 gap-4 
                 overflow-x-hidden 
                 overflow-y-auto 
                 cursor-auto
                 ${isDragging || isPointerIn || hasTouch ? 'scrollbar-thin' : 'scrollbar-none'}
-                scrollbar-thumb-red-400
+                scrollbar-thumb-indigo-400
                 scrollbar-track-transparent`
                 }
             >
