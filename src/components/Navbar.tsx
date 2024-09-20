@@ -4,6 +4,7 @@ import { useState } from 'react';
 
 import Sidebar from './Sidebar';
 import { clearCache } from '../utils/CacheUtils';
+import { useLocation } from 'react-router-dom';
 
 const Navbar = () => {
     const [showDrawer, setShowDrawer] = useState(false);
@@ -11,13 +12,15 @@ const Navbar = () => {
     const theme = useTheme();
     const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
+    const location = useLocation();
+
     return (
         <AppBar sx={{ bgcolor: 'transparent' }} position='sticky'>
             <Toolbar disableGutters className='bg-mainBackgroundColor' sx={{ justifyContent: 'space-between' }}>
                 <Toolbar>
-                    <Button onClick={() => setShowDrawer(true)}>
+                    {location.pathname !== '/' && <Button onClick={() => setShowDrawer(true)}>
                         <Menu />
-                    </Button>
+                    </Button>}
                     <Typography variant='h5'>
                         SuperKanban
                     </Typography>
