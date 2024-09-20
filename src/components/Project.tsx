@@ -49,7 +49,7 @@ const Project: React.FC<ProjectProps> = ({ project }) => {
                 <Link to={`/project/${project.id}`}>
                     <Tooltip title={`${project.name}${project.description && ': ' + project.description}`} placement='top' arrow>
                         <div className='flex items-center justify-end gap-2 hover:bg-taskBackgroundPrimary py-2 px-2 rounded-lg'>
-                            <Typography variant='h5' className='truncate max-w-[300px]'>{project.name}</Typography>
+                            <Typography variant='h5' className='truncate max-w-[270px]'>{project.name}</Typography>
                             <LaunchOutlined className='text-indigo-400' />
                         </div>
                     </Tooltip>
