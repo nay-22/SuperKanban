@@ -6,7 +6,7 @@ import { cacheItem } from "../utils/CacheUtils";
 import { Id, KBBoard, KBMember } from "../types";
 
 export const useProjectActions = () => {
-    const { currentUser, setProjects } = useContext(KanbanContext);
+    const { currentUser, projectId, setProjects } = useContext(KanbanContext);
 
     const createProject = (title: string, description: string) => {
         const id = uuid();
@@ -25,7 +25,6 @@ export const useProjectActions = () => {
                     },
                 }
             };
-            cacheItem('projects', newState);
             return newState;
         });
     }
@@ -50,7 +49,14 @@ export const useProjectActions = () => {
                     }
                 }
             };
-            cacheItem('projects', newState);
+            return newState;
+        });
+    }
+
+    const removeBoard = (boardId: Id) => {
+        setProjects(prev => {
+            const newState = {...prev};
+            delete newState[projectId].boards[boardId];
             return newState;
         });
     }
@@ -73,7 +79,6 @@ export const useProjectActions = () => {
                     }
                 }
             }
-            cacheItem('projects', newState);
             return newState;
         });
         localStorage.setItem('users', JSON.stringify(users));
@@ -93,5 +98,5 @@ export const useProjectActions = () => {
         user.projects = user.projects.filter(pId => pId !== id);
     }
 
-    return { createProject, addBoard, addMember, removeMember };
+    return { createProject, addBoard, addMember, removeMember, removeBoard};
 }
