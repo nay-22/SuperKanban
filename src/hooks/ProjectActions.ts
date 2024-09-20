@@ -29,6 +29,14 @@ export const useProjectActions = () => {
         });
     }
 
+    const deleteProject = () => {
+        setProjects(prev => {
+            const newState = { ...prev };
+            delete newState[projectId];
+            return newState;
+        });
+    }
+
     const addBoard = (id: Id, boardName: string) => {
         const board: KBBoard = {
             id: uuid(),
@@ -98,5 +106,5 @@ export const useProjectActions = () => {
         user.projects = user.projects.filter(pId => pId !== id);
     }
 
-    return { createProject, addBoard, addMember, removeMember, removeBoard};
+    return { createProject, deleteProject, addBoard, addMember, removeMember, removeBoard};
 }
