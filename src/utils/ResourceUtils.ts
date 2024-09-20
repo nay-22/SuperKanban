@@ -8,7 +8,7 @@ export const timestamp = () => {
     return { date, year, time };
 }
 
-export const getTaskCountByColumn = (board: KBBoard): { label: string, value: number, color: string, columnId: Id, tasks: KBTask[] }[] => {
+export const getTaskInfoByColumn = (board: KBBoard): { label: string, value: number, color: string, columnId: Id, tasks: KBTask[] }[] => {
     return board.columns.map((column) => {
         const taskCount = board.tasks.filter(task => task.columnId === column.id).length;
         const tasks = board.tasks.filter(task => task.columnId === column.id);
