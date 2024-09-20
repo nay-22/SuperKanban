@@ -5,7 +5,7 @@ import { KBTask } from "../../types";
 import AssigneeForm from "../forms/AssigneeForm";
 import Assignee from "./Assignee";
 
-const AssigneeView: React.FC<{ task: KBTask }> = React.memo(({ task }) => {
+const AssigneeView: React.FC<{ task: KBTask; readOnly?: boolean; }> = React.memo(({ task, readOnly }) => {
     const [showAssigneeForm, setShowAssigneeForm] = useState(false);
     return <>
         <Accordion
@@ -23,7 +23,7 @@ const AssigneeView: React.FC<{ task: KBTask }> = React.memo(({ task }) => {
                     maxHeight: '40px',
                     alignItems: 'center',
                 }}
-                expandIcon={<KeyboardArrowDown sx={{ color: 'white' }} />}
+                expandIcon={<KeyboardArrowDown sx={{ color: readOnly && task.assignedTo.length === 0 ? 'transparent' : 'white' }} />}
             >
                 <div className='px-1 py-1 flex items-center justify-between gap-2 w-full'>
                     <div className='flex items-center justify-center gap-2'>
@@ -35,13 +35,13 @@ const AssigneeView: React.FC<{ task: KBTask }> = React.memo(({ task }) => {
             </AccordionSummary>
             {task.assignedTo.length !== 0 && <AccordionDetails className='bg-taskBackgroundPrimary'>
                 {task.assignedTo?.map(person => (
-                    <Assignee key={person.id} taskId={task.id} member={person} />
+                    <Assignee readOnly={readOnly || false} key={person.id} taskId={task.id} member={person} />
                 ))}
             </AccordionDetails>}
-            <AccordionActions sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', }}>
+            {!readOnly && <AccordionActions sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', }}>
                 <p className='text-xs text-slate-400'>{task.assignedTo.length === 0 && 'Not Assigned'}</p>
                 <Button onClick={() => setShowAssigneeForm(true)} variant='outlined' sx={{ textTransform: 'none' }} startIcon={<Add />}>Assign</Button>
-            </AccordionActions>
+            </AccordionActions>}
         </Accordion>
         <Modal
             open={showAssigneeForm}

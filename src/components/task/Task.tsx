@@ -11,9 +11,10 @@ import AssigneeView from './AssigneeView';
 
 interface TaskProps {
     task: KBTask;
+    readonly?: boolean;
 }
 
-const Task: React.FC<TaskProps> = React.memo(({ task }) => {
+const Task: React.FC<TaskProps> = React.memo(({ task, readonly=false }) => {
     const { updateTask, deleteTask } = useTaskActions();
     const { newItemId, setNewItemId } = useContext(KanbanContext);
 
@@ -74,21 +75,21 @@ const Task: React.FC<TaskProps> = React.memo(({ task }) => {
         >
             <div className='flex align-center justify-between p-3'>
                 <div className={`flex justify-items-center gap-2`}>
-                    <div {...listeners} className={`touch-none ${isDragging ? 'cursor-grabbing' : 'cursor-move'}`}>
+                    {!readonly && <div {...listeners} className={`touch-none ${isDragging ? 'cursor-grabbing' : 'cursor-move'}`}>
                         <DragIndicator />
-                    </div>
+                    </div>}
                     <div>
                         <div className='text-sm text-slate-100'>{`${task.createdAt.date}, ${task.createdAt.year}`}</div>
                         <div className='text-xs text-slate-400'>{task.createdAt.time}</div>
                     </div>
                 </div>
                 <div className='flex items-center justify-center gap-2 cursor-pointer'>
-                    <button
+                    {!readonly && <button
                         className={`hover:bg-slate-700 rounded-full flex items-center justify-center text-red-400 px-1 py-1`}
                         onClick={() => setShowConfirmation(true)}
                     >
                         <DeleteOutline />
-                    </button>
+                    </button>}
                     <div
                         ref={priorityRef}
                         className='relative'
@@ -100,7 +101,7 @@ const Task: React.FC<TaskProps> = React.memo(({ task }) => {
                             arrow
                         >
                             <div
-                                onClick={() => setEditPriority(!editPriority)}
+                                onClick={() => !readonly && setEditPriority(!editPriority)}
                                 className={`w-5 h-5 ${task.priority === 1 ? 'bg-green-500' : task.priority === 2 ? 'bg-orange-400' : 'bg-red-500'} rounded-full cursor-pointer`}
                             />
                         </Tooltip>
@@ -142,7 +143,7 @@ const Task: React.FC<TaskProps> = React.memo(({ task }) => {
                 </div>
             </div>
             <div className='bg-taskBackgroundSecondary rounded-b-lg'>
-                {editContent ? (
+                {!readonly && editContent ? (
                     <div className='flex items-center justify-between gap-2 p-3'>
                         <input
                             autoFocus
@@ -168,18 +169,18 @@ const Task: React.FC<TaskProps> = React.memo(({ task }) => {
                         />
                     </div>
                 ) : (
-                    <Tooltip className='cursor-pointer' title='Click To Edit' placement='left' arrow enterDelay={2000} leaveDelay={0}>
+                    <Tooltip disableHoverListener={readonly} className={readonly ? 'cursor-default' : 'cursor-pointer'} title='Click To Edit' placement='left' arrow enterDelay={2000} leaveDelay={0}>
                         <div
                             onClick={() => {
                                 setEditContent(true);
                             }}
-                            className='bg-taskBackgroundSecondary p-3 rounded-b-lg overflow-y-auto scrollbar-thin'
+                            className='bg-taskBackgroundSecondary p-3 rounded-b-lg overflow-y-auto scrollbar-thin text-white'
                         >
                             {task.content ? task.content : <p className='text-slate-500'>Empty, click to enter task content</p>}
                         </div>
                     </Tooltip>
                 )}
-                <AssigneeView task={task} />
+                <AssigneeView readOnly={readonly} task={task} />
             </div>
             <ConfirmationModal onConfirm={() => deleteTask(task.id)} open={showConfirmation} onClose={() => setShowConfirmation(false)} />
         </div>

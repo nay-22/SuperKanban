@@ -5,7 +5,7 @@ import { Avatar, Tooltip, Button } from "@mui/material";
 import { Id, KBMember } from "../../types";
 import ConfirmationModal from "../modals/ConfirmationModal";
 
-const Assignee: React.FC<{ taskId: Id, member: KBMember }> = React.memo(({ taskId, member }) => {
+const Assignee: React.FC<{ taskId: Id; member: KBMember; readOnly: boolean }> = React.memo(({ taskId, member, readOnly = false }) => {
     const [showConfirmation, setShowConfirmation] = useState(false);
     const { revokeTask } = useTaskActions();
     return <>
@@ -14,21 +14,24 @@ const Assignee: React.FC<{ taskId: Id, member: KBMember }> = React.memo(({ taskI
                 <Avatar sx={{ width: '25px', height: '25px' }} src={member.avatar} alt={member.name} />
                 <span className='text-xs text-slate-400'>{member.name}</span>
             </div>
-            <Tooltip
-                title={`Revoke Assignee`}
-                placement='right'
-                arrow
-            >
-                <Button sx={{ minWidth: 0, width: '20px' }} onClick={() => setShowConfirmation(true)} >
-                    <DoNotDisturbOnTotalSilence className='text-indigo-400' />
-                </Button>
-            </Tooltip>
-            <ConfirmationModal
-                onConfirm={() => revokeTask(taskId, [member.id])}
-                onClose={() => setShowConfirmation(false)}
-                message={`Are you sure you want to revoke ${member.name} from this task?`}
-                open={showConfirmation}
-            />
+            {!readOnly && <>
+                <Tooltip
+                    title={`Revoke Assignee`}
+                    placement='right'
+                    arrow
+                >
+                    <Button sx={{ minWidth: 0, width: '20px' }} onClick={() => setShowConfirmation(true)} >
+                        <DoNotDisturbOnTotalSilence className='text-indigo-400' />
+                    </Button>
+                </Tooltip>
+                <ConfirmationModal
+                    onConfirm={() => revokeTask(taskId, [member.id])}
+                    onClose={() => setShowConfirmation(false)}
+                    message={`Are you sure you want to revoke ${member.name} from this task?`}
+                    open={showConfirmation}
+                />
+            </>
+            }
         </div>
     </>
 });
