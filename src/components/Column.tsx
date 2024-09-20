@@ -206,7 +206,7 @@ const Column: React.FC<ColumnProps> = ({ column, children }) => {
                 flex-grow 
                 p-2
                 flex-col 
-                gap-4 
+                gap-2
                 overflow-x-hidden 
                 overflow-y-auto 
                 cursor-auto
