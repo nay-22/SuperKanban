@@ -28,7 +28,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({ message = 'Do you
                     minWidth: '300px',
                 }}
             >
-                <Typography variant='h6' fontWeight={'bold'}>{message}</Typography>
+                <Typography sx={{overflowWrap: 'break-word'}} variant='h6' fontWeight={'bold'}>{message}</Typography>
                 <Box
                     sx={{
                         mt: '2em',
