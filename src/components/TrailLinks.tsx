@@ -2,6 +2,7 @@ import { Breadcrumbs, Tooltip, Typography } from '@mui/material'
 import React, { useContext } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import KanbanContext from '../contexts/KanbanContext'
+import { Home, ViewKanbanOutlined, ViewQuilt, Workspaces } from '@mui/icons-material'
 
 type TrailLinkProps = {
     children?: React.ReactNode
@@ -25,9 +26,10 @@ const TrailLinks: React.FC<TrailLinkProps> = ({ children }) => {
                             <Typography
                                 className={`hover:bg-slate-800 ${location === '/' &&
                                     'text-indigo-400 cursor-default hover:bg-transparent'
-                                    } p-1 rounded-lg`
-                                }>
-                                Home
+                                    } p-1 rounded-lg flex items-center justify-center gap-1`
+                                }
+                            >
+                                <Home /> Home
                             </Typography>
                         </Link>
                     )}
@@ -37,10 +39,10 @@ const TrailLinks: React.FC<TrailLinkProps> = ({ children }) => {
                                 <Typography
                                     className={`hover:bg-slate-800 ${location.match(projectsPagePattern) &&
                                         'text-indigo-400 cursor-default hover:bg-transparent'
-                                        } p-1 rounded-lg`
+                                        } p-1 rounded-lg flex items-center justify-center gap-1`
                                     }
                                 >
-                                    Projects
+                                    <ViewQuilt /> Projects
                                 </Typography>
                             </Link>
                         </Tooltip>
@@ -51,9 +53,10 @@ const TrailLinks: React.FC<TrailLinkProps> = ({ children }) => {
                                 <Typography
                                     className={`hover:bg-slate-800 ${location.match(projectPagePattern)
                                         && !location.match(boardPagePattern) && 'text-indigo-400 cursor-default hover:bg-transparent'
-                                        } p-1 rounded-lg`
+                                        } p-1 rounded-lg flex items-center justify-center gap-1 border-2 border-slate-700`
                                     }
-                                >{projects[projectId]?.name}
+                                >
+                                    <Workspaces />{projects[projectId]?.name}
                                 </Typography>
                             </Link>
                         </Tooltip>
@@ -64,8 +67,10 @@ const TrailLinks: React.FC<TrailLinkProps> = ({ children }) => {
                                 <Typography
                                     className={`hover:bg-slate-800 ${location.match(boardPagePattern)
                                         && 'text-indigo-400 cursor-default hover:bg-transparent'
-                                        } p-1 rounded-lg`
-                                    }>
+                                        } p-1 rounded-lg flex items-center justify-center gap-1`
+                                    }
+                                >
+                                    <ViewKanbanOutlined />
                                     {projects[projectId]?.boards[boardId]?.title}
                                 </Typography>
                             </Link>
