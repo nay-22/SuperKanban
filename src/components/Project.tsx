@@ -1,4 +1,4 @@
-import { Add, Dashboard, DeleteOutline, KeyboardArrowDown, Launch, PeopleAlt, ViewWeek } from '@mui/icons-material'
+import { Add, Dashboard, DeleteOutline, KeyboardArrowDown, Launch, LaunchOutlined, PeopleAlt, ViewWeek } from '@mui/icons-material'
 import { Accordion, AccordionActions, AccordionDetails, AccordionSummary, Button, Modal, Tooltip, Typography } from '@mui/material'
 import { KBMember, KBProject } from '../types';
 import React, { useState } from 'react';
@@ -42,13 +42,18 @@ const Project: React.FC<ProjectProps> = ({ project }) => {
     return <>
         <div className='border-2 border-slate-800 rounded-lg p-4 h-fit'>
             <div className='flex items-center justify-between'>
-                <Tooltip title={project.name} placement='top' arrow>
-                    <Typography variant='h5' className='truncate max-w-[300px]'>{project.name}</Typography>
-                </Tooltip>
                 <div>
                     <div>{project.createdAt.date + ', ' + project.createdAt.year}</div>
-                    <div className='float-right text-slate-400'>{project.createdAt.time}</div>
+                    <div className='text-slate-400'>{project.createdAt.time}</div>
                 </div>
+                <Link to={`/project/${project.id}`}>
+                    <Tooltip title={`${project.name}${project.description && ': ' + project.description}`} placement='top' arrow>
+                        <div className='flex items-center justify-end gap-2 hover:bg-taskBackgroundPrimary py-2 px-2 rounded-lg'>
+                            <Typography variant='h5' className='truncate max-w-[300px]'>{project.name}</Typography>
+                            <LaunchOutlined className='text-indigo-400' />
+                        </div>
+                    </Tooltip>
+                </Link>
             </div>
             <hr className='my-2 border-1 border-slate-600' />
             <div className='flex flex-col gap-4'>
