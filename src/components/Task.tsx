@@ -235,7 +235,7 @@ const Task: React.FC<TaskProps> = React.memo(({ task }) => {
                     </AccordionSummary>
                     {task.assignedTo.length !== 0 && <AccordionDetails className='bg-taskBackgroundPrimary'>
                         {task.assignedTo?.map(person => (
-                            <Assignee key={task.id} taskId={task.id} member={person} />
+                            <Assignee key={person.id} taskId={task.id} member={person} />
                         ))}
                     </AccordionDetails>}
                     <AccordionActions sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', }}>
