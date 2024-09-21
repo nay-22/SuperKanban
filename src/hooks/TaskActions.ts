@@ -31,7 +31,7 @@ export const useTaskActions = () => {
                         ...prev[projectId].boards,
                         [boardId]: {
                             ...prev[projectId].boards[boardId],
-                            tasks: [...prev[projectId].boards[boardId].tasks, task]
+                            tasks: [task, ...prev[projectId].boards[boardId].tasks]
                         }
                     }
                 }
