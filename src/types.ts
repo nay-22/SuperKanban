@@ -51,6 +51,8 @@ export type KBMember = {
     createdAt: Timestamp;
     projects?: Id[];
     boards?: Id[];
+    assignedTasks?: Id[];
+    createdTasks?: Id[];
 }
 
 export type Toast = {
@@ -87,8 +89,20 @@ export type BoardContainerProps = {
     board: KBBoard
 }
 
-export type ColumnInfo = { label: string, value: number, color: string, columnId: Id, tasks: KBTask[] }
+export type MemberContainerProps = {
+    board: KBMember
+}
+
+export type ColumnInfo = {
+    label: string,
+    value: number,
+    color: string,
+    columnId: Id,
+    tasks: KBTask[]
+}
 
 export type TaskInfoProps = {
     item: ColumnInfo
+    anchorEl: HTMLElement | null;
+    setAnchorEl: (el: HTMLElement | null) => void;
 }
