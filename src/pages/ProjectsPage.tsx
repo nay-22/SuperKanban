@@ -1,6 +1,6 @@
 import { Add } from '@mui/icons-material'
 import { Button, Modal } from '@mui/material'
-import Project from '../components/Project'
+import Project from '../components/project/Project'
 import { useContext, useState } from 'react'
 import KanbanContext from '../contexts/KanbanContext'
 import ProjectForm from '../components/forms/ProjectForm'
