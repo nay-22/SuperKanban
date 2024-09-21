@@ -82,3 +82,13 @@ export type KBContext = {
 export type FormProps = {
     callback: () => void;
 }
+
+export type BoardContainerProps = {
+    board: KBBoard
+}
+
+export type ColumnInfo = { label: string, value: number, color: string, columnId: Id, tasks: KBTask[] }
+
+export type TaskInfoProps = {
+    item: ColumnInfo
+}
