@@ -4,6 +4,7 @@ import { v4 as uuid } from "uuid";
 import KanbanContext from "../contexts/KanbanContext";
 import { timestamp } from "../utils/ResourceUtils";
 import { Id, KBMember, KBTask } from "../types";
+import { cacheItem } from "../utils/CacheUtils";
 
 export const useTaskActions = () => {
 
@@ -102,6 +103,16 @@ export const useTaskActions = () => {
                 }
             }
         }));
+        const users: KBMember[] = JSON.parse(localStorage.getItem('users')!);
+        if (!users || users === null) return;
+        const updatedUsers = users.map(user => {
+            if (memberIds.includes(user.id)) {
+                if (!user.assignedTasks) user.assignedTasks = [taskId];
+                else user.assignedTasks.push(taskId);
+            }
+            return user
+        });
+        cacheItem('users', updatedUsers);
     }
 
     const revokeTask = (taskId: Id, memberIds: Id[]) => {
@@ -123,6 +134,16 @@ export const useTaskActions = () => {
                 }
             }
         }));
+
+        const users: KBMember[] = JSON.parse(localStorage.getItem('users')!);
+        if (!users || users === null) return;
+        const updatedUsers = users.map(user => {
+            if (memberIds.includes(user.id)) {
+                if (user.assignedTasks) user.assignedTasks = user.assignedTasks.filter(id => id !== taskId);
+            }
+            return user
+        });
+        cacheItem('users', updatedUsers);
     }
 
     const getAssignees = (memberIds: Id[]): KBMember[] => {
