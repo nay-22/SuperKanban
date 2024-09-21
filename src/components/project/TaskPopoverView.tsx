@@ -1,11 +1,12 @@
-import { Tooltip, Popover, Typography, Chip } from "@mui/material";
+import { Tooltip, Popover, Typography, Chip, TextField } from "@mui/material";
 import { useState } from "react";
 import Task from "../task/Task";
-import { ColumnInfo, TaskInfoProps } from "../../types";
+import { TaskInfoProps } from "../../types";
 import React from "react";
 
 const TasksPopoverView: React.FC<TaskInfoProps> = ({ item }) => {
     const [anchorEl, setAchorEl] = useState<HTMLElement | null>(null);
+    const [filteredTasks, setFilteredTasks] = useState(item?.tasks);
     return <>
         <div className='flex items-center justify-start gap-2 mt-1'>
             <div className='w-3 h-3 rounded-full' style={{ backgroundColor: item.color }}></div>
@@ -35,24 +36,55 @@ const TasksPopoverView: React.FC<TaskInfoProps> = ({ item }) => {
                     }
                 }}
             >
-                <div className='flex items-center justify-between py-2 px-4 bg-taskBackgroundPrimary text-white'>
+                <div className='w-[320px] flex items-center justify-between py-2 px-4 gap-3 bg-taskBackgroundPrimary text-white'>
                     <Typography>{item.label}</Typography>
+                    <TextField 
+                    size="small" 
+                    variant="outlined" 
+                    label='Filter Tasks' 
+                    autoFocus
+                    onChange={(e) => {
+                        const filtered = item.tasks.filter(task => task.content.toLowerCase().includes(e.target.value.toLowerCase()));
+                        setFilteredTasks(filtered);
+                    }}
+                    sx={{
+                        '& .MuiOutlinedInput-root': {
+                            '& fieldset': {
+                                borderColor: 'gray',
+                            },
+                            '&:hover fieldset': {
+                                borderColor: 'darkorange',
+                                color: "white"
+                            },
+                            '&.Mui-focused fieldset': {
+                                borderColor: 'darkorange',
+                            },
+                        },
+                        '& .MuiInputBase-input': {
+                            color: 'white',
+                        },
+                        '& .MuiInputLabel-root': {
+                            color: 'white',
+                        },
+                        width: '100%'
+                    }} 
+                    />
                     <Chip sx={{ color: 'white', bgcolor: 'slateblue' }} label={item.value} />
                 </div>
                 <div className='
-                                            max-h-[400px] 
-                                            w-[320px] 
-                                            overflow-y-auto 
-                                            overflow-x-hidden 
-                                            relative scrollbar-thin 
-                                            scrollbar-thumb-slate-400
-                                            scrollbar-track-transparent
-                                            flex flex-col gap-2
-                                            p-2
-                                            bg-mainBackgroundColor
-                                            '
+                    w-[320px]
+                    max-h-[400px]
+                    overflow-y-auto 
+                    overflow-x-hidden 
+                    relative scrollbar-thin 
+                     scrollbar-thumb-slate-400
+                    scrollbar-track-transparent
+                    flex flex-col gap-2
+                    p-2
+                     bg-mainBackgroundColor
+                    '
                 >
-                    {item.tasks.map(task => <Task readonly task={task} key={task.id} />)}
+                    {filteredTasks?.map(task => <Task readonly task={task} key={task.id} />)}
                 </div>
             </Popover>
         </div>
