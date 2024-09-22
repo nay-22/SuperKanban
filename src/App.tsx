@@ -22,20 +22,35 @@ function App() {
   const [boardId, setBoardId] = useState<Id>('');
   const [hasTouch] = useState(() => 'ontouchstart' in window || navigator.maxTouchPoints > 0);
   const [toast, setToast] = useState<Toast>({open: false, message: ''});
+  const [users, setUsers] = useState<KBMember[]>([]);
+
+  const taskChannel = new BroadcastChannel('task_actions');
+  const columnChannel = new BroadcastChannel('column_actions');
+  const dragChannel = new BroadcastChannel('drag_actions');
 
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem('currentUser')!);
+    const users = JSON.parse(localStorage.getItem('users')!);
     if (user !== null) {
       const projects = JSON.parse(localStorage.getItem('projects')!);
       setCurrentUser(user)
       setProjects(projects);
     }
+    if (users !== null) setUsers(users);
     else alert('Error parsing user from localStorage');
   }, []);
 
   useEffect(() => {
     if (Object.keys(projects).length !== 0) cacheItem('projects', projects);
   }, [projects]);
+
+  useEffect(() => {
+    if (users.length !== 0) cacheItem('users', users);
+  }, [users]);
+
+  useEffect(() => {
+    if (currentUser !== null) cacheItem('currentUser', currentUser);
+  }, [currentUser])
 
   return (
       <KanbanContext.Provider value={{
@@ -53,7 +68,12 @@ function App() {
         boardId,
         setBoardId,
         toast,
-        setToast
+        setToast,
+        users,
+        setUsers,
+        taskChannel,
+        columnChannel,
+        dragChannel,
       }}>
         <Navbar />
         <Routes>

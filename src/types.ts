@@ -79,6 +79,11 @@ export type KBContext = {
     setBoardId: Dispatch<SetStateAction<Id>>;
     toast: Toast;
     setToast: Dispatch<SetStateAction<Toast>>;
+    users: KBMember[];
+    setUsers: Dispatch<SetStateAction<KBMember[]>>;
+    taskChannel: BroadcastChannel;
+    columnChannel: BroadcastChannel;
+    dragChannel: BroadcastChannel;
 }
 
 export type FormProps = {
@@ -105,4 +110,57 @@ export type TaskInfoProps = {
     item: ColumnInfo
     anchorEl: HTMLElement | null;
     setAnchorEl: (el: HTMLElement | null) => void;
+}
+
+export enum ActionType {
+    'task_assign' , 'task_revoke' , 'task_create' , 'task_update' , 'task_delete' , 
+    'column_create' , 'column_update' , 'column_delete' , 
+    'board_create' , 'board_update' , 'board_delete',
+    'project_create' , 'project_update' , 'project_delete'
+}
+
+export enum TaskActionType {
+    'CREATE', 'UPDATE', 'DELETE', 'REVOKE', 'ASSIGN'
+}
+
+export enum ColumnActionType {
+    'CREATE', 'UPDATE', 'DELETE'
+}
+
+export enum DragActionType {
+    'START', 'OVER', 'END'
+}
+
+export type ActionBroadcast = {
+    oldImage: KBProject;
+    newImage: KBProject;
+    resourceIds: Id[];
+    action: ActionType;
+}
+
+export type TaskActionBroadcast = {
+    oldImage: KBTask | null;
+    newImage: KBTask | null;
+    resourceIds: Id[];
+    action: TaskActionType;
+}
+
+export type ColumnActionBroadcast = {
+    oldImage: KBColumn | null;
+    newImage: KBColumn | null;
+    resourceIds: Id[];
+    action: ColumnActionType;
+}
+
+export type DragActionBroadcast = {
+    action: DragActionType;
+    columns?: {
+        oldImage: KBColumn[] | null;
+        newImage: KBColumn[] | null;
+    };
+    tasks?: {
+        oldImage: KBTask[] | null;
+        newImage: KBTask[] | null;
+    };
+    resourceIds?: Id[];
 }

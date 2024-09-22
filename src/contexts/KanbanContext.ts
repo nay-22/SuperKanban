@@ -17,7 +17,12 @@ const KanbanContext = createContext<KBContext>({
   boardId: '',
   setBoardId: () => { },
   toast: { open: false, message: ''},
-  setToast: () => {}
+  setToast: () => {},
+  users: [],
+  setUsers: () => {},
+  taskChannel: new BroadcastChannel('task_actions'),
+  columnChannel: new BroadcastChannel('column_actions'),
+  dragChannel: new BroadcastChannel('drag_actions'),
 });
 
 export default KanbanContext;
