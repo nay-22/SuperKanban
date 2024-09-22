@@ -1,12 +1,12 @@
 import { useContext } from "react"
-import KanbanContext from "../contexts/KanbanContext"
 import { v4 as uuid } from "uuid";
+
+import KanbanContext from "../contexts/KanbanContext"
 import { timestamp } from "../utils/ResourceUtils";
-import { cacheItem } from "../utils/CacheUtils";
-import { Id, KBBoard, KBMember } from "../types";
+import { Id, KBBoard } from "../types";
 
 export const useProjectActions = () => {
-    const { currentUser, projectId, setProjects } = useContext(KanbanContext);
+    const { users, currentUser, setUsers, projectId, setProjects } = useContext(KanbanContext);
 
     const createProject = (title: string, description: string) => {
         const id = uuid();
@@ -35,6 +35,7 @@ export const useProjectActions = () => {
             delete newState[projectId];
             return newState;
         });
+        setUsers(prev => prev.map(user => ({ ...user, projects: user.projects?.filter(pId => pId !== projectId) })));
     }
 
     const addBoard = (id: Id, boardName: string) => {
@@ -63,48 +64,42 @@ export const useProjectActions = () => {
 
     const removeBoard = (boardId: Id) => {
         setProjects(prev => {
-            const newState = {...prev};
+            const newState = { ...prev };
             delete newState[projectId].boards[boardId];
             return newState;
         });
     }
 
     const addMember = (id: Id, memberId: Id) => {
-        const users: KBMember[] = JSON.parse(localStorage.getItem('users')!);
-        const user = users.find(u => u.id === memberId);
-        if (!user) throw Error('User not found');
-        if (!user.projects) user.projects = [];
-        if (user.projects.includes(id)) throw Error('User already assigned to project');
-        user.projects = [...user.projects, id];
-        setProjects(prev => {
-            const newState = {
-                ...prev,
-                [id]: {
-                    ...prev[id],
-                    members: {
-                        ...prev[id].members,
-                        [memberId]: user
-                    }
+        const member = users.find(u => u.id === memberId);
+        setProjects(prev => ({
+            ...prev,
+            [id]: {
+                ...prev[id],
+                members: {
+                    ...prev[id].members,
+                    [memberId]: member!
                 }
             }
-            return newState;
-        });
-        localStorage.setItem('users', JSON.stringify(users));
+        }));
+        setUsers(prev => prev.map(user => user.id === memberId ? { ...user, projects: [...user.projects!, id] } : user));
+
     }
 
     const removeMember = (id: Id, memberId: Id) => {
         setProjects(prev => {
             const newState = { ...prev };
             delete newState[id].members[memberId];
-            cacheItem('projects', newState);
             return newState;
         });
-        const users: KBMember[] = JSON.parse(localStorage.getItem('users')!);
-        if (!users) return;
-        const user: KBMember | undefined = users.find(u => u.id === memberId);
-        if (!user || !user.projects) return;
-        user.projects = user.projects.filter(pId => pId !== id);
+        setUsers(prev => prev.map(user => {
+            if (user.id === memberId) {
+                const projects = user.projects!.filter(pId => pId !== id);
+                return { ...user, projects };
+            }
+            return user;
+        }));
     }
 
-    return { createProject, deleteProject, addBoard, addMember, removeMember, removeBoard};
+    return { createProject, deleteProject, addBoard, addMember, removeMember, removeBoard };
 }
