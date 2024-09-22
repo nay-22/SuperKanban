@@ -1,9 +1,9 @@
 # Kanban Board (Ongoing)
 
 ## To-Do:
+- Complete Project Dashboard & BroadcastChannel API integration for full tab sync
 - Build a Member Dashboard to view assigned tasks and track activity
 - Implement RBA Auth - CRUD authority to boards in a project
-- Implement BreadCrumbs component at the top level
 - Complete Multi-Project setup
 - Implement Home Page
 - Implement Backend
