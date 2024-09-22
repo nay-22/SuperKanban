@@ -1,4 +1,4 @@
-import { Id, KBBoard, KBTask } from "../types";
+import { ColumnInfo, Id, KBBoard, KBProject } from "../types";
 
 export const timestamp = () => {
     const ts = new Date().toLocaleString('en-US', { day: '2-digit', month: 'short', year: 'numeric', hour: 'numeric', minute: 'numeric' }).split(',');
@@ -8,12 +8,25 @@ export const timestamp = () => {
     return { date, year, time };
 }
 
-export const getTaskInfoByColumn = (board: KBBoard): { label: string, value: number, color: string, columnId: Id, tasks: KBTask[] }[] => {
+export const getTaskInfoByColumn = (board: KBBoard): ColumnInfo[] => {
     return board.columns.map((column) => {
         const taskCount = board.tasks.filter(task => task.columnId === column.id).length;
         const tasks = board.tasks.filter(task => task.columnId === column.id);
         return { label: column.title, columnId: column.id, value: taskCount, color: '', tasks };
     });
+}
+
+export type MemberInfo = {boards: KBBoard[]}[]
+
+export const getTaskInfoByMember = (project: KBProject, memberId: Id): KBBoard[] => {
+    return Object.entries(project.boards).map(([_, board]) => {
+        const filteredBoard: KBBoard = {
+            ...board,
+            tasks: board.tasks.filter(task => task.assignedTo.find(member => member.id === memberId)),
+            columns: board.columns,
+        }
+        return filteredBoard
+    })
 }
 
 export const generateKRandomColors = (k: number, dark = false) => {
