@@ -77,7 +77,7 @@ const ProjectDashboard = () => {
                 <hr className='my-2 border-1 border-slate-600' />
                 <div className='flex items-start gap-4 px-4 pb-4 overflow-x-auto overflow-y-hidden scrollbar-thumb-slate-600 scrollbar-track-transparent scrollbar-thin'>
                     {projects[projectId || ''] && Object.entries(projects[projectId || '']?.members).map(([id, member]) => (
-                        <MemberContainer key={id} member={member} />
+                        <MemberContainer project={projects[projectId]} key={id} member={member} />
                     ))}
                 </div>
                 <Modal open={showMemberForm} onClose={() => setShowMemberForm(false)}>
