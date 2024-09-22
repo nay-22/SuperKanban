@@ -22,7 +22,7 @@ export const getTaskInfoByMember = (project: KBProject, memberId: Id): KBBoard[]
     return Object.entries(project.boards).map(([_, board]) => {
         const filteredBoard: KBBoard = {
             ...board,
-            tasks: board.tasks.filter(task => task.assignedTo.find(member => member.id === memberId)),
+            tasks: board.tasks.filter(task => task.assignedTo && task.assignedTo.find(member => member.id === memberId)),
             columns: board.columns,
         }
         return filteredBoard

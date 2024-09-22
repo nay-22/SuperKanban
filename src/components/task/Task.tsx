@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
-import { KBTask } from '../../types';
+import { KBTask, TaskActionBroadcast } from '../../types';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { Tooltip } from '@mui/material';
@@ -8,6 +8,7 @@ import { useTaskActions } from '../../hooks/TaskActions';
 import ConfirmationModal from '../modals/ConfirmationModal';
 import KanbanContext from '../../contexts/KanbanContext';
 import AssigneeView from './AssigneeView';
+import useSync from '../../hooks/SyncActions';
 
 interface TaskProps {
     task: KBTask;
@@ -24,6 +25,32 @@ const Task: React.FC<TaskProps> = React.memo(({ task, readonly=false }) => {
     const [content, setContent] = useState(task.content);
     const dropdownRef = useRef<HTMLDivElement>(null);
     const priorityRef = useRef<HTMLDivElement>(null);
+
+    const { syncTask } = useSync();
+    const { taskChannel, projectId, boardId } = useContext(KanbanContext);
+    const [taskBroadcast, setTaskBroadcast] = useState<TaskActionBroadcast | null>(null);
+
+
+    useEffect(() => {
+        const handleTaskActions = (e: MessageEvent) => {
+            console.log(e.data);
+            
+            setTaskBroadcast(e.data);
+        }
+        taskChannel.addEventListener('message', handleTaskActions);
+
+        return () => {
+            taskChannel.removeEventListener('message', handleTaskActions);
+        }
+
+    })
+
+    useEffect(() => {
+        if (taskBroadcast != null) {
+            syncTask(projectId, boardId, taskBroadcast);
+            // setTaskBroadcast(null);
+        }
+    }, [taskBroadcast]);
 
 
     const { isDragging, setNodeRef, attributes, listeners, transform, transition } = useSortable({
@@ -180,7 +207,7 @@ const Task: React.FC<TaskProps> = React.memo(({ task, readonly=false }) => {
                         </div>
                     </Tooltip>
                 )}
-                <AssigneeView readOnly={readonly} task={task} />
+                <AssigneeView readOnly={readonly} task={(taskBroadcast?.newImage && taskBroadcast.newImage.id === task.id) ? taskBroadcast.newImage :  task} />
             </div>
             <ConfirmationModal onConfirm={() => deleteTask(task.id)} open={showConfirmation} onClose={() => setShowConfirmation(false)} />
         </div>

@@ -63,7 +63,7 @@ const BoardContainer: React.FC<BoardContainerProps> = React.memo(({ board }) => 
                                             arcLabel: (item) => `${item.label}`,
                                             cx: '80%',
                                             cy: '50%',
-                                            arcLabelMinAngle: 35,
+                                            arcLabelMinAngle: 45,
                                             arcLabelRadius: '100%',
                                         }
                                     ]}

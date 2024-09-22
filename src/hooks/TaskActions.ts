@@ -3,7 +3,7 @@ import { v4 as uuid } from "uuid";
 
 import KanbanContext from "../contexts/KanbanContext";
 import { timestamp } from "../utils/ResourceUtils";
-import { ActionBroadcast, ActionType, Id, KBMember, KBTask, TaskActionBroadcast, TaskActionType } from "../types";
+import { Id, KBMember, KBTask, TaskActionBroadcast, TaskActionType } from "../types";
 import { cacheItem } from "../utils/CacheUtils";
 
 export const useTaskActions = () => {
@@ -124,12 +124,12 @@ export const useTaskActions = () => {
                         }
                     }
                 }
-            }            
-            const action: ActionBroadcast = {
-                oldImage: prev[projectId],
-                newImage: newState[projectId],
+            }
+            const action: TaskActionBroadcast = {
+                oldImage: prev[projectId].boards[boardId].tasks.find(t => t.id === taskId)!,
+                newImage: newState[projectId].boards[boardId].tasks.find(t => t.id === taskId)!,
                 resourceIds: memberIds,
-                action: ActionType.task_assign
+                action: TaskActionType.UPDATE
             }
             broadcast.postMessage(action);
             return newState;
@@ -148,24 +148,34 @@ export const useTaskActions = () => {
     }
 
     const revokeTask = (taskId: Id, memberIds: Id[]) => {
-        setProjects(prev => ({
-            ...prev,
-            [projectId]: {
-                ...prev[projectId],
-                boards: {
-                    ...prev[projectId].boards,
-                    [boardId]: {
-                        ...prev[projectId].boards[boardId],
-                        tasks: prev[projectId].boards[boardId].tasks.map(task => {
-                            if (task.id === taskId) {
-                                return { ...task, assignedTo: task.assignedTo.filter(user => !memberIds.includes(user.id)) }
-                            }
-                            return task;
-                        })
+        setProjects(prev => {
+            const newState = {
+                ...prev,
+                [projectId]: {
+                    ...prev[projectId],
+                    boards: {
+                        ...prev[projectId].boards,
+                        [boardId]: {
+                            ...prev[projectId].boards[boardId],
+                            tasks: prev[projectId].boards[boardId].tasks.map(task => {
+                                if (task.id === taskId) {
+                                    return { ...task, assignedTo: task.assignedTo.filter(user => !memberIds.includes(user.id)) }
+                                }
+                                return task;
+                            })
+                        }
                     }
                 }
             }
-        }));
+            const action: TaskActionBroadcast = {
+                oldImage: prev[projectId].boards[boardId].tasks.find(t => t.id === taskId)!,
+                newImage: newState[projectId].boards[boardId].tasks.find(t => t.id === taskId)!,
+                resourceIds: memberIds,
+                action: TaskActionType.UPDATE
+            }
+            broadcast.postMessage(action);
+            return newState;
+        });
 
         const users: KBMember[] = JSON.parse(localStorage.getItem('users')!);
         if (!users || users === null) return;
