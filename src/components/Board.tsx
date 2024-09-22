@@ -1,17 +1,69 @@
 import { DndContext, DragOverlay, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
+import { useContext, useEffect, useMemo, useState } from 'react';
 import { SortableContext } from '@dnd-kit/sortable';
-import { useContext, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 
+import { ColumnActionBroadcast, DragActionBroadcast, TaskActionBroadcast } from '../types';
 import { useDragHandles } from '../hooks/DragHandles';
 import KanbanContext from '../contexts/KanbanContext';
-import Column from './Column';
+import useSync from '../hooks/SyncActions';
 import Task from './task/Task';
+import Column from './Column';
 
 const Board = () => {
 
+    const { projects, activeItem, projectId, boardId, taskChannel, columnChannel, dragChannel } = useContext(KanbanContext);
     const { handleDragStart, handleDragOver, handleDragEnd } = useDragHandles();
-    const { projects, activeItem, projectId, boardId } = useContext(KanbanContext);
+    const { syncTask, syncColumn, syncDrag } = useSync();
+    const [taskBroadCast, setTaskBroadcast] = useState<TaskActionBroadcast | null>(null);
+    const [columnBroadCast, setColumnBroadcast] = useState<ColumnActionBroadcast | null>(null);
+    const [dragBroadCast, setDragBroadcast] = useState<DragActionBroadcast | null>(null);
+
+    useEffect(() => {
+        const handleTaskActions = (e: MessageEvent) => {
+            setTaskBroadcast(e.data);
+        }
+
+        const handleColumnActions = (e: MessageEvent) => {
+            setColumnBroadcast(e.data);
+        }
+
+        const handleDragActions = (e: MessageEvent) => {
+            setDragBroadcast(e.data);
+        }
+
+        taskChannel.addEventListener('message', handleTaskActions);
+        columnChannel.addEventListener('message', handleColumnActions);
+        dragChannel.addEventListener('message', handleDragActions);
+
+
+        return () => {
+            taskChannel.removeEventListener('message', handleTaskActions);
+            columnChannel.removeEventListener('message', handleColumnActions);
+            dragChannel.removeEventListener('message', handleDragActions);
+        }
+    }, [])
+
+    useEffect(() => {
+        if (taskBroadCast != null) {
+            syncTask(projectId, boardId, taskBroadCast);
+            setTaskBroadcast(null);
+        }
+    }, [taskBroadCast]);
+
+    useEffect(() => {
+        if (columnBroadCast != null) {
+            syncColumn(projectId, boardId, columnBroadCast);
+            setColumnBroadcast(null);
+        }
+    }, [columnBroadCast]);
+
+    useEffect(() => {
+        if (dragBroadCast != null) {
+            syncDrag(projectId, boardId, dragBroadCast);
+            setDragBroadcast(null);
+        }
+    }, [dragBroadCast]);
 
     const columnsId = useMemo(() => {
         if (projects[projectId]?.boards?.[boardId]?.columns) {
