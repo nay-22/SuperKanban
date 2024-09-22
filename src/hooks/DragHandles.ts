@@ -3,12 +3,12 @@ import { arrayMove } from "@dnd-kit/sortable";
 import { useContext } from "react";
 
 import KanbanContext from "../contexts/KanbanContext";
-import { Id } from "../types";
+import { DragActionBroadcast, DragActionType, Id } from "../types";
 import { debounce } from "@mui/material";
 
 export const useDragHandles = () => {
 
-    const { setActiveItem, setProjects, projectId, boardId } = useContext(KanbanContext);
+    const { setActiveItem, setProjects, projectId, boardId, dragChannel: broadcast } = useContext(KanbanContext);
 
     const handleDragStart = (e: DragStartEvent) => {
         const { current } = e.active.data;
@@ -56,6 +56,14 @@ export const useDragHandles = () => {
                         }
                     }
                 }
+                const action: DragActionBroadcast = {
+                    action: DragActionType.OVER,
+                    tasks: {
+                        oldImage: prev[projectId].boards[boardId].tasks!,
+                        newImage: newState[projectId].boards[boardId].tasks!
+                    }
+                }
+                broadcast.postMessage(action);
                 return newState;
             })
         }
@@ -81,6 +89,14 @@ export const useDragHandles = () => {
                         }
                     }
                 }
+                const action: DragActionBroadcast = {
+                    action: DragActionType.OVER,
+                    tasks: {
+                        oldImage: prev[projectId].boards[boardId].tasks!,
+                        newImage: newState[projectId].boards[boardId].tasks!
+                    }
+                }
+                broadcast.postMessage(action);
                 return newState;
             });
         }
@@ -119,6 +135,14 @@ export const useDragHandles = () => {
                         }
                     }
                 }
+                const action: DragActionBroadcast = {
+                    action: DragActionType.END,
+                    tasks: {
+                        oldImage: prev[projectId].boards[boardId].tasks!,
+                        newImage: newState[projectId].boards[boardId].tasks!
+                    }
+                }
+                broadcast.postMessage(action);
                 return newState;
             });
         }
@@ -142,6 +166,14 @@ export const useDragHandles = () => {
                         }
                     }
                 };
+                const action: DragActionBroadcast = {
+                    action: DragActionType.END,
+                    columns: {
+                        oldImage: prev[projectId].boards[boardId].columns!,
+                        newImage: newState[projectId].boards[boardId].columns!
+                    }
+                }
+                broadcast.postMessage(action);
                 return newState;
             })
         }

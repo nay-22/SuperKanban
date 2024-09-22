@@ -1,10 +1,10 @@
 import { v4 as uuid } from "uuid";
-import { Id, KBColumn } from "../types";
+import { ColumnActionBroadcast, ColumnActionType, Id, KBColumn } from "../types";
 import { useContext } from "react";
 import KanbanContext from "../contexts/KanbanContext";
 
 export const useColumnActions = () => {
-    const { setNewItemId, setProjects, projectId, boardId } = useContext(KanbanContext);
+    const { setNewItemId, setProjects, projectId, boardId, columnChannel: broadcast } = useContext(KanbanContext);
 
     const createColumn = (projectId: Id, boardId: Id) => {
         const id = uuid();
@@ -13,21 +13,27 @@ export const useColumnActions = () => {
             title: '',
             sortOrder: 'none',
         };
-
         setProjects(prev => {
             const newState = {
                 ...prev,
                 [projectId]: {
                     ...prev[projectId],
                     boards: {
-                        ...prev[projectId].boards,
+                        ...prev[projectId]?.boards,
                         [boardId]: {
-                            ...prev[projectId].boards[boardId],
-                            columns: [...prev[projectId].boards[boardId].columns, column]
+                            ...prev[projectId]?.boards[boardId],
+                            columns: [...prev[projectId]?.boards[boardId].columns, column]
                         }
                     }
                 }
             };
+            const action: ColumnActionBroadcast = {
+                oldImage: null,
+                newImage: column,
+                resourceIds: [id],
+                action: ColumnActionType.CREATE
+            }
+            broadcast.postMessage(action);
             return newState;
         });
 
@@ -49,6 +55,13 @@ export const useColumnActions = () => {
                     }
                 }
             };
+            const action: ColumnActionBroadcast = {
+                oldImage: prev[projectId].boards[boardId].columns.find(c => c.id === id) || null,
+                newImage: null,
+                resourceIds: [id],
+                action: ColumnActionType.DELETE
+            }
+            broadcast.postMessage(action);
             return newState;
         });
     };
@@ -73,6 +86,13 @@ export const useColumnActions = () => {
                     }
                 }
             };
+            const action: ColumnActionBroadcast = {
+                oldImage: prev[projectId].boards[boardId].columns.find(c => c.id === id) || null,
+                newImage: newState[projectId].boards[boardId].columns.find(c => c.id === id) || null,
+                resourceIds: [id],
+                action: ColumnActionType.UPDATE
+            }
+            broadcast.postMessage(action);
             return newState;
         });
         

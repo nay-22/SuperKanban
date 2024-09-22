@@ -3,12 +3,12 @@ import { v4 as uuid } from "uuid";
 
 import KanbanContext from "../contexts/KanbanContext";
 import { timestamp } from "../utils/ResourceUtils";
-import { Id, KBMember, KBTask } from "../types";
+import { ActionBroadcast, ActionType, Id, KBMember, KBTask, TaskActionBroadcast, TaskActionType } from "../types";
 import { cacheItem } from "../utils/CacheUtils";
 
 export const useTaskActions = () => {
 
-    const { currentUser, setNewItemId, setProjects, projectId, boardId } = useContext(KanbanContext);
+    const { currentUser, setNewItemId, setProjects, projectId, boardId, taskChannel: broadcast } = useContext(KanbanContext);
 
     const createTask = (columnId: Id) => {
         if (currentUser === null) return;
@@ -37,6 +37,13 @@ export const useTaskActions = () => {
                     }
                 }
             }
+            const action: TaskActionBroadcast = {
+                oldImage: null,
+                newImage: task,
+                resourceIds: [id],
+                action: TaskActionType.CREATE
+            }
+            broadcast.postMessage(action);
             return newState;
         });
     }
@@ -56,6 +63,13 @@ export const useTaskActions = () => {
                     }
                 }
             }
+            const action: TaskActionBroadcast = {
+                oldImage: prev[projectId].boards[boardId].tasks.find(t => t.id === id)!,
+                newImage: null,
+                resourceIds: [id],
+                action: TaskActionType.DELETE
+            }
+            broadcast.postMessage(action);
             return newState;
         });
     }
@@ -80,29 +94,47 @@ export const useTaskActions = () => {
                     }
                 }
             }
+            const action: TaskActionBroadcast = {
+                oldImage: prev[projectId].boards[boardId].tasks.find(t => t.id === id)!,
+                newImage: newState[projectId].boards[boardId].tasks.find(t => t.id === id)!,
+                resourceIds: [id],
+                action: TaskActionType.UPDATE
+            }
+            broadcast.postMessage(action);
             return newState;
         });
     }
 
     const assignTask = (taskId: Id, memberIds: Id[]) => {
-        setProjects(prev => ({
-            ...prev,
-            [projectId]: {
-                ...prev[projectId],
-                boards: {
-                    ...prev[projectId].boards,
-                    [boardId]: {
-                        ...prev[projectId].boards[boardId],
-                        tasks: prev[projectId].boards[boardId].tasks.map(task => {
-                            if (task.id === taskId) {
-                                return { ...task, assignedTo: [...task.assignedTo, ...getAssignees(memberIds)] }
-                            }
-                            return task;
-                        })
+        setProjects(prev => {
+            const newState = {
+                ...prev,
+                [projectId]: {
+                    ...prev[projectId],
+                    boards: {
+                        ...prev[projectId].boards,
+                        [boardId]: {
+                            ...prev[projectId].boards[boardId],
+                            tasks: prev[projectId].boards[boardId].tasks.map(task => {
+                                if (task.id === taskId) {
+                                    return { ...task, assignedTo: [...task.assignedTo, ...getAssignees(memberIds)] }
+                                }
+                                return task;
+                            })
+                        }
                     }
                 }
+            }            
+            const action: ActionBroadcast = {
+                oldImage: prev[projectId],
+                newImage: newState[projectId],
+                resourceIds: memberIds,
+                action: ActionType.task_assign
             }
-        }));
+            broadcast.postMessage(action);
+            return newState;
+        });
+
         const users: KBMember[] = JSON.parse(localStorage.getItem('users')!);
         if (!users || users === null) return;
         const updatedUsers = users.map(user => {
