@@ -40,21 +40,21 @@ const Project: React.FC<ProjectProps> = ({ project }) => {
     const { removeMember } = useProjectActions();
 
     return <>
-        <div className='border-2 border-slate-800 rounded-lg p-4 h-fit'>
-            <div className='flex items-center justify-between'>
-                <div>
-                    <div>{project.createdAt.date + ', ' + project.createdAt.year}</div>
-                    <div className='text-slate-400'>{project.createdAt.time}</div>
-                </div>
-                <Link to={`/project/${project.id}`}>
+        <div className='border-2 border-slate-800 rounded-lg px-4 pt-2 pb-4 h-fit'>
+            <Link to={`/project/${project.id}`}>
+                <div className='flex items-center justify-between hover:bg-taskBackgroundPrimary p-2 rounded-lg'>
+                    <div>
+                        <div>{project.createdAt.date + ', ' + project.createdAt.year}</div>
+                        <div className='text-slate-400'>{project.createdAt.time}</div>
+                    </div>
                     <Tooltip title={`${project.name}${project.description && ': ' + project.description}`} placement='top' arrow>
-                        <div className='flex items-center justify-end gap-2 hover:bg-taskBackgroundPrimary py-2 px-2 rounded-lg'>
+                        <div className='flex items-center justify-end gap-2 py-2 px-2 rounded-lg'>
                             <Typography variant='h5' className='truncate max-w-[270px]'>{project.name}</Typography>
                             <LaunchOutlined className='text-indigo-400' />
                         </div>
                     </Tooltip>
-                </Link>
-            </div>
+                </div>
+            </Link>
             <hr className='my-2 border-1 border-slate-600' />
             <div className='flex flex-col gap-4'>
                 <Accordion disableGutters sx={{ bgcolor: 'rgba(40, 56, 71)', color: 'white' }} >
