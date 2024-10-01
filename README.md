@@ -1,9 +1,9 @@
 # Kanban Board (Ongoing)
 
 ## To-Do:
+- Complete Project Dashboard & BroadcastChannel API integration for full tab sync
 - Build a Member Dashboard to view assigned tasks and track activity
 - Implement RBA Auth - CRUD authority to boards in a project
-- Implement BreadCrumbs component at the top level
 - Complete Multi-Project setup
 - Implement Home Page
 - Implement Backend
@@ -18,6 +18,21 @@
   
 # Current Implementation
 
+## v4.1.1-dev
+   ### Features
+  - Board Stats with a popover-view of tasks in each column
+  - Member Stats with the number of assigned tasks
+  - Tab sync with BroadcastChannel view for tasks/columns
+    
+  <video width="315" height="150" src="https://github.com/user-attachments/assets/ff39d8aa-4d2f-468e-83d5-cc24e8289fda" controls></video>
+  <video width="315" height="150" src="https://github.com/user-attachments/assets/6f896ff7-095a-4613-81ef-489e751b3328" controls></video>
+
+      
+  
+  
+
+
+
 ## v4.1.0-dev
    ### Features
   - Project Dashboard with board details (ongoing)
@@ -26,8 +41,8 @@
       - Total Tasks
       - Tasks per Column
   - Trail Links for quick navigation
-       
-    <video width="630" height="300" src="https://github.com/user-attachments/assets/4124c6ed-18b5-40fe-a2f0-8bcedad67a13"></video>    
+
+    <video width="630" height="300" src="https://github.com/user-attachments/assets/4124c6ed-18b5-40fe-a2f0-8bcedad67a13"></video>       
 
 ## v4.0.0-dev
    ### Features
