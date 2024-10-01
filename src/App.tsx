@@ -1,4 +1,4 @@
-import { Route, Routes } from 'react-router-dom';
+import { Route, Routes, useLocation } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 
 import { Id, KBColumn, KBMember, KBProject, KBTask, Toast } from './types';
@@ -12,6 +12,7 @@ import './App.css'
 import { Button, Snackbar } from '@mui/material';
 import { cacheItem } from './utils/CacheUtils';
 import ProjectPage from './pages/ProjectPage';
+import LandingPage from './pages/LandingPage';
 
 function App() {
   const [currentUser, setCurrentUser] = useState<KBMember | null>(null);
@@ -21,12 +22,14 @@ function App() {
   const [projectId, setProjectId] = useState<Id>('');
   const [boardId, setBoardId] = useState<Id>('');
   const [hasTouch] = useState(() => 'ontouchstart' in window || navigator.maxTouchPoints > 0);
-  const [toast, setToast] = useState<Toast>({open: false, message: ''});
+  const [toast, setToast] = useState<Toast>({ open: false, message: '' });
   const [users, setUsers] = useState<KBMember[]>([]);
 
   const taskChannel = new BroadcastChannel('task_actions');
   const columnChannel = new BroadcastChannel('column_actions');
   const dragChannel = new BroadcastChannel('drag_actions');
+
+  const location = useLocation();
 
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem('currentUser')!);
@@ -52,7 +55,8 @@ function App() {
     if (currentUser !== null) cacheItem('currentUser', currentUser);
   }, [currentUser])
 
-  return (
+  return <>
+    <div>
       <KanbanContext.Provider value={{
         hasTouch,
         currentUser,
@@ -75,23 +79,25 @@ function App() {
         columnChannel,
         dragChannel,
       }}>
-        <Navbar />
+        {location.pathname !== '/' && <Navbar />}
         <Routes>
           <Route path='/project/:projectId/board/:boardId' element={<BoardPage />} />
           <Route path='/project/:projectId' element={<ProjectPage />} />
           <Route path='/projects' element={<ProjectsPage />} />
-          <Route path='/' element={<HomePage />} />
+          <Route path='/home' element={<HomePage />} />
+          <Route path='/' element={<LandingPage />} />
         </Routes>
         <Snackbar
           open={toast.open}
           autoHideDuration={toast.autoHide || 6000}
           message={toast.message}
-          onClose={() => setToast({open: false, message: '', })}
+          onClose={() => setToast({ open: false, message: '', })}
           anchorOrigin={toast.anchor}
-          action={toast.action || <Button color="inherit" size="small" onClick={() => setToast({open: false, message: '', })}>Close</Button>}
+          action={toast.action || <Button color="inherit" size="small" onClick={() => setToast({ open: false, message: '', })}>Close</Button>}
         />
       </KanbanContext.Provider>
-  )
+    </div>
+  </>
 }
 
 export default App
